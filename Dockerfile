@@ -13,9 +13,10 @@ RUN npm install
 
 COPY ./ $FRONTEND
 RUN npm run build
+RUN ls
+RUN ls $FRONTEND
 
 # Copy frontend from the first stage
-COPY --from=0 /opt/frontend/build ./build
-COPY --from=0 /opt/frontend/dist ./dist
+COPY --from=0 $FRONTEND/dist ./dist
 
 CMD ["/bin/sh", "./run.sh"]

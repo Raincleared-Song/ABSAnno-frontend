@@ -7,16 +7,28 @@ ENV FRONTEND=/opt/frontend
 
 WORKDIR $FRONTEND
 
-COPY ./package.json $FRONTEND
-COPY ./package-lock.json $FRONTEND
+COPY package.json $FRONTEND
+COPY package-lock.json $FRONTEND
 RUN npm install
 
-COPY ./ $FRONTEND
+COPY . $FRONTEND
 RUN npm run build
-RUN ls
-RUN ls $FRONTEND
+
+# Second stage
+FROM nginx:1.18.0
+
+ENV HOME=/opt/app
+
+WORKDIR $HOME
 
 # Copy frontend from the first stage
-COPY --from=0 $FRONTEND/dist ./dist
+COPY --from=0 /opt/frontend/dist dist
+COPY nginx/ nginx/
 
-CMD ["/bin/sh", "./run.sh"]
+RUN rm -r /etc/nginx/conf.d \
+ && ln -s $HOME/nginx /etc/nginx/conf.d
+
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+ && ln -sf /dev/stderr /var/log/nginx/error.log
+
+EXPOSE 80

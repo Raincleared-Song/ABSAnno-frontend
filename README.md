@@ -17,6 +17,7 @@ a web application for the release, management and completion of data annotation 
 #### 访问后端数据
 
 后端 url 都是以 `https://absanno-abstract.app.secoder.net/` 开头，建议大家模仿小作业写一个 API 对象，不要将 url 和请求方式写死在代码里。
+另外，配置文件中已经设置了代理，大家在访问时可以不用输入完整的 url，而是输入相对于上述前缀的相对 url。
 
 #### 更新远程代码
 

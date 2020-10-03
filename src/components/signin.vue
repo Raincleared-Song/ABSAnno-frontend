@@ -15,8 +15,16 @@
             <div class="inputBox">
                 <input type="password" name="repeat" v-model="repeat" required="">
                 <label>请确认密码</label>
-                <span v-if="secretOK===false" style="color: #ff0000">两次输入的密码务必保持一致</span>
             </div>
+            <div>
+                <span v-if="secretOK===false" style="color: #ff0000">两次输入的密码务必保持一致</span>
+                <span v-if="nameIllegal===true" style="color: #ff0000">该用户名不合规范，请重新输入</span>
+                <span v-if="userExist===true" style="color: #ff0000">该用户名已被注册，请登录或重新取名</span>
+                <span v-if="userExist===true" style="color: #ff0000">该用户名已被注册，请登录或重新取名</span>
+                <span v-if="pslen===false" style="color: #ff0000">密码不合规范，请重新输入</span>
+                <span v-if="OK===false" style="color: #ff0000">注册异常，请稍后重试</span>
+            </div>
+
 <!--            <a-button type="primary" html-type="submit" @click="sendMsg">-->
 <!--                注册-->
 <!--            </a-button>-->
@@ -46,21 +54,44 @@
                 repeat:"",
                 secretOK:true,
                 nameOK:false,
+                nameIllegal:false,
+                userExist:false,
+                OK:true,
+                pslen:true,
             }
         },
         methods: {
             sendMsg(){
                 console.log(this.name, this.secret)
-                // TODO 直接在这里与后端交互
-                console.log(this.name, this.secret)
                 const xhr = new XMLHttpRequest()
                 let context = this
                 xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4 && xhr.status === 200)
+                    if (xhr.readyState === 4 && xhr.status === 201){
+                        console.log(xhr.response);
                         context.$router.push('/ground');
+                    }
+                    else if(xhr.readyState === 4){
+                        let res = JSON.parse(xhr.response);
+                        let error = res.data;
+                        console.log(error)
+                        if(error === "UserNameError"){
+                            context.nameIllegal = true;
+                        }
+                        else if(error === "UserNameHasExisted"){
+                            context.userExist = true;
+                        }
+                        else if(error === "PasswordLengthError"){
+                            context.pslen = false;
+                        }
+                        else {
+                            context.OK = false;
+                        }
+                    }
                 };
-                xhr.open("post","backend/login")
-                xhr.send(JSON.stringify({"name":this.name,"password":this.secret, "method":"SignIn"}))
+                xhr.open("post","backend/signin");
+                xhr.setRequestHeader('content-type', 'application/json');
+                xhr.send(JSON.stringify({"name":this.name,"password":this.secret,
+                    "method":"SignIn","email":""}))
             },
         },
 

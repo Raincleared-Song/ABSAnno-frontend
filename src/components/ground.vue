@@ -13,7 +13,30 @@
 
 <script>
     export default {
-        name: "ground"
+        name: "ground",
+        data(){
+            return {
+                msgList:[],
+            }
+        },
+        methods: {
+            getMsg(){
+                const xhr = new XMLHttpRequest()
+                let context = this
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 201){
+                        console.log(xhr.response);
+                        context.msgList = xhr.response.data;
+                    }
+                };
+                xhr.open("post","backend/square")
+                xhr.send(JSON.stringify({'id': 1, 'num': 0}));
+            },
+
+        },
+        mounted:function () {   //自动触发写入的函数
+            this.getMsg();
+        },
     }
 </script>
 

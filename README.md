@@ -16,7 +16,11 @@ a web application for the release, management and completion of data annotation 
 
 #### 访问后端数据
 
-后端 url 都是以 `https://absanno-abstract.app.secoder.net/absanno/` 开头，建议大家模仿小作业写一个 API 对象，不要将 url 和请求方式写死在代码里。另外，配置文件中已经设置了代理，大家在访问时可以不用输入完整的 url，而是输入**相对于 `/backend` 的 url**。例如，大家请求 `https://absanno-abstract.app.secoder.net/absanno/data` 的数据时，也可以用：`/backend/data`。代理配置已经修改过，大家严格遵守后端定义的 url 来，**访问 backend 的子目录时，一般不能加斜杠（因为后端配置里也是没有斜杠的）**。
+**只有 master 分支中的版本会进行部署！**
+
+建议大家模仿小作业写一个 API 对象，不要将 url 和请求方式写死在代码里。
+
+后端 url 都是以 `https://absanno-abstract.app.secoder.net/absanno/` 开头，但是，配置文件中已经设置了代理，大家在访问时可以**不可以使用完整的 url（因为 ajax 不允许进行跨域访问）**，而是输入**相对于 `/backend` 的 url**。例如，大家请求 `https://absanno-abstract.app.secoder.net/absanno/data` 的数据时，需要使用：`/backend/data`。代理配置已经修改过，大家严格遵守后端定义的 url 来，**访问 backend 的子目录时，一般不能加斜杠（因为后端配置里也是没有斜杠的）**。
 
 ```python
 # nginx/frontend.conf
@@ -27,6 +31,38 @@ location /backend/ {
     proxy_pass https://absanno-abstract.app.secoder.net/absanno/;
 }
 ```
+
+#### 本地测试（nginx 使用）
+
+##### windows 环境：
+
+1. 在前端项目的目录下，运行 `npm install` 与 `npm run build`，生成 `dist` 文件夹
+2. 下载安装 nginx，地址：https://nginx.org/download/nginx-1.18.0.zip
+3. 打开后解压到一个**不含中文**的路径下，修改 `conf/nginx.conf` 文件
+4. 找到配置文件中的 `server` 字段，把原本的配置注释掉，修改为：
+
+```json
+server {
+    listen 80;
+    server_name  localhost;
+    root  你的项目目录\dist;
+    server_name_in_redirect off;
+
+    location / {
+    }
+
+    location /backend/ {
+        proxy_pass https://absanno-abstract.app.secoder.net/absanno/;
+    }
+}
+```
+
+5. 双击 `nginx.exe`，即可运行代理服务器，`127.0.0.1:80` 就是前端页面的入口 url
+6. 如果要中止服务器，需要在命令行/powershell 中 cd 到 `nginx` 所在目录下，输入 `./nginx -s stop` 命令
+
+##### Mac 环境
+
+// todo
 
 #### 更新远程代码
 

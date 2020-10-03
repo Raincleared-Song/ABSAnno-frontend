@@ -9,31 +9,26 @@
           <li @click="addTextEditQuestion">添加文字题</li>
         </ul>
       </div>
-      <div
-              class="right"
-              v-if="nowQuestion != null">
+      <div class="right"
+          v-if="nowQuestion != null">
         <JudgementGroup
-            v-if="nowQuestion.type === 'tof_group'"
-            :key="nowQuestion.id"
+            v-if="nowQuestion.type === 'judgement_group'"
             :editable="true"
             :question="nowQuestion" />
         <RadioGroup
             v-else-if="nowQuestion.type === 'select_single'"
             @addOption="addOption"
             @removeOption="removeOption"
-            :key="nowQuestion.id"
             :editable="true"
             :question="nowQuestion" />
         <CheckboxGroup
             v-else-if="nowQuestion.type === 'select_multiple'"
             @addOption="addOption"
             @removeOption="removeOption"
-            :key="nowQuestion.id"
             :editable="true"
             :question="nowQuestion" />
         <TextEdit
             v-else-if="nowQuestion.type === 'text_edit'"
-            :key="nowQuestion.id"
             :editable="true"
             :question="nowQuestion" />
       </div>

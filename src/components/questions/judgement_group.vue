@@ -21,7 +21,7 @@ export default {
       default() {
         return {
           id: 0,
-          type: 'tof_group',
+          type: 'judgement_group',
           description: ""
         }
       }

@@ -8,7 +8,9 @@ import rules from "@/components/rules";
 import edit_question from "@/components/edit_question";
 import login from "@/components/login"
 import signin from "@/components/signin"
+import answer_question from "@/components/answer_question";
 // import login from "../static/login.html"
+
 //定义routes路由的集合，数组类型
 const routes=[
     {path:'/ground',component:ground},
@@ -16,7 +18,8 @@ const routes=[
     {path:"/rules",component:rules},
     {path:'',redirect:"ground"},
     {path:'/login',component:login},
-    {path:'/signin',component: signin}
+    {path:'/signin',component: signin},
+    {path:'/question', component: answer_question}
 ]
 
 const router=new VueRouter({

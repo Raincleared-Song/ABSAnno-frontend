@@ -13,8 +13,20 @@
 
 <script>
     export default {
-        name: "ground"
+        name: "ground",
+        methods: {
+            getMsg(){
+                // console.log(this.name, this.secret)
+                // TODO 直接在这里与后端交互
+                this.$emit('msg',this.name,this.secret)
+                if(this.showLogin){
+                    // TODO 后端判断用户名和密码是否匹配后返回
+                    this.$router.push('/ground');
+                }
+            },
+        },
     }
+
 </script>
 
 <style scoped>

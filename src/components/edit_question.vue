@@ -13,25 +13,29 @@
               class="right"
               v-if="nowQuestion != null">
         <JudgementGroup
-                v-if="nowQuestion.type === 'tof_group'"
-                :key="nowQuestion.id"
-                :question="nowQuestion" />
+            v-if="nowQuestion.type === 'tof_group'"
+            :key="nowQuestion.id"
+            :editable="true"
+            :question="nowQuestion" />
         <RadioGroup
-                v-else-if="nowQuestion.type === 'select_single'"
-                @addOption="addOption"
-                @removeOption="removeOption"
-                :key="nowQuestion.id"
-                :question="nowQuestion" />
+            v-else-if="nowQuestion.type === 'select_single'"
+            @addOption="addOption"
+            @removeOption="removeOption"
+            :key="nowQuestion.id"
+            :editable="true"
+            :question="nowQuestion" />
         <CheckboxGroup
             v-else-if="nowQuestion.type === 'select_multiple'"
             @addOption="addOption"
             @removeOption="removeOption"
             :key="nowQuestion.id"
+            :editable="true"
             :question="nowQuestion" />
         <TextEdit
-                v-else-if="nowQuestion.type === 'text_edit'"
-                :key="nowQuestion.id"
-                :question="nowQuestion" />
+            v-else-if="nowQuestion.type === 'text_edit'"
+            :key="nowQuestion.id"
+            :editable="true"
+            :question="nowQuestion" />
       </div>
       <p v-else>请点击左侧标签添加问题</p>
     </div>

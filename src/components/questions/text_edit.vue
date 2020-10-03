@@ -2,8 +2,15 @@
 <template>
   <div>
     <h2>文字编辑题</h2>
-    <p>编辑题目：</p>
-    <input type="text" v-model="question.description"><br>
+    <div v-if="editable">
+      <p>编辑题目：</p>
+      <input type="text" v-model="question.description"><br>
+    </div>
+    <div v-else>
+      <p>{{ this.question.description }}</p>
+    </div>
+    <p>答题区：</p>
+    <input type="text" :readonly="editable"><br>
   </div>
 </template>
 
@@ -19,6 +26,10 @@
             description: ""
           }
         }
+      },
+      editable: {
+        type: Boolean,
+        default: false
       }
     }
   }

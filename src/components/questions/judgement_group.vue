@@ -1,10 +1,15 @@
 <template>
   <div>
     <h2>判断题</h2>
-    <p>编辑题目：</p>
-    <input v-model="question.description"><br>
-    <input type="radio" name="judgement" value="1">True<br>
-    <input type="radio" name="judgement" value="0">False<br>
+    <div v-if="editable">
+      <p>编辑题目：</p>
+      <input v-model="question.description"><br>
+    </div>
+    <div v-else>
+      <p>{{ this.question.description }}</p>
+    </div>
+    <input type="radio" name="judgement" value="1" :disabled="editable">True<br>
+    <input type="radio" name="judgement" value="0" :disabled="editable">False<br>
   </div>
 </template>
 
@@ -20,6 +25,10 @@ export default {
           description: ""
         }
       }
+    },
+    editable: {
+      type: Boolean,
+      default: false
     }
   }
 }

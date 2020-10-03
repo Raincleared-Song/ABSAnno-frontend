@@ -6,7 +6,7 @@
                 </a-col>
         </a-row>
 
-        <a-pagination total="89" defaultCurrent = "1" :style="{textAlign: 'center' }"/>
+        <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="msgNum" :style="{textAlign: 'center' }" @change="onChange" />
 
     </div>
 </template>
@@ -17,22 +17,41 @@
         data(){
             return {
                 msgList:[],
+                current: 1,
+                msgNum: 100,
+                id: 0,
+                pagesize: 12,
             }
         },
         methods: {
             getMsg(){
                 const xhr = new XMLHttpRequest()
-                let context = this
+                // let context = this
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 201){
-                        console.log(xhr.response);
-                        context.msgList = xhr.response.data;
+                        let res = JSON.parse(xhr.response);
+                        if(res.data === "?"){
+                            console.log("wrong")
+                        }
                     }
                 };
                 xhr.open("post","backend/square")
                 xhr.send(JSON.stringify({'id': 1, 'num': 0}));
             },
-
+            onChange(pageNumber) {
+                console.log('Page: ', pageNumber);
+                const xhr = new XMLHttpRequest()
+                let context = this
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 201){
+                        let res = JSON.parse(xhr.response);
+                        context.msgList = res.data;
+                        console.log(res.data);
+                    }
+                };
+                xhr.open("post","backend/square")
+                xhr.send(JSON.stringify({'id': 1, 'num': pageNumber-1}));
+            },
         },
         mounted:function () {   //自动触发写入的函数
             this.getMsg();

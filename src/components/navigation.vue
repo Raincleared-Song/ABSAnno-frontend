@@ -59,7 +59,16 @@
                 console.log(this.current);
             }
         },
-
+        mounted:function(){
+            let name = this.$route.path;
+            if(name === "/login" || name === "/signin"){
+                this.current = ["4"];
+            }
+            else{
+                this.current = [this.$route.path];
+            }
+            console.log(this.current);
+        }
     }
 </script>
 

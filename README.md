@@ -16,16 +16,15 @@ a web application for the release, management and completion of data annotation 
 
 #### 访问后端数据
 
-后端 url 都是以 `https://absanno-abstract.app.secoder.net/absanno/` 开头，建议大家模仿小作业写一个 API 对象，不要将 url 和请求方式写死在代码里。另外，配置文件中已经设置了代理，大家在访问时可以不用输入完整的 url，而是输入**相对于 `/backend` 的 url**。例如，大家请求 `https://absanno-abstract.app.secoder.net/absanno/data/` 的数据时，也可以用：`/backend/data/`。
-另外，**请求的 URL 最后必须加斜杠！**（否则代理会出 bug，目前还没有 fix 掉）
+后端 url 都是以 `https://absanno-abstract.app.secoder.net/absanno/` 开头，建议大家模仿小作业写一个 API 对象，不要将 url 和请求方式写死在代码里。另外，配置文件中已经设置了代理，大家在访问时可以不用输入完整的 url，而是输入**相对于 `/backend` 的 url**。例如，大家请求 `https://absanno-abstract.app.secoder.net/absanno/data` 的数据时，也可以用：`/backend/data`。代理配置已经修改过，大家严格遵守后端定义的 url 来，**访问 backend 的子目录时，一般不能加斜杠（因为后端配置里也是没有斜杠的）**。
 
 ```python
 # nginx/frontend.conf
 location / {
 }
 
-location /backend {
-    proxy_pass https://absanno-abstract.app.secoder.net/absanno;
+location /backend/ {
+    proxy_pass https://absanno-abstract.app.secoder.net/absanno/;
 }
 ```
 

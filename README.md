@@ -34,7 +34,7 @@ location /backend/ {
 
 #### 本地测试（nginx 使用）
 
-##### windows 环境：
+##### Windows 环境：
 
 1. 在前端项目的目录下，运行 `npm install` 与 `npm run build`，生成 `dist` 文件夹
 2. 下载安装 nginx，地址：https://nginx.org/download/nginx-1.18.0.zip
@@ -62,7 +62,11 @@ server {
 
 ##### Mac 环境
 
-// todo
+1. 执行上述第 1 步
+2. 安装 nginx：`brew install nginx`
+3. 修改 `/usr/local/etc/nginx/nginx.conf` 配置文件，方法同上，可能需要管理员权限（加 sudo）
+4. 运行：`sudo nginx`
+5. 停止：`sudo nginx -s stop`
 
 #### 更新远程代码
 

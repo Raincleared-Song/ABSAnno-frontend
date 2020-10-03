@@ -9,13 +9,17 @@
 
 <script>
   export default {
-    props: ['question']
-    // props: {
-    //   question: {
-    //     id: Number,
-    //     type: String,
-    //     description: String
-    //   }
-    // }
+    props: {
+      question: {
+        type: Object,
+        default() {
+          return {
+            id: 0,
+            type: 'text_edit',
+            description: ""
+          }
+        }
+      }
+    }
   }
 </script>

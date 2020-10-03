@@ -12,16 +12,22 @@
       <div
               class="right"
               v-if="nowQuestion != null">
-        <TOFGroup
+        <JudgementGroup
                 v-if="nowQuestion.type === 'tof_group'"
                 :key="nowQuestion.id"
                 :question="nowQuestion" />
-        <SelectGroup
-                v-else-if="nowQuestion.type === 'select_single' || nowQuestion.type === 'select_multiple'"
+        <RadioGroup
+                v-else-if="nowQuestion.type === 'select_single'"
                 @addOption="addOption"
                 @removeOption="removeOption"
                 :key="nowQuestion.id"
                 :question="nowQuestion" />
+        <CheckboxGroup
+            v-else-if="nowQuestion.type === 'select_multiple'"
+            @addOption="addOption"
+            @removeOption="removeOption"
+            :key="nowQuestion.id"
+            :question="nowQuestion" />
         <TextEdit
                 v-else-if="nowQuestion.type === 'text_edit'"
                 :key="nowQuestion.id"
@@ -47,18 +53,19 @@
 </template>
 
 <script>
-  import TOFGroup from "@/components/tof_group"
-
-  import TextEdit from "@/components/text_edit";
-  import SelectGroup from "@/components/select_group";
+  import JudgementGroup from "@/components/questions/judgement_group";
+  import TextEdit from "@/components/questions/text_edit";
+  import RadioGroup from "@/components/questions/radio_group";
+  import CheckboxGroup from "@/components/questions/checkbox_group";
 
   let nowId = 0;
 
   export default {
     components: {
-      TOFGroup: TOFGroup,
+      JudgementGroup: JudgementGroup,
       TextEdit: TextEdit,
-      SelectGroup: SelectGroup
+      RadioGroup: RadioGroup,
+      CheckboxGroup: CheckboxGroup
     },
     data() {
       return {

@@ -2,21 +2,19 @@
 
 <template>
   <div>
-    <h2> {{ question.type === 'select_single'? '单选题': '多选题' }} </h2>
+    <h2>多选题</h2>
     <p>编辑题目：</p>
-    <input v-model="question.description"><br>
+    <input type="text" v-model="question.description"><br>
     <p>编辑选项：</p>
     <div>
       <div v-if="question.options.length">
         <ul>
-        <div
-            v-for="option in question.options"
-            v-bind:key="option.index">
-          <li>
-            {{ option }}
+          <div
+              v-for="option in question.options"
+              :key="option.index">
+            <input type="checkbox" name="checkbox">{{ option }}
             <button @click="$emit('removeOption', question.id, option.index)">X</button>
-          </li>
-        </div>
+          </div>
         </ul>
       </div>
       <p v-else>No option added...</p>
@@ -28,9 +26,22 @@
 </template>
 
 <script>
-  export default {
-    props: ['question']
+export default {
+  props: {
+    question: {
+      type: Object,
+      default() {
+        return {
+          id: 0,
+          type: 'select_multiple',
+          description: "",
+          options: [],
+          new_option: ""
+        }
+      }
+    }
   }
+}
 </script>
 
 <style></style>

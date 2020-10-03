@@ -2,8 +2,7 @@
     <body>
     <div class="box">
         <h2>请注册</h2>
-<!--        TODO 需要看看有没有更好的办法提交这个表单。目前密码会显示在网址上……       -->
-        <form target="iframe">
+        <div target="iframe">
             <div class="inputBox">
                 <input type="text" name="name" v-model="name" required="">
                 <label>用户名</label>
@@ -18,8 +17,11 @@
                 <label>请确认密码</label>
                 <span v-if="secretOK===false" style="color: #ff0000">两次输入的密码务必保持一致</span>
             </div>
+<!--            <a-button type="primary" html-type="submit" @click="sendMsg">-->
+<!--                注册-->
+<!--            </a-button>-->
             <input type="submit" name="" value="注册" @click="sendMsg">
-        </form>
+        </div>
         <p></p>
         <p>已有账号？请<router-link to="/login">登录</router-link></p>
     </div>
@@ -50,17 +52,21 @@
             sendMsg(){
                 console.log(this.name, this.secret)
                 // TODO 直接在这里与后端交互
-                this.$emit('msg',this.name,this.secret)
-                if(this.showLogin){
-                    // TODO 后端判断用户名和密码是否匹配后返回
-                    this.$router.push('/ground');
-                }
+                console.log(this.name, this.secret)
+                const xhr = new XMLHttpRequest()
+                let context = this
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200)
+                        context.$router.push('/ground');
+                };
+                xhr.open("post","backend/login")
+                xhr.send(JSON.stringify({"name":this.name,"password":this.secret, "method":"SignIn"}))
             },
         },
 
         watch: { // 用于实时检测username是否合法
             "name": {
-                handler(name) {// TODO 可以更改要求
+                handler(name) {// TODO 可以更改要求，暂时没用
                     this.nameOK = /^[A-Za-z\u4e00-\u9fa5][-A-Za-z0-9\u4e00-\u9fa5_]*$/.test(name)
                 }
             },

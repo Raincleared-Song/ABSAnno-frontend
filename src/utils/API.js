@@ -1,7 +1,7 @@
 export const API = {
     GET_QUESTION: {
         // 向后端获取新的题目
-        path: "",
+        path: "/backend/",
         method: "GET"
     },
     POST_SINGLE_QUESTION: {

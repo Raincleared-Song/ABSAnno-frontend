@@ -28,7 +28,7 @@
       <router-link to="/ground">返回广场</router-link>
     </a-button>
     <br>
-    <a-button @click="submit">提交</a-button>
+    <a-button @click="submit">提交本题</a-button>
   </div>
 </template>
 
@@ -37,6 +37,8 @@ import JudgementGroup from "@/components/questions/judgement_group";
 import TextEdit from "@/components/questions/text_edit";
 import RadioGroup from "@/components/questions/radio_group";
 import CheckboxGroup from "@/components/questions/checkbox_group";
+import connectBackend from "@/utils/communications";
+import API from "@/utils/API";
 
 export default {
   components: {
@@ -58,7 +60,13 @@ export default {
   methods: {
     lastQuestion() {},
     nextQuestion() {},
-    submit() {}
+    submit() {
+      connectBackend(API.POST_SINGLE_QUESTION, {
+        user_id: 0,
+
+      }, function () {});
+      this.nextQuestion();  // 提交后自动跳到下一题
+    }
   }
 }
 </script>

@@ -46,6 +46,19 @@
                     this.$router.push('/ground');
                 }
             },
+            post(){
+                const xhr = new XMLHttpRequest()
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200)
+                        console.log(xhr.responseText);
+                };
+                xhr.open("post","/api/message")
+                // document.cookie = "user" + "=" + escape(user) + ";expires=" + timestamp
+                // xhr.withCredentials = true;
+                //xhr.setRequestHeader('content-type', 'application/json')
+                xhr.send(JSON.stringify({"title":title,"content":content}))
+                //console.log("sent")
+            }
         },
     }
 </script>

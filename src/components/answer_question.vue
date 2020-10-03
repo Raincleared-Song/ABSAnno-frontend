@@ -61,10 +61,21 @@ export default {
     lastQuestion() {},
     nextQuestion() {},
     submit() {
+      let _ans;
+      if (this.nowQuestion.type === 'judgement_group') {
+        _ans = [];
+      }
+      // TODO: finish the rest kinds of questions
+      // else if (this.nowQuestion.type === 'select_single') {
+      // } else if (this.nowQuestion.type === 'select_multiple') {
+      // } else if (this.nowQuestion.type === 'text_edit') {}
       connectBackend(API.POST_SINGLE_QUESTION, {
-        user_id: 0,
-
-      }, function () {});
+        user_id: 0, // TODO: get user_id from cookie
+        mission_id: 0, // TODO: get mission_id
+        ans: _ans
+      }, function (jsonObj) {
+        console.log(jsonObj);
+      });
       this.nextQuestion();  // 提交后自动跳到下一题
     }
   }

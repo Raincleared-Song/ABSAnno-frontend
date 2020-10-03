@@ -1,7 +1,7 @@
-export const API = {
+const API = {
     GET_QUESTION: {
         // 向后端获取新的题目
-        path: "/backend/",
+        path: "backend/",
         method: "GET"
     },
     POST_SINGLE_QUESTION: {
@@ -10,3 +10,5 @@ export const API = {
         method: "POST"
     },
 };
+
+export default API;

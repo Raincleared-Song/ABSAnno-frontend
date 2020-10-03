@@ -12,5 +12,4 @@ export default function setCookie(key, value){
         document.cookie = document.cookie.replace(
             new RegExp(`${key}=(.*?);`, 'g'), `${escape(value)}`);
     }
-
 }

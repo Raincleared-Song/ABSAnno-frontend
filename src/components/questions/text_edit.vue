@@ -10,7 +10,7 @@
       <p>{{ this.question.description }}</p>
     </div>
     <p>答题区：</p>
-    <input type="text" :readonly="editable"><br>
+    <input type="text" :readonly="editable" v-model="userValue.inputText"><br>
   </div>
 </template>
 
@@ -23,13 +23,23 @@
           return {
             id: 0,
             type: 'text_edit',
-            description: ""
+            // 出题者可编辑
+            description: "",
           }
         }
       },
       editable: {
         type: Boolean,
         default: false
+      },
+      userValue: {
+        type: Object,
+        default() {
+          return {
+            // 做题者可编辑
+            inputText: ""
+          };
+        }
       }
     }
   }

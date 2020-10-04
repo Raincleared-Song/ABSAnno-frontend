@@ -4,18 +4,22 @@
       <JudgementGroup
           v-if="nowQuestion.type === 'judgement_group'"
           :editable="false"
+          :user-value="nowQuestion.userInput"
           :question="nowQuestion" />
       <RadioGroup
           v-else-if="nowQuestion.type === 'select_single'"
           :editable="false"
+          :user-value="nowQuestion.userInput"
           :question="nowQuestion" />
       <CheckboxGroup
           v-else-if="nowQuestion.type === 'select_multiple'"
           :editable="false"
+          :user-value="nowQuestion.userInput"
           :question="nowQuestion" />
       <TextEdit
           v-else-if="nowQuestion.type === 'text_edit'"
           :editable="false"
+          :user-value="nowQuestion.userInput"
           :question="nowQuestion" />
     </div>
     <p v-else>该任务内还没有问题</p>
@@ -48,11 +52,7 @@ export default {
   data() {
     return {
       questions: [],
-      nowQuestion: {
-        index: 0,
-        type: 'judgement_group',
-        description: "清华是不是世一大？"
-      }
+      nowQuestion: null
     }
   },
   methods: {
@@ -68,8 +68,9 @@ export default {
         this.nowQuestion = {
           index: prevIndex - 1,
           type: 'judgement_group',
-          description: jsonObj.word
-        }
+          description: jsonObj.word,
+          userInput: null
+        };
       });
       if (this.nowQuestion.index >= this.questions.length)
         this.questions.push(this.nowQuestion);
@@ -86,20 +87,27 @@ export default {
         this.nowQuestion = {
           index: prevIndex + 1,
           type: 'judgement_group',
-          description: jsonObj.word
-        }
+          description: jsonObj.word,
+          userInput: null
+        };
       });
       if (this.nowQuestion.index >= this.questions.length)
         this.questions.push(this.nowQuestion);
     },
     submit() {
-      let _ans;
       // TODO: finish the rest kinds of questions
-      if (this.nowQuestion.type === 'judgement_group') {
-        _ans = this.questions.map(element => {
-          return 1;
-        });
-      }
+      let _ans = this.questions.map((question, index) => {
+        if (question.type === 'judgement_group') {
+          return question.checkedOption;
+        } else if (question.type === 'select_single') {
+          return question.checkedOption;
+        } else if (question.type === 'select_multiple') {
+          return question.checkedOptions;
+        } else if (question.type === 'text_edit') {
+          return question.inputText;
+        }
+      });
+      console.log(_ans);
       connectBackend(API.POST_SINGLE_QUESTION, {
         user_id: 0, // TODO: get user_id from cookie
         mission_id: 0, // TODO: get mission_id
@@ -115,11 +123,12 @@ export default {
       id: 0,  // TODO: get mission id
       num: 0,
       step: 0
-    }, function (jsonObj) {
+    }, jsonObj => {
       this.nowQuestion = {
         index: 0,
-        type: 'judgement_group',
-        description: jsonObj.word
+        type: 'judgement_group',  // TODO: add more type
+        description: jsonObj.word,
+        userInput: null
       }
     });
     if (this.nowQuestion != null)

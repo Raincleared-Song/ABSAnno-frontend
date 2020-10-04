@@ -8,8 +8,12 @@
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
-    <input type="radio" name="judgement" value="1" :disabled="editable">True<br>
-    <input type="radio" name="judgement" value="0" :disabled="editable">False<br>
+    <input type="radio" name="judgement" value="1"
+           :disabled="editable" v-model="userValue.checkedOptions">
+    <label>True</label><br>
+    <input type="radio" name="judgement" value="0"
+           :disabled="editable" v-model="userValue.checkedOption">
+    <label>False</label><br>
   </div>
 </template>
 
@@ -22,13 +26,23 @@ export default {
         return {
           id: 0,
           type: 'judgement_group',
-          description: ""
+          // 出题者可编辑
+          description: "",
         }
       }
     },
     editable: {
       type: Boolean,
       default: false
+    },
+    userValue: {
+      type: Object,
+      default() {
+        return {
+          // 做题者可编辑
+          checkedOption: null
+        };
+      }
     }
   }
 }

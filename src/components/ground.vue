@@ -36,7 +36,7 @@
                     }
                 };
                 xhr.open("post","backend/square")
-                xhr.send(JSON.stringify({'id': 1, 'num': 0}));
+                xhr.send(JSON.stringify({'id': 1, 'num': 1}));
             },
             onChange(pageNumber) {
                 console.log('Page: ', pageNumber);

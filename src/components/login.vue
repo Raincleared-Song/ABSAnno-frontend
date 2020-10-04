@@ -59,10 +59,10 @@
                         let res = JSON.parse(xhr.response);
                         let error = res.data;
                         console.log(error)
-                        if(error === "PasswordIsError" || error === "ThisUserIsNotHere"){
+                        if(error === "Password Is Error" || error === "This User Is Not Here"){
                             context.passOK = false;
                         }
-                        else if(error === "UserIsBanned"){
+                        else if(error === "User Is Banned"){
                             context.banned = true;
                         }
                         else {

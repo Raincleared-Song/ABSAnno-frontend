@@ -74,13 +74,13 @@
                         let res = JSON.parse(xhr.response);
                         let error = res.data;
                         console.log(error)
-                        if(error === "UserNameError"){
+                        if(error === "User Name Error"){
                             context.nameIllegal = true;
                         }
-                        else if(error === "UserNameHasExisted"){
+                        else if(error === "User Name Has Existed"){
                             context.userExist = true;
                         }
-                        else if(error === "PasswordLengthError"){
+                        else if(error === "Password Length Error"){
                             context.pslen = false;
                         }
                         else {

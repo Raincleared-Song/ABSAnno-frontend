@@ -3,8 +3,8 @@
 /* 这是一个高阶函数，负责向后端发送请求，包装在communication.js里也许方便一些？？？
 *  param api: 定义在API.js里的东西
 *  param requestBody: request.body，传进一个object
-*  param func: 一个函数，参数是返回的json object */
-export default function connectBackend(api, requestBody, func) {
+*  param onRespond: 一个函数，参数是返回的json object */
+export default function connectBackend(api, requestBody, onRespond) {
     let xmlHttp = null;
     if (window.XMLHttpRequest)
         xmlHttp = new XMLHttpRequest();
@@ -15,9 +15,9 @@ export default function connectBackend(api, requestBody, func) {
     if (xmlHttp != null) {
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState === 4) {
-                if (xmlHttp.status / 200 === 2) {
+                if (parseInt(xmlHttp.status / 100) === 2) {
                     const jsonObj = JSON.parse(xmlHttp.responseText);
-                    func(jsonObj);
+                    onRespond(jsonObj);
                 } else {
                     alert(`response status ${xmlHttp.status}`);
                 }

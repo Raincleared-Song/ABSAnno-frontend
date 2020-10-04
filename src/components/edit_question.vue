@@ -128,15 +128,15 @@
       submit() {
         let submitObj = {
           name: this.mission_description,
-          question_form: "judgement_group",
+          question_form: "judgement", // TODO: add more question_form
           question_num: this.questions.length,
           user_id: 0,   // TODO: set user id
-          total: this.minimum_total_annotation,
-          questions: []
+          total: this.minimum_total_annotation
         };
-        submitObj.questions = this.questions.map(element => {
+        submitObj.question_list = this.questions.map(element => {
           return { contains: element.description };
         });
+        console.log(submitObj);
         connectBackend(API.POST_NEW_MISSION, submitObj, function (jsonObj) {
           console.log(jsonObj);
         });

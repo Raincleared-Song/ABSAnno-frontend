@@ -3,7 +3,7 @@
         <navigation @showLogin="showLoginFunc"/>
 
         <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }">
-            <div :style="{ background: '#fff', padding: '24px', minHeight: '610px' }">
+            <div :style="{ background: '#fff', padding: '24px', minHeight: '580px' }">
             <router-view></router-view>
             </div>
         </a-layout-content>

@@ -2,7 +2,9 @@
     <div>
         <a-row type="flex" justify="space-around" v-for="count2 in 3" :key="count2">
                 <a-col :span="4" v-for="count in 4" :key="count">
-                    <img src="@/assets/pic.jpg" alt="" width="200" >
+                    <router-link to="/question">
+                        <img src="@/assets/pic.jpg" alt="" width="200" >
+                    </router-link>
                 </a-col>
         </a-row>
 

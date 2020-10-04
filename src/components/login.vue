@@ -39,13 +39,33 @@
         methods: {
             sendMsg(){
                 console.log(this.name, this.secret)
-                // TODO 直接在这里与后端交互？
-                this.$emit('msg',this.name,this.secret)
+                const xhr = new XMLHttpRequest()
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200)
+                        console.log(xhr.responseText);
+                };
+                xhr.open("post","/backend/login/")
+                xhr.send(JSON.stringify({"name":this.name,"password":this.secret, "method":"LogIn"}))
+                console.log("?")
+                //this.$emit('msg',this.name,this.secret)
                 if(this.showLogin){
                     // TODO 后端判断用户名和密码是否匹配后返回
                     this.$router.push('/ground');
                 }
             },
+            // post(){
+            //     const xhr = new XMLHttpRequest()
+            //     xhr.onreadystatechange = function () {
+            //         if (xhr.readyState === 4 && xhr.status === 200)
+            //             console.log(xhr.responseText);
+            //     };
+            //     xhr.open("post","/absanno/login")
+            //     // document.cookie = "user" + "=" + escape(user) + ";expires=" + timestamp
+            //     // xhr.withCredentials = true;
+            //     //xhr.setRequestHeader('content-type', 'application/json')
+            //     xhr.send(JSON.stringify({"name":this.name,"password":this.secret, "method":"LogIn"}))
+            //     //console.log("sent")
+            // }
         },
     }
 </script>

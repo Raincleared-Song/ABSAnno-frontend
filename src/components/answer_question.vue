@@ -1,5 +1,5 @@
 <template>
-  <div id="root">
+  <body id="root">
     <div v-if="nowQuestion != null">
       <JudgementGroup
           v-if="nowQuestion.type === 'judgement_group'"
@@ -29,7 +29,7 @@
     </a-button>
     <br>
     <a-button @click="submit">提交本题</a-button>
-  </div>
+  </body>
 </template>
 
 <script>
@@ -51,9 +51,8 @@ export default {
     return {
       nowQuestion: {
         id: 0,
-        type: 'select_multiple',
-        description: "这个软工作业是谁做的？",
-        options: ['scy', 'wjw', 'xyq', 'ljj', 'zyz']
+        type: 'judgement_group',
+        description: "清华是不是世一大？"
       }
     }
   },
@@ -62,13 +61,12 @@ export default {
     nextQuestion() {},
     submit() {
       let _ans;
-      if (this.nowQuestion.type === 'judgement_group') {
-        _ans = [];
-      }
+
       // TODO: finish the rest kinds of questions
-      // else if (this.nowQuestion.type === 'select_single') {
-      // } else if (this.nowQuestion.type === 'select_multiple') {
-      // } else if (this.nowQuestion.type === 'text_edit') {}
+      if (this.nowQuestion.type === 'judgement_group') {
+        _ans = [1];
+      }
+
       connectBackend(API.POST_SINGLE_QUESTION, {
         user_id: 0, // TODO: get user_id from cookie
         mission_id: 0, // TODO: get mission_id

@@ -20,12 +20,16 @@
                     <span>
                         <a-popover title="USER-NAME" placement="bottom">
                             <template slot="content">
-                                <p>个人中心</p>
-                                <p>管理员页面</p>
+                              <p>
+                                <router-link to="/user">个人中心</router-link>
+                              </p>
+                                <p>
+                                  <router-link to="/admin">管理员界面</router-link>
+                                </p>
                                 <p>我的消息</p>
-<!--                                <a-button @click="showLogin">登陆/注册-->
-                                <p><router-link to="/login">登陆/注册</router-link></p>
-<!--                                </a-button>-->
+                                <p>
+                                  <router-link to="/login">登陆/注册</router-link>
+                                </p>
                             </template>
                             <a-button type="link">
                                 <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>

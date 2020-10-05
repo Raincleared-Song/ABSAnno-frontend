@@ -16,7 +16,10 @@
         <div
             v-for="option in question.options"
             :key="option.index">
-          <input type="checkbox" name="checkbox" :disabled="editable">{{ option }}
+          <input type="checkbox" name="checkbox"
+                 :disabled="editable" :value="option"
+                 v-model="userValue.checkedOptions">
+          <label>{{ option }}</label>
           <button v-if="editable" @click="$emit('removeOption', question.id, option.index)">X</button>
         </div>
       </div>
@@ -37,19 +40,34 @@ export default {
         return {
           id: 0,
           type: 'select_multiple',
+          // 出题者可编辑
           description: "",
           options: [],
-          new_option: ""
+          new_option: "",
+
         }
       }
     },
     editable: {
       type: Boolean,
       default: false
+    },
+    userValue: {
+      type: Object,
+      default() {
+        return {
+          // 做题者可编辑
+          checkedOptions: []
+        };
+      }
     }
   }
 }
 </script>
 
-<style></style>
+<style>
+label {
+  margin: 2px;
+}
+</style>
 

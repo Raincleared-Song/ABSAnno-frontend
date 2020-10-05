@@ -1,5 +1,5 @@
 const API = {
-    GET_QUESTION: {
+    GET_SINGLE_QUESTION: {
         // 向后端获取新的题目
         path: "/backend/mission",
         method: "GET"

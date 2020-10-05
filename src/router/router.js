@@ -27,7 +27,7 @@ const routes=[
     {path:'/signin',component: signin},
     {path:'/user',component: user_page},
     {path:'/admin',component: admin_page},
-    { path:'/question/:id', component: answer_question }
+    {path:'/question/:id', component: answer_question}
 
 ]
 

@@ -52,7 +52,8 @@ export default {
   data() {
     return {
       questions: [],
-      nowQuestion: null
+      nowQuestion: null,
+      id:0,
     }
   },
   methods: {
@@ -118,6 +119,9 @@ export default {
     }
   },
   created: function () {
+    let name = this.$route.path;
+    this.id = Number(name.slice(10,));
+
     // 从后台申请数据加载
     connectBackend(API.GET_SINGLE_QUESTION, {
       id: 0,  // TODO: get mission id

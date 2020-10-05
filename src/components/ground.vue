@@ -4,11 +4,24 @@
                 <a-col :span="4" v-for="msg in msgList1" :key="msg">
                     <p></p>
                     <div class="portfolio-wrap">
-                        <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="200" >
+<!--                        图片尺寸：500*350            -->
+                        <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="210" >
                         <div class="portfolio-info">
                             <h4>{{msg.name}}</h4>
                             <p>题目数量：{{msg.questionNum}}</p>
+                            <div class="portfolio-links">
+                                <div class="icons-list">
+                                    <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
+                                    <router-link to="rules/"><a-icon type="info-circle" /></router-link>
+                                </div>
+                            </div>
+<!--                            <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>-->
+<!--                            <a-icon type="delete" />-->
+<!--                            <a-icon type="info-circle" />-->
 <!--                            <div class="portfolio-links">-->
+<!--                                <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>-->
+<!--                                <a-icon type="delete" />-->
+<!--                                <a-icon type="info-circle" />-->
 <!--                                <a href="assets/img/portfolio/portfolio-1.jpg" data-gall="portfolioGallery" class="venobox" title="App 1"><i class="bx bx-plus"></i></a>-->
 <!--                                <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>-->
 <!--                            </div>-->
@@ -21,10 +34,16 @@
             <a-col :span="4" v-for="msg in msgList2" :key="msg">
                 <p></p>
                 <div class="portfolio-wrap">
-                    <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="200" >
+                    <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="210" >
                     <div class="portfolio-info">
                         <h4>{{msg.name}}</h4>
                         <p>题目数量：{{msg.questionNum}}</p>
+                        <div class="portfolio-links">
+                            <div class="icons-list">
+                                <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
+                                <router-link to="rules/"><a-icon type="info-circle" /></router-link>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <p></p>
@@ -34,10 +53,16 @@
             <a-col :span="4" v-for="msg in msgList3" :key="msg">
                 <p></p>
                 <div class="portfolio-wrap">
-                    <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="200" >
+                    <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="210" >
                     <div class="portfolio-info">
                         <h4>{{msg.name}}</h4>
                         <p>题目数量：{{msg.questionNum}}</p>
+                        <div class="portfolio-links">
+                            <div class="icons-list">
+                                <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
+                                <router-link to="rules/"><a-icon type="info-circle" /></router-link>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <p></p>
@@ -80,11 +105,11 @@
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
                         context.totalMsgNum = data.ret;
                         context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
-                        console.log(context.thisPageSize);
+                        // console.log(context.thisPageSize);
                         context.msgList1 = data.question_list.slice(0, context.min(4,context.thisPageSize));
                         context.msgList2 = data.question_list.slice(context.min(4,context.thisPageSize), context.min(8,context.thisPageSize));
                         context.msgList3 = data.question_list.slice(context.min(8,context.thisPageSize), context.min(12,context.thisPageSize));
-                        console.log(context.msgList1)
+                        // console.log(context.msgList1)
                     }
                 };
                 this.getMsgNum = (pageNumber-1)*12;

@@ -2,7 +2,7 @@
     <body>
     <div class="box">
         <h2>请登录</h2>
-        <form target="iframe">
+        <div target="iframe">
             <div class="inputBox">
                 <input type="text" name="name" v-model="name" required="">
                 <label>用户名</label>
@@ -11,8 +11,14 @@
                 <input type="password" name="secret" v-model="secret" required="">
                 <label>密码</label>
             </div>
+            <div>
+                <span v-if="passOK===false" style="color: #ff0000">账号或密码错误，请重新输入</span>
+                <span v-if="banned===true" style="color: #ff0000">该账号已被封禁，无法登录</span>
+                <span v-if="OK===false" style="color: #ff0000">登录异常，请稍后重试</span>
+            </div>
+            <p></p>
             <input type="submit" name="" value="登录" @click="sendMsg">
-        </form>
+        </div>
         <p></p>
         <p>没有账号？请<router-link to="/signin">注册</router-link></p>
     </div>
@@ -34,17 +40,40 @@
             return {
                 name:"",
                 secret:"",
+                passOK:true,
+                banned:false,
+                OK:true,
             }
         },
         methods: {
             sendMsg(){
                 console.log(this.name, this.secret)
-                // TODO 直接在这里与后端交互？
-                this.$emit('msg',this.name,this.secret)
-                if(this.showLogin){
-                    // TODO 后端判断用户名和密码是否匹配后返回
-                    this.$router.push('/ground');
-                }
+                const xhr = new XMLHttpRequest()
+                let context = this
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 201){
+                        console.log(xhr.response);
+                        context.$router.push('/ground');
+                    }
+                    else if(xhr.readyState === 4){
+                        let res = JSON.parse(xhr.response);
+                        let error = res.data;
+                        console.log(error)
+                        if(error === "Password Is Error" || error === "This User Is Not Here"){
+                            context.passOK = false;
+                        }
+                        else if(error === "User Is Banned"){
+                            context.banned = true;
+                        }
+                        else {
+                            context.OK = false;
+                        }
+                    }
+                };
+                xhr.open("post","backend/login");
+                xhr.setRequestHeader('content-type', 'application/json');
+                xhr.send(JSON.stringify({"name":this.name,"password":this.secret,
+                    "method":"LogIn", "email":""}))
             },
         },
     }

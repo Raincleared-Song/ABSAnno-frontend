@@ -2,8 +2,7 @@
     <body>
     <div class="box">
         <h2>请注册</h2>
-<!--        TODO 需要看看有没有更好的办法提交这个表单。目前密码会显示在网址上……       -->
-        <form target="iframe">
+        <div target="iframe">
             <div class="inputBox">
                 <input type="text" name="name" v-model="name" required="">
                 <label>用户名</label>
@@ -16,10 +15,21 @@
             <div class="inputBox">
                 <input type="password" name="repeat" v-model="repeat" required="">
                 <label>请确认密码</label>
-                <span v-if="secretOK===false" style="color: #ff0000">两次输入的密码务必保持一致</span>
             </div>
+            <div>
+                <span v-if="secretOK===false" style="color: #ff0000">两次输入的密码务必保持一致</span>
+                <span v-if="nameIllegal===true" style="color: #ff0000">该用户名不合规范，请重新输入</span>
+                <span v-if="userExist===true" style="color: #ff0000">该用户名已被注册，请登录或重新取名</span>
+                <span v-if="userExist===true" style="color: #ff0000">该用户名已被注册，请登录或重新取名</span>
+                <span v-if="pslen===false" style="color: #ff0000">密码不合规范，请重新输入</span>
+                <span v-if="OK===false" style="color: #ff0000">注册异常，请稍后重试</span>
+            </div>
+
+<!--            <a-button type="primary" html-type="submit" @click="sendMsg">-->
+<!--                注册-->
+<!--            </a-button>-->
             <input type="submit" name="" value="注册" @click="sendMsg">
-        </form>
+        </div>
         <p></p>
         <p>已有账号？请<router-link to="/login">登录</router-link></p>
     </div>
@@ -44,23 +54,50 @@
                 repeat:"",
                 secretOK:true,
                 nameOK:false,
+                nameIllegal:false,
+                userExist:false,
+                OK:true,
+                pslen:true,
             }
         },
         methods: {
             sendMsg(){
                 console.log(this.name, this.secret)
-                // TODO 直接在这里与后端交互
-                this.$emit('msg',this.name,this.secret)
-                if(this.showLogin){
-                    // TODO 后端判断用户名和密码是否匹配后返回
-                    this.$router.push('/ground');
-                }
+                const xhr = new XMLHttpRequest()
+                let context = this
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 201){
+                        console.log(xhr.response);
+                        context.$router.push('/ground');
+                    }
+                    else if(xhr.readyState === 4){
+                        let res = JSON.parse(xhr.response);
+                        let error = res.data;
+                        console.log(error)
+                        if(error === "User Name Error"){
+                            context.nameIllegal = true;
+                        }
+                        else if(error === "User Name Has Existed"){
+                            context.userExist = true;
+                        }
+                        else if(error === "Password Length Error"){
+                            context.pslen = false;
+                        }
+                        else {
+                            context.OK = false;
+                        }
+                    }
+                };
+                xhr.open("post","backend/signin");
+                xhr.setRequestHeader('content-type', 'application/json');
+                xhr.send(JSON.stringify({"name":this.name,"password":this.secret,
+                    "method":"SignIn","email":""}))
             },
         },
 
         watch: { // 用于实时检测username是否合法
             "name": {
-                handler(name) {// TODO 可以更改要求
+                handler(name) {// TODO 可以更改要求，暂时没用
                     this.nameOK = /^[A-Za-z\u4e00-\u9fa5][-A-Za-z0-9\u4e00-\u9fa5_]*$/.test(name)
                 }
             },

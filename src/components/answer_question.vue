@@ -68,15 +68,19 @@ export default {
         num: prevIndex,
         step: -1
       }, jsonObj => {
+        if (jsonObj == null)
+          alert("No more question.");
         this.nowQuestion = {
-          index: prevIndex - 1,
-          type: 'judgement_group',
+          index: jsonObj.ret,
+          type: 'judgement_group',  // TODO: add more type
           description: jsonObj.word,
-          userInput: null
+          userInput: ''
         };
       });
       if (this.nowQuestion.index >= this.questions.length)
         this.questions.push(this.nowQuestion);
+      else
+        this.showQuestionAtIndex(this.nowQuestion.index);
     },
     // 从后端获取数据
     nextQuestion() {
@@ -89,14 +93,16 @@ export default {
         if (jsonObj == null)
           alert("No more question.");
         this.nowQuestion = {
-          index: prevIndex + 1,
-          type: 'judgement_group',
+          index: jsonObj.ret,
+          type: 'judgement_group',  // TODO: add more type
           description: jsonObj.word,
-          userInput: null
+          userInput: ''
         };
       });
       if (this.nowQuestion.index >= this.questions.length)
         this.questions.push(this.nowQuestion);
+      else
+        this.showQuestionAtIndex(this.nowQuestion.index);
     },
     // 向后端发送数据
     submit() {
@@ -131,15 +137,28 @@ export default {
       num: 0,
       step: 0
     }, jsonObj => {
+      if (jsonObj == null)
+        alert("No more question.");
       this.nowQuestion = {
-        index: 0,
+        index: jsonObj.ret,
         type: 'judgement_group',  // TODO: add more type
         description: jsonObj.word,
-        userInput: null
-      }
+        userInput: ''
+      };
     });
     if (this.nowQuestion != null)
       this.questions.push(this.nowQuestion);
+  },
+  // 一个内部函数
+  onGetRespond: jsonObj => {
+    if (jsonObj == null)
+      alert("No more question.");
+    this.nowQuestion = {
+      index: jsonObj.ret,
+      type: 'judgement_group',  // TODO: add more type
+      description: jsonObj.word,
+      userInput: ''
+    };
   }
 }
 </script>

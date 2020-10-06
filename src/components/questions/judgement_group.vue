@@ -40,7 +40,7 @@ export default {
       default() {
         return {
           // 做题者可编辑
-          checkedOption: null
+          checkedOption: ''
         };
       }
     }

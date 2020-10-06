@@ -25,13 +25,15 @@ export default function getBackend(api, requestParams, onRespond) {
             }
         }
         let trueUrl = api.path;
-        if (requestParams !== null) {
+        console.log(requestParams);
+        if (requestParams !== null && typeof requestParams === "object") {
             trueUrl += "?";
-            requestParams.forEach((val, key) => {
-                trueUrl += `${key}=${val}&`;
+            Object.keys(requestParams).forEach(key => {
+                trueUrl += `${key}=${requestParams[key]}&`;
             });
             trueUrl = trueUrl.substring(0, trueUrl.length - 1);
         }
+        console.log(trueUrl);
         xmlHttp.open('GET', trueUrl, true);
         xmlHttp.send(null);
     } else {

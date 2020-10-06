@@ -70,10 +70,13 @@ export default {
       }, jsonObj => {
         if (jsonObj == null)
           alert("No more question.");
+        let dataObj = getDataObj(jsonObj);
+        // console.log(jsonObj);
+        // console.log(dataObj);
         this.nowQuestion = {
-          index: jsonObj.ret,
+          index: dataObj.ret,
           type: 'judgement_group',  // TODO: add more type
-          description: jsonObj.word,
+          description: dataObj.word,
           userInput: ''
         };
       });
@@ -92,10 +95,13 @@ export default {
       }, jsonObj => {
         if (jsonObj == null)
           alert("No more question.");
+        // console.log(jsonObj);
+        let dataObj = getDataObj(jsonObj);
+        // console.log(dataObj);
         this.nowQuestion = {
-          index: jsonObj.ret,
+          index: dataObj.ret,
           type: 'judgement_group',  // TODO: add more type
-          description: jsonObj.word,
+          description: dataObj.word,
           userInput: ''
         };
       });
@@ -109,19 +115,19 @@ export default {
       // TODO: finish the rest kinds of questions
       let _ans = this.questions.map((question, index) => {
         if (question.type === 'judgement_group') {
-          return question.checkedOption;
+          return question.checkedOption.toString();
         } else if (question.type === 'select_single') {
-          return question.checkedOption;
+          return question.checkedOption.toString(); // TODO: modify string format
         } else if (question.type === 'select_multiple') {
-          return question.checkedOptions;
+          return question.checkedOptions.toString();  // TODO: modify string format
         } else if (question.type === 'text_edit') {
-          return question.inputText;
+          return question.inputText.toString(); // TODO: modify string format
         }
       });
       console.log(_ans);
       postBackend(API.POST_SINGLE_QUESTION, {
-        user_id: 1, // TODO: get user_id from cookie
-        mission_id: this.id,
+        user_id: "1", // TODO: get user_id from cookie
+        mission_id: this.id.toString(),
         ans: _ans
       }, jsonObj => {
         console.log(jsonObj);
@@ -139,27 +145,27 @@ export default {
     }, jsonObj => {
       if (jsonObj == null)
         alert("No more question.");
+      // console.log(jsonObj);
+      let dataObj = getDataObj(jsonObj);
+      // console.log(dataObj);
       this.nowQuestion = {
-        index: jsonObj.ret,
+        index: dataObj.ret,
         type: 'judgement_group',  // TODO: add more type
-        description: jsonObj.word,
+        description: dataObj.word,
         userInput: ''
       };
     });
     if (this.nowQuestion != null)
       this.questions.push(this.nowQuestion);
-  },
-  // 一个内部函数
-  onGetRespond: jsonObj => {
-    if (jsonObj == null)
-      alert("No more question.");
-    this.nowQuestion = {
-      index: jsonObj.ret,
-      type: 'judgement_group',  // TODO: add more type
-      description: jsonObj.word,
-      userInput: ''
-    };
   }
+}
+
+function getDataObj(jsonObj) {
+  let dataStr = jsonObj.data;
+  console.log(dataStr);
+  dataStr = dataStr.replace(/'/g, '"');
+  console.log(dataStr);
+  return JSON.parse(dataStr);
 }
 </script>
 

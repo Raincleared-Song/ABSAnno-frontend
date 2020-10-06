@@ -18,6 +18,8 @@ export default function getBackend(api, requestParams, onRespond) {
             if (xmlHttp.readyState === 4) {
                 if (parseInt(xmlHttp.status / 100) === 2) {
                     const jsonObj = JSON.parse(xmlHttp.responseText);
+                    console.log(jsonObj);
+                    // jsonObj.data = JSON.parse(jsonObj.data);
                     onRespond(jsonObj);
                 } else {
                     alert(`response status ${xmlHttp.status}`);

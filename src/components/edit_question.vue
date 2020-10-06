@@ -69,7 +69,7 @@
   import RadioGroup from "@/components/questions/radio_group";
   import CheckboxGroup from "@/components/questions/checkbox_group";
   import API from "@/utils/API"
-  import connectBackend from "@/utils/communications";
+  import postBackend from "@/utils/postBackend";
 
   let nowId = 0;
 
@@ -142,10 +142,10 @@
           return { contains: element.description };
         });
         console.log(submitObj);
-        connectBackend(API.POST_NEW_MISSION, submitObj, function (jsonObj) {
+        postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {
           console.log(jsonObj);
           alert("问题上传成功！");
-          window.history.back(-1);
+          this.$router.push("/ground"); // 返回广场
         });
       },
       // 这两个方法处理子组件触发的事件

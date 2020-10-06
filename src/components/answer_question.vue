@@ -39,7 +39,8 @@ import JudgementGroup from "@/components/questions/judgement_group";
 import TextEdit from "@/components/questions/text_edit";
 import RadioGroup from "@/components/questions/radio_group";
 import CheckboxGroup from "@/components/questions/checkbox_group";
-import connectBackend from "@/utils/communications";
+import getBackend from "@/utils/getBackend";
+import postBackend from "@/utils/postBackend";
 import API from "@/utils/API";
 
 export default {
@@ -51,18 +52,19 @@ export default {
   },
   data() {
     return {
+      id: 0,
       questions: [],
-      nowQuestion: null,
-      id:0,
+      nowQuestion: null
     }
   },
   methods: {
+    // 从后端获取数据
     lastQuestion() {
       if (this.nowQuestion.index === 0)
         alert("No more question.");
       let prevIndex = this.nowQuestion.index;
-      connectBackend(API.GET_SINGLE_QUESTION, {
-        id: 0,  // TODO: get mission id
+      getBackend(API.GET_SINGLE_QUESTION, {
+        id: this.id,
         num: prevIndex,
         step: -1
       }, jsonObj => {
@@ -76,10 +78,11 @@ export default {
       if (this.nowQuestion.index >= this.questions.length)
         this.questions.push(this.nowQuestion);
     },
+    // 从后端获取数据
     nextQuestion() {
       let prevIndex = this.nowQuestion.index;
-      connectBackend(API.GET_SINGLE_QUESTION, {
-        id: 0,  // TODO: get mission id
+      getBackend(API.GET_SINGLE_QUESTION, {
+        id: this.id,
         num: prevIndex,
         step: 1
       }, jsonObj => {
@@ -95,6 +98,7 @@ export default {
       if (this.nowQuestion.index >= this.questions.length)
         this.questions.push(this.nowQuestion);
     },
+    // 向后端发送数据
     submit() {
       // TODO: finish the rest kinds of questions
       let _ans = this.questions.map((question, index) => {
@@ -109,22 +113,21 @@ export default {
         }
       });
       console.log(_ans);
-      connectBackend(API.POST_SINGLE_QUESTION, {
+      postBackend(API.POST_SINGLE_QUESTION, {
         user_id: 1, // TODO: get user_id from cookie
-        mission_id: 1, // TODO: get mission_id
+        mission_id: this.id,
         ans: _ans
       }, jsonObj => {
         console.log(jsonObj);
       });
     }
   },
-  created: function () {
+  created() {
     let name = this.$route.path;
     this.id = Number(name.slice(10,));
-
     // 从后台申请数据加载
-    connectBackend(API.GET_SINGLE_QUESTION, {
-      id: 0,  // TODO: get mission id
+    getBackend(API.GET_SINGLE_QUESTION, {
+      id: this.id,
       num: 0,
       step: 0
     }, jsonObj => {

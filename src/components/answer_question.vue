@@ -110,8 +110,8 @@ export default {
       });
       console.log(_ans);
       connectBackend(API.POST_SINGLE_QUESTION, {
-        user_id: 0, // TODO: get user_id from cookie
-        mission_id: 0, // TODO: get mission_id
+        user_id: 1, // TODO: get user_id from cookie
+        mission_id: 1, // TODO: get mission_id
         ans: _ans
       }, jsonObj => {
         console.log(jsonObj);

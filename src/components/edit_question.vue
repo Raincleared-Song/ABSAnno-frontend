@@ -125,13 +125,18 @@
         }
         this.questions.push(this.nowQuestion);
       },
+      showQuestionAtIndex(index) {
+        if (index >= 0 && index < this.questions.length)
+          this.nowQuestion = this.questions[index];
+      },
+      // 向后端发送数据
       submit() {
         let submitObj = {
           name: this.mission_description,
           question_form: "judgement", // TODO: add more question_form
-          question_num: this.questions.length,
-          user_id: 0,   // TODO: set user id
-          total: this.minimum_total_annotation
+          question_num: this.questions.length.toString(),
+          user_id: "1",   // TODO: set user id
+          total: this.minimum_total_annotation.toString()
         };
         submitObj.question_list = this.questions.map(element => {
           return { contains: element.description };
@@ -139,11 +144,9 @@
         console.log(submitObj);
         connectBackend(API.POST_NEW_MISSION, submitObj, function (jsonObj) {
           console.log(jsonObj);
+          alert("问题上传成功！");
+          window.history.back(-1);
         });
-      },
-      showQuestionAtIndex(index) {
-        if (index >= 0 && index < this.questions.length)
-          this.nowQuestion = this.questions[index];
       },
       // 这两个方法处理子组件触发的事件
       addOption(questionId, newOption) {

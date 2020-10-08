@@ -1,20 +1,19 @@
+<!-- 这是个判断题的页面 -->
 <template>
   <div>
     <h2>判断题</h2>
-    <div v-if="editable">
+    <div v-if="editable" style="margin: 10px">
       <p>编辑题目：</p>
-      <input v-model="question.description"><br>
+      <a-textarea v-model="question.description" placeholder="your question" />
     </div>
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
-    <input type="radio" name="judgement" value="1"
-           :disabled="editable" v-model="checkedOption">
-    <label>True</label><br>
-    <input type="radio" name="judgement" value="0"
-           :disabled="editable" v-model="checkedOption">
-    <label>False</label><br>
-    <div v-if="editable">
+    <a-radio-group v-model="checkedOption">
+      <a-radio value="1" :disabled="editable">True</a-radio>
+      <a-radio value="0" :disabled="editable">False</a-radio>
+    </a-radio-group>
+    <div v-if="editable === false">
       <el-button @click="$emit('inputOk', question.index, checkedOption)">next</el-button>
     </div>
   </div>
@@ -48,5 +47,10 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+p {
+  margin-bottom: 5px;
+  margin-top: 50px;
+}
+</style>
 

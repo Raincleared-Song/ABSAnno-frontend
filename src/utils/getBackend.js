@@ -23,8 +23,9 @@ export default function getBackend(api, requestParams, onRespond, onFail) {
                     // jsonObj.data = JSON.parse(jsonObj.data);
                     onRespond(jsonObj);
                 } else {
-                    // alert(`response status ${xmlHttp.status}`);
-                    if (onFail !== null) onFail();
+                    alert(`response status ${xmlHttp.status}`);
+                    console.log(xmlHttp.responseText);
+                    // if (onFail !== null) onFail();
                 }
             }
         }

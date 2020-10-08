@@ -1,17 +1,17 @@
-<!-- 这是个文字输入题编辑页面 -->
+<!-- 这是个文字输入题页面 -->
 <template>
   <div>
     <h2>文字编辑题</h2>
     <div v-if="editable">
       <p>编辑题目：</p>
-      <input type="text" v-model="question.description"><br>
+      <a-textarea v-model="question.description" placeholder="your question" />
     </div>
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
     <p>答题区：</p>
     <div>
-      <input type="text" :readonly="editable" v-model="inputText"><br>
+      <a-textarea :read-only="editable" v-model="inputText" />
     </div>
     <div v-if="editable === false">
       <el-button @click="$emit('inputOk', index, inputText)">next</el-button>
@@ -50,3 +50,10 @@
     }
   }
 </script>
+
+<style>
+p {
+  margin-bottom: 5px;
+  margin-top: 50px;
+}
+</style>

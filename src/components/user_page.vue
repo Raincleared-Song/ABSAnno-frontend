@@ -33,15 +33,56 @@
         <a-layout-content style="margin: 0 16px">
           <a-breadcrumb style="margin: 16px 0">
             <a-breadcrumb-item>User</a-breadcrumb-item>
-            <a-breadcrumb-item>Bill</a-breadcrumb-item>
+            <a-breadcrumb-item>{{this.user_name}}</a-breadcrumb-item>
           </a-breadcrumb>
           <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
             <!--          填写下方的四个div中的内容，预计有表格、列表、输入框等等。-->
             <div v-show="0===page_number">
-              <p>这是用户信息界面</p>
+              <div>
+                <a-descriptions title="User Info">
+                  <a-descriptions-item label="UserName">
+                    Zhou Maomao
+                  </a-descriptions-item>
+                  <a-descriptions-item label="Telephone">
+                    N/A
+                  </a-descriptions-item>
+                  <a-descriptions-item label="Mail">
+                    example@me.com
+                  </a-descriptions-item>
+                  <a-descriptions-item label="Remark">
+                    ???
+                  </a-descriptions-item>
+                  <a-descriptions-item label="Credit">
+                    Credit
+                  </a-descriptions-item>
+                </a-descriptions>
+              </div>
             </div>
             <div v-show="1===page_number">
-              <p>这是答题历史界面</p>
+              <div>
+                <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
+                  <div slot="footer"><b>ant design vue</b> footer part</div>
+                  <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
+                    <template v-for="{ type, text } in actions" slot="actions">
+                      <span :key="type">
+                        <a-icon :type="type" style="margin-right: 8px" />
+                        {{ text }}
+                      </span>
+                    </template>
+                    <img
+                        slot="extra"
+                        width="272"
+                        alt="logo"
+                        src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+                    />
+                    <a-list-item-meta :description="item.description">
+                      <a slot="title" :href="item.href">{{ item.title + index}}</a>
+                      <a-avatar slot="avatar" :src="item.avatar" />
+                    </a-list-item-meta>
+                    {{ item.content }}
+                  </a-list-item>
+                </a-list>
+              </div>
             </div>
             <div v-show="2===page_number">
               <p>这是我的发布界面</p>
@@ -59,12 +100,34 @@
 </template>
 
 <script>
+const listData = [];
+for (let i = 0; i < 23; i++) {
+  listData.push({
+    href: 'https://www.antdv.com/',
+    title: `ant design vue part ${i}`,
+    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    description:
+        'Ant Design, a design language for background applications, is refined by Ant UED Team.',
+    content:
+        'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+  });
+}
   export default {
     name: "user_page",
     data () {
       return {
-        circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
-        squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
+        listData,
+        pagination: {
+          onChange: page => {
+            console.log(page);
+          },
+          pageSize: 3,
+        },
+        actions: [
+          { type: 'star-o', text: '156' },
+          { type: 'like-o', text: '156' },
+          { type: 'message', text: '2' },
+        ],
         collapsed: false,
         page_number: 0,
         // 这里需要默认值？怎么获取userid？

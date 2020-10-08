@@ -9,22 +9,31 @@
       <p>{{ this.question.description }}</p>
     </div>
     <input type="radio" name="judgement" value="1"
-           :disabled="editable" v-model="userValue.checkedOptions">
+           :disabled="editable" v-model="checkedOption">
     <label>True</label><br>
     <input type="radio" name="judgement" value="0"
-           :disabled="editable" v-model="userValue.checkedOption">
+           :disabled="editable" v-model="checkedOption">
     <label>False</label><br>
+    <div v-if="editable">
+      <el-button @click="$emit('inputOk', question.index, checkedOption)">next</el-button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      // 做题者可编辑
+      checkedOption: ""
+    };
+  },
   props: {
     question: {
       type: Object,
       default() {
         return {
-          id: 0,
+          index: 0,
           type: 'judgement_group',
           // 出题者可编辑
           description: "",
@@ -34,19 +43,9 @@ export default {
     editable: {
       type: Boolean,
       default: false
-    },
-    userValue: {
-      type: Object,
-      default() {
-        return {
-          // 做题者可编辑
-          checkedOption: ''
-        };
-      }
     }
   }
 }
-
 </script>
 
 <style></style>

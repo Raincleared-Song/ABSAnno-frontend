@@ -18,22 +18,36 @@
             :key="option.index">
           <input type="checkbox" name="checkbox"
                  :disabled="editable" :value="option"
-                 v-model="userValue.checkedOptions">
+                 v-model="checkedOptions">
           <label>{{ option }}</label>
           <button v-if="editable" @click="$emit('removeOption', question.id, option.index)">X</button>
         </div>
       </div>
       <p v-else>No option added...</p>
     </div>
-    <input v-if="editable"
-        v-model="question.new_option"
-        @keydown.enter="$emit('addOption', question.id, question.new_option)"><br>
+    <div v-if="editable">
+      <input v-model="question.new_option"
+          @keydown.enter="$emit('addOption', question.id, question.new_option)"><br>
+    </div>
+    <div v-else>
+      <el-button @click="$emit('inputOk', index, checkedOptions)">next</el-button>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      // 做题者可编辑
+      checkedOptions: []
+    }
+  },
   props: {
+    index: {
+      type: Number,
+      default: -1
+    },
     question: {
       type: Object,
       default() {
@@ -51,15 +65,6 @@ export default {
     editable: {
       type: Boolean,
       default: false
-    },
-    userValue: {
-      type: Object,
-      default() {
-        return {
-          // 做题者可编辑
-          checkedOptions: []
-        };
-      }
     }
   }
 }

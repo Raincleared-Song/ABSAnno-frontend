@@ -10,13 +10,28 @@
       <p>{{ this.question.description }}</p>
     </div>
     <p>答题区：</p>
-    <input type="text" :readonly="editable" v-model="userValue.inputText"><br>
+    <div>
+      <input type="text" :readonly="editable" v-model="inputText"><br>
+    </div>
+    <div v-if="editable === false">
+      <el-button @click="$emit('inputOk', index, inputText)">next</el-button>
+    </div>
   </div>
 </template>
 
 <script>
   export default {
+    data() {
+      return {
+        // 做题者可编辑
+        inputText: ""
+      };
+    },
     props: {
+      index: {
+        type: Number,
+        default: -1
+      },
       question: {
         type: Object,
         default() {
@@ -31,15 +46,6 @@
       editable: {
         type: Boolean,
         default: false
-      },
-      userValue: {
-        type: Object,
-        default() {
-          return {
-            // 做题者可编辑
-            inputText: ""
-          };
-        }
       }
     }
   }

@@ -11,12 +11,12 @@
     </div>
     <p v-if="editable">编辑选项：</p>
     <div>
-      <a-radio-group v-if="question.options.length"
-                     v-model="checkedOption" style="margin: 10px">
+      <a-radio-group
+          v-if="question.options.length" :disabled="editable"
+          v-model="checkedOption" style="margin: 10px">
         <div v-for="option in question.options"
             :key="option.index" style="margin: 5px">
-          <a-radio :disabled="editable" :value="option"
-                   v-model="checkedOption">{{ option }}</a-radio>
+          <a-radio :value="option">{{ option }}</a-radio>
           <a-button v-if="editable" size="small"
                     @click="$emit('removeOption', question.id, option.index)">X</a-button>
         </div>

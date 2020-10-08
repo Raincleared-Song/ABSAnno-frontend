@@ -4,9 +4,8 @@ import triggerEvent from "ant-design-vue/lib/_util/triggerEvent";
 /* 这是一个高阶函数，负责向后端发送请求，包装在communication.js里也许方便一些？？？
 *  param api: 定义在API.js里的东西
 *  param requestParams: GET的请求参数
-*  param onRespond: 一个函数，参数是返回的json object
-*  param onFail: 一个函数，没有参数，失败情况下进行处理，可为空 */
-export default function getBackend(api, requestParams, onRespond, onFail) {
+*  param onRespond: 一个函数，参数是返回的json object */
+export default function getBackend(api, requestParams, onRespond) {
     let xmlHttp = null;
     if (window.XMLHttpRequest)
         xmlHttp = new XMLHttpRequest();
@@ -25,7 +24,6 @@ export default function getBackend(api, requestParams, onRespond, onFail) {
                 } else {
                     alert(`response status ${xmlHttp.status}`);
                     console.log(xmlHttp.responseText);
-                    // if (onFail !== null) onFail();
                 }
             }
         }

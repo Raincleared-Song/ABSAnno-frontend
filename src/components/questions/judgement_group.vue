@@ -9,9 +9,12 @@
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
-    <a-radio-group v-model="checkedOption">
-      <a-radio value="1" :disabled="editable">True</a-radio>
-      <a-radio value="0" :disabled="editable">False</a-radio>
+    <a-radio-group
+        :disabled="editable"
+        v-model="checkedOption"
+        style="margin: 10px">
+      <a-radio value="1">True</a-radio>
+      <a-radio value="0">False</a-radio>
     </a-radio-group>
     <div v-if="editable === false">
       <el-button @click="$emit('inputOk', question.index, checkedOption)">next</el-button>

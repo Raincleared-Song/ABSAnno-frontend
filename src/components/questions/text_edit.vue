@@ -13,7 +13,7 @@
     <div>
       <a-textarea :read-only="editable" v-model="inputText" />
     </div>
-    <div v-if="editable === false">
+    <div v-if="!editable">
       <el-button @click="$emit('inputOk', index, inputText)">next</el-button>
     </div>
   </div>

@@ -44,10 +44,12 @@
                 :question="nowQuestion" />
             <p v-else>{{ nowQuestion.type }}</p>
           </div>
-          <p v-else>请点击左侧标签添加问题</p>
+          <a-empty v-else :description="false" />
+
           <!-- 底部分页栏和提交按钮 -->
           <div style="margin: 20px 0 20px 0">
             <a-pagination
+                size="small"
                 v-model="nowQuestionIndex"
                 :total="questions.length"
                 :page-size="1" />
@@ -86,7 +88,7 @@
         questions: [],
         nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
         nowQuestion: null
-      }
+      };
     },  // end of data
     methods: {
       addJudgementQuestion() {
@@ -96,8 +98,6 @@
           description: ""
         });
         this.nowQuestionIndex = this.questions.length;
-        console.log(this.questions.length);
-        console.log(this.nowQuestionIndex);
       },
       addSingleChoiceQuestion() {
         this.questions.push({

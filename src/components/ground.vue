@@ -13,7 +13,17 @@
                             <div class="portfolio-links">
                                 <div class="icons-list">
                                     <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
-                                    <router-link to="rules/"><a-icon type="info-circle" /></router-link>
+                                    <a-popover title="题组详情" trigger="hover">
+                                        <template slot="content">
+                                            <p>题目：{{msg.name}}</p>
+                                            <p>题目数量：{{msg.questionNum}}</p>
+                                            <p>发布者：{{msg.user}}</p>
+                                            <p>题目类型：{{msg.questionForm}}</p>
+                                        </template>
+                                        <router-link to="/rules">
+                                            <a-icon type="info-circle" />
+                                        </router-link>
+                                    </a-popover>
                                 </div>
                             </div>
                         </div>

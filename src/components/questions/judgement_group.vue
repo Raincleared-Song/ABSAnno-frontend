@@ -27,7 +27,7 @@ export default {
       default() {
         return {
           index: 0,
-          type: 'judgement_group',
+          type: 'judgement',
           // 出题者可编辑
           description: "",
           // 做题者可编辑

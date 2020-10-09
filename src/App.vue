@@ -1,12 +1,12 @@
 <template>
     <a-layout id="components-layout-demo-fixed">
         <a-config-provider :autoInsertSpaceInButton="false">
-            <navigation @logout='logout' :username="userName" :id="userId"/>
+            <navigation @logout='logout' :id="userId"/>
         </a-config-provider>
 
         <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }">
             <div :style="{ background: '#fff', padding: '24px', minHeight: '580px' }">
-            <router-view ></router-view>
+            <router-view :username="userName" :id="userId"></router-view>
             </div>
         </a-layout-content>
         <a-layout-footer :style="{ textAlign: 'center' }">

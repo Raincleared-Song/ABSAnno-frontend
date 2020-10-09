@@ -32,5 +32,11 @@
         components: {
             navigation,
         },
+        data(){
+            return {
+                userId:0,
+                userName:"default",
+            }
+        },
     }
 </script>

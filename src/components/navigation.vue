@@ -33,22 +33,23 @@
                     <router-link to="/signin">注册</router-link>
                 </a-button>
             </a-menu-item>
+            <a-menu-item v-if="id!==0" style="float: right;">
+                <a-button v-if="id!==0" @click="onClick" type="danger" ghost >
+                    <router-link to="/ground">登出</router-link>
+                </a-button>
+            </a-menu-item>
             <a-menu-item v-if="id!==0" key="0" style="float: right;">
                 <div >
                     <span>
-                        <a-popover :title="username" placement="bottom" >
-                            <template slot="content">
-
-                            </template>
+                        <a-popover :title="'欢迎，'+username" placement="bottom" >
+<!--                            <template slot="content">-->
+<!--                                <p>用户名：{{this.username}}</p>-->
+<!--                                <p>id：{{this.id}}</p>-->
+<!--                            </template>-->
                             <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>
                         </a-popover>
                     </span>
                 </div>
-            </a-menu-item>
-            <a-menu-item v-if="id!==0" style="float: right;">
-                <a-button v-if="id!==0" @click="onClick" type="danger" block size="small">
-                    <router-link to="/ground">登出</router-link>
-                </a-button>
             </a-menu-item>
         </a-menu>
     </a-layout-header>

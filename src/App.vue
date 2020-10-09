@@ -1,11 +1,11 @@
-<template>
-    <a-layout id="components-layout-demo-fixed">
+<template >
+    <a-layout id="components-layout-demo-fixed" >
 <!--        <a-config-provider :autoInsertSpaceInButton="false">-->
-            <navigation @logout='logout' :id="userId" />
+            <navigation @logout='logout' :id="userId" :username="userName"/>
 <!--        </a-config-provider>-->
 
-        <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }">
-            <div :style="{ background: '#fff', padding: '24px', minHeight: '600px' }">
+        <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }" >
+            <div :style="{ background: '#fff', padding: '24px', minHeight: '610px' }" >
             <router-view :username="userName" :id="userId" @login="login"></router-view>
             </div>
         </a-layout-content>
@@ -28,6 +28,7 @@
 
 <script>
     import navigation from "@/components/navigation";
+    // import '@/assets/css/global.scss';
     export default {
         name: 'Home',
         components: {
@@ -46,9 +47,10 @@
                 console.log("logout!");
             },
             login(data){
-                console.log(data)
+                // console.log(data)
                 this.userId=data.id;
                 this.userName=data.name;
+                console.log(this.userName);
             }
         }
     }

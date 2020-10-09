@@ -1,10 +1,11 @@
-// 通信函数
+// 通信函数，向后端发送GET请求
+import triggerEvent from "ant-design-vue/lib/_util/triggerEvent";
 
 /* 这是一个高阶函数，负责向后端发送请求，包装在communication.js里也许方便一些？？？
 *  param api: 定义在API.js里的东西
-*  param requestBody: request.body，传进一个object
+*  param requestParams: GET的请求参数
 *  param onRespond: 一个函数，参数是返回的json object */
-export default function connectBackend(api, requestBody, onRespond) {
+export default function getBackend(api, requestParams, onRespond) {
     let xmlHttp = null;
     if (window.XMLHttpRequest)
         xmlHttp = new XMLHttpRequest();
@@ -17,14 +18,27 @@ export default function connectBackend(api, requestBody, onRespond) {
             if (xmlHttp.readyState === 4) {
                 if (parseInt(xmlHttp.status / 100) === 2) {
                     const jsonObj = JSON.parse(xmlHttp.responseText);
+                    console.log(jsonObj);
+                    // jsonObj.data = JSON.parse(jsonObj.data);
                     onRespond(jsonObj);
                 } else {
                     alert(`response status ${xmlHttp.status}`);
+                    console.log(xmlHttp.responseText);
                 }
             }
         }
-        xmlHttp.open(api.method, api.path, true);
-        xmlHttp.send(JSON.stringify(requestBody));
+        let trueUrl = api.path;
+        console.log(requestParams);
+        if (requestParams !== null && typeof requestParams === "object") {
+            trueUrl += "?";
+            Object.keys(requestParams).forEach(key => {
+                trueUrl += `${key}=${requestParams[key]}&`;
+            });
+            trueUrl = trueUrl.substring(0, trueUrl.length - 1);
+        }
+        console.log(trueUrl);
+        xmlHttp.open('GET', trueUrl, true);
+        xmlHttp.send(null);
     } else {
         alert("Your browser does not support XmlHTTP...");
     }

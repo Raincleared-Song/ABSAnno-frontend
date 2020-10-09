@@ -13,22 +13,40 @@
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>
             </a-menu-item>
-            <a-menu-item key="/edit">
-                <router-link to="/edit">我要发布</router-link>
+            <a-menu-item v-if="id!==0" key="/edit">
+                <router-link to="/edit">发布题目</router-link>
             </a-menu-item>
-            <a-menu-item key="4" >
-                <div>
+            <a-menu-item v-if="id!==0" key="/user">
+                <router-link to="/user">个人中心</router-link>
+            </a-menu-item>
+
+            <a-menu-item v-if="id===0" key="/login" style="float: right;">
+<!--                <a-button-group>-->
+                    <a-button ghost>
+                        <router-link to="/login">登陆</router-link>
+                    </a-button>
+
+<!--                </a-button-group>-->
+            </a-menu-item>
+            <a-menu-item v-if="id===0" key="/signin" style="float: right;">
+                <a-button ghost>
+                    <router-link to="/signin">注册</router-link>
+                </a-button>
+            </a-menu-item>
+            <a-menu-item v-if="id!==0" style="float: right;">
+                <a-button v-if="id!==0" @click="onClick" type="danger" ghost >
+                    <router-link to="/ground">登出</router-link>
+                </a-button>
+            </a-menu-item>
+            <a-menu-item v-if="id!==0" key="0" style="float: right;">
+                <div >
                     <span>
-                        <a-popover title="USER-NAME" placement="bottom">
-                            <template slot="content">
-                                <p>个人中心</p>
-                                <p>管理员页面</p>
-                                <p>我的消息</p>
-                                <p><router-link to="/login">登陆/注册</router-link></p>
-                            </template>
-                            <a-button type="link">
-                                <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>
-                            </a-button>
+                        <a-popover :title="'欢迎，'+username" placement="bottom" >
+<!--                            <template slot="content">-->
+<!--                                <p>用户名：{{this.username}}</p>-->
+<!--                                <p>id：{{this.id}}</p>-->
+<!--                            </template>-->
+                            <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>
                         </a-popover>
                     </span>
                 </div>
@@ -42,31 +60,42 @@
         name: "navigation",
         components:{
         },
+        props:[
+            "username",
+            "id",
+        ],
         data() {
             return {
                 current: [],
             };
         },
+        methods: {
+            onClick() {
+                this.$emit('logout',true);
+            },
+        },
         watch: {
             $route(to, from) {
-                let name = this.$route.path;
-                if(name === "/login" || name === "/signin"){
-                    this.current = ["4"];
-                }
-                else{
-                    this.current = [this.$route.path];
-                }
+                // let name = this.$route.path;
+                this.current = [this.$route.path];
+                // if(name === "/login" || name === "/signin" || name === "/user"){
+                //     this.current = ["0"];
+                // }
+                // else{
+                //
+                // }
                 console.log(this.current);
             }
         },
         mounted:function(){
-            let name = this.$route.path;
-            if(name === "/login" || name === "/signin"){
-                this.current = ["4"];
-            }
-            else{
-                this.current = [this.$route.path];
-            }
+            // let name = this.$route.path;
+            this.current = [this.$route.path];
+            // if(name === "/login" || name === "/signin" || name === "/user"){
+            //     this.current = ["0"];
+            // }
+            // else{
+            //     this.current = [this.$route.path];
+            // }
             console.log(this.current);
         }
     }

@@ -24,10 +24,6 @@
                 <span v-if="pslen===false" style="color: #ff0000">密码不合规范，请重新输入</span>
                 <span v-if="OK===false" style="color: #ff0000">注册异常，请稍后重试</span>
             </div>
-
-<!--            <a-button type="primary" html-type="submit" @click="sendMsg">-->
-<!--                注册-->
-<!--            </a-button>-->
             <input type="submit" name="" value="注册" @click="sendMsg">
         </div>
         <p></p>
@@ -46,7 +42,6 @@
                 default: () => true
             },
         },
-        // 请在下方设计自己的数据结构以及事件函数
         data(){
             return {
                 name:"",
@@ -67,7 +62,9 @@
                 let context = this
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 201){
-                        console.log(xhr.response);
+                        let res = JSON.parse(xhr.responseText);
+                        let data = JSON.parse(res.data.replace(/'/g,'"'));
+                        context.$emit('login', {"name":data.name, "id":data.id});
                         context.$router.push('/ground');
                     }
                     else if(xhr.readyState === 4){

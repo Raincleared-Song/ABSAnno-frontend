@@ -19,7 +19,7 @@ const routes = [
     { path:'', redirect:"ground" },
     { path:'/login', component:login },
     { path:'/signin', component: signin },
-    { path:'/question', component: answer_question }
+    { path:'/question/:id', component: answer_question }
 ]
 
 const router = new VueRouter({

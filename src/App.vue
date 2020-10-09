@@ -27,9 +27,6 @@
 
 <script>
     import navigation from "@/components/navigation";
-    import ground from "@/components/ground";
-    import edit_question from "@/components/edit_question";
-    import login from "@/components/login"
     export default {
         name: 'Home',
         components: {

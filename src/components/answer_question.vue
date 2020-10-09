@@ -1,36 +1,67 @@
 <template>
   <body id="root">
+
+    <!-- 显示问题的区域 -->
     <div v-if="nowQuestion != null">
       <JudgementGroup
-          v-if="nowQuestion.type === 'judgement_group'"
+          v-if="nowQuestion.type === 'judgement'"
           :editable="false"
-          :user-value="nowQuestion.userInput"
           :question="nowQuestion" />
       <RadioGroup
           v-else-if="nowQuestion.type === 'select_single'"
           :editable="false"
-          :user-value="nowQuestion.userInput"
           :question="nowQuestion" />
       <CheckboxGroup
           v-else-if="nowQuestion.type === 'select_multiple'"
           :editable="false"
-          :user-value="nowQuestion.userInput"
           :question="nowQuestion" />
       <TextEdit
           v-else-if="nowQuestion.type === 'text_edit'"
           :editable="false"
-          :user-value="nowQuestion.userInput"
           :question="nowQuestion" />
     </div>
-    <p v-else>该任务内还没有问题</p>
-    <a-button-group>
-      <a-button @click="lastQuestion">上一题</a-button>
-      <a-button @click="nextQuestion">下一题</a-button>
-    </a-button-group>
-    <a-button>
-      <router-link to="/ground">返回广场</router-link>
-    </a-button>
-    <a-button @click="submit">提交任务</a-button>
+    <a-empty v-else :description="false" />
+
+    <!-- 提交成功的消息框 -->
+    <a-modal
+        title="Success!"
+        :visible="modal.visible"
+        @ok="returnSquare"
+        @cancel="onCancelModal"
+        closable="false">
+      <p>答案提交成功！</p>
+      <p>是否返回广场？</p>
+    </a-modal>
+
+    <!-- 答题进度条 -->
+    <a-steps :current="nowQuestionIndex" style="margin: 40px">
+      <a-step v-for="n in totalNum" :key="n" :title="nowQuestion.type" />
+    </a-steps>
+
+    <!-- 按钮区域 -->
+    <div align="center">
+      <a-space :size="20">
+        <a-button
+            :disabled="nowQuestionIndex === 0"
+            @click="switchToPrev">
+          <a-icon type="arrow-left" />上一题
+        </a-button>
+        <a-button
+            :disabled="this.questions.length < totalNum && !modal.submitted"
+            @click="submit" type="primary">
+          提交任务<a-icon type="check" />
+        </a-button>
+        <a-button
+            :disabled="nowQuestionIndex === totalNum - 1"
+            @click="switchToNext">
+          下一题<a-icon type="arrow-right" />
+        </a-button>
+        <a-button
+            @click="returnSquare">
+          返回广场<a-icon type="rollback" />
+        </a-button>
+      </a-space>
+    </div>
   </body>
 </template>
 
@@ -39,7 +70,8 @@ import JudgementGroup from "@/components/questions/judgement_group";
 import TextEdit from "@/components/questions/text_edit";
 import RadioGroup from "@/components/questions/radio_group";
 import CheckboxGroup from "@/components/questions/checkbox_group";
-import connectBackend from "@/utils/communications";
+import getBackend from "@/utils/getBackend";
+import postBackend from "@/utils/postBackend";
 import API from "@/utils/API";
 
 export default {
@@ -48,100 +80,110 @@ export default {
     RadioGroup: RadioGroup,
     CheckboxGroup: CheckboxGroup,
     TextEdit: TextEdit
-  },
+  },  // end of components
   data() {
     return {
-      questions: [],
-      nowQuestion: null
-    }
-  },
+      missionId: 0,
+      totalNum: 0,    // 总题目数量
+      questions: [],  // 问题列表
+      nowQuestionIndex: -1, // 从0开始
+      nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
+      modal: {
+        visible: false,
+        submitted: false
+      }
+    };
+  },  // end of data
   methods: {
-    lastQuestion() {
-      if (this.nowQuestion.index === 0)
-        alert("No more question.");
-      let prevIndex = this.nowQuestion.index;
-      connectBackend(API.GET_SINGLE_QUESTION, {
-        id: 0,  // TODO: get mission id
-        num: prevIndex,
-        step: -1
-      }, jsonObj => {
-        this.nowQuestion = {
-          index: prevIndex - 1,
-          type: 'judgement_group',
-          description: jsonObj.word,
-          userInput: null
-        };
-      });
-      if (this.nowQuestion.index >= this.questions.length)
-        this.questions.push(this.nowQuestion);
-    },
-    nextQuestion() {
-      let prevIndex = this.nowQuestion.index;
-      connectBackend(API.GET_SINGLE_QUESTION, {
-        id: 0,  // TODO: get mission id
-        num: prevIndex,
-        step: 1
-      }, jsonObj => {
-        if (jsonObj == null)
-          alert("No more question.");
-        this.nowQuestion = {
-          index: prevIndex + 1,
-          type: 'judgement_group',
-          description: jsonObj.word,
-          userInput: null
-        };
-      });
-      if (this.nowQuestion.index >= this.questions.length)
-        this.questions.push(this.nowQuestion);
-    },
+    // 向后端发送数据
     submit() {
-      // TODO: finish the rest kinds of questions
-      let _ans = this.questions.map((question, index) => {
-        if (question.type === 'judgement_group') {
-          return question.checkedOption;
-        } else if (question.type === 'select_single') {
-          return question.checkedOption;
-        } else if (question.type === 'select_multiple') {
-          return question.checkedOptions;
-        } else if (question.type === 'text_edit') {
-          return question.inputText;
-        }
+      let answers = this.questions.map(question => {
+        return question.answer;
       });
-      console.log(_ans);
-      connectBackend(API.POST_SINGLE_QUESTION, {
-        user_id: 0, // TODO: get user_id from cookie
-        mission_id: 0, // TODO: get mission_id
-        ans: _ans
+      console.log(answers);
+      postBackend(API.POST_SINGLE_QUESTION, {
+        user_id: "1", // TODO: get user_id from cookie
+        mission_id: this.missionId.toString(),
+        ans: answers
       }, jsonObj => {
         console.log(jsonObj);
+        this.modal.visible = true;
       });
+    },
+    // 下一题
+    switchToNext() {
+      let nextIndex = this.nowQuestionIndex + 1;
+      if (nextIndex === this.questions.length) {
+        // 下一题未加载，从后端获取
+        getBackend(API.GET_SINGLE_QUESTION, {
+          id: this.missionId,
+          num: nextIndex,
+          step: 0
+        }, jsonObj => {
+          let dataObj = getDataObj(jsonObj);
+          this.questions.push({
+            index: dataObj.ret,
+            type: 'judgement',  // TODO: add more type
+            description: dataObj.word,
+            answer: ""
+          });
+          this.nowQuestionIndex = this.questions.length - 1;
+        });
+      } else {
+        // 下一题已经加载过了
+        this.nowQuestionIndex += 1;
+      }
+    },
+    // 上一题
+    switchToPrev() {
+      this.nowQuestionIndex -= 1;
+    },
+    // 返回广场
+    returnSquare() {
+      this.$router.push("/ground");
+    },
+    // 消息框点击取消之后
+    onCancelModal() {
+      this.modal.visible = false;
+      this.modal.submitted = true;
     }
-  },
-  created: function () {
+  },  // end of methods
+  created() {
+    let name = this.$route.path;
+    this.missionId = Number(name.slice(10,));
     // 从后台申请数据加载
-    connectBackend(API.GET_SINGLE_QUESTION, {
-      id: 0,  // TODO: get mission id
+    getBackend(API.GET_SINGLE_QUESTION, {
+      id: this.missionId,
       num: 0,
       step: 0
     }, jsonObj => {
-      this.nowQuestion = {
-        index: 0,
-        type: 'judgement_group',  // TODO: add more type
-        description: jsonObj.word,
-        userInput: null
-      }
+      let dataObj = getDataObj(jsonObj);
+      this.totalNum = dataObj.total;
+      this.questions.push({
+        index: dataObj.ret,
+        type: 'judgement',  // TODO: add more type
+        description: dataObj.word,
+        answer: ""
+      });
+      this.nowQuestionIndex = this.questions.length - 1;
     });
-    if (this.nowQuestion != null)
-      this.questions.push(this.nowQuestion);
-  }
+  },  // end of created
+  watch: {
+    nowQuestionIndex(newVal) {
+      this.nowQuestion = this.questions[newVal];
+    }
+  }   // end of watch
+}
+
+function getDataObj(jsonObj) {
+  let dataStr = jsonObj.data;
+  dataStr = dataStr.replace(/'/g, '"');
+  return JSON.parse(dataStr);
 }
 </script>
 
 <style>
 #root {
-  padding: 50px;
-}
-a-button {
-  margin: 20px;
+  padding: 50px 150px 50px 150px;
 }
 </style>

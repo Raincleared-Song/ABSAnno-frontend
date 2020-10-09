@@ -1,19 +1,21 @@
+<!-- 这是个判断题的页面 -->
 <template>
   <div>
     <h2>判断题</h2>
-    <div v-if="editable">
+    <div v-if="editable" style="margin: 10px">
       <p>编辑题目：</p>
-      <input v-model="question.description"><br>
+      <a-textarea v-model="question.description" placeholder="your question" />
     </div>
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
-    <input type="radio" name="judgement" value="1"
-           :disabled="editable" v-model="userValue.checkedOptions">
-    <label>True</label><br>
-    <input type="radio" name="judgement" value="0"
-           :disabled="editable" v-model="userValue.checkedOption">
-    <label>False</label><br>
+    <a-radio-group
+        :disabled="editable"
+        v-model="question.answer"
+        style="margin: 10px">
+      <a-radio value="1">True</a-radio>
+      <a-radio value="0">False</a-radio>
+    </a-radio-group>
   </div>
 </template>
 
@@ -24,29 +26,27 @@ export default {
       type: Object,
       default() {
         return {
-          id: 0,
+          index: 0,
           type: 'judgement_group',
           // 出题者可编辑
           description: "",
+          // 做题者可编辑
+          answer: ""
         }
       }
     },
     editable: {
       type: Boolean,
       default: false
-    },
-    userValue: {
-      type: Object,
-      default() {
-        return {
-          // 做题者可编辑
-          checkedOption: null
-        };
-      }
     }
-  }
+  }   // end of props
 }
 </script>
 
-<style></style>
+<style>
+p {
+  margin-bottom: 5px;
+  margin-top: 50px;
+}
+</style>
 

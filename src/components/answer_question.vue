@@ -184,6 +184,6 @@ function getDataObj(jsonObj) {
 
 <style>
 #root {
-  padding: 50px 150px 50px 150px;
+  padding: 50px 150px;
 }
 </style>

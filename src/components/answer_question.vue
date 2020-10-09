@@ -29,8 +29,8 @@
         @ok="returnSquare"
         @cancel="onCancelModal"
         closable="false">
-      <p>答案提交成功！</p>
-      <p>是否返回广场？</p>
+      <div style="margin: 20px">答案提交成功！</div>
+      <div style="margin: 20px">是否返回广场？</div>
     </a-modal>
 
     <!-- 答题进度条 -->
@@ -47,7 +47,7 @@
           <a-icon type="arrow-left" />上一题
         </a-button>
         <a-button
-            :disabled="this.questions.length < totalNum && !modal.submitted"
+            :disabled="this.questions.length < totalNum || modal.submitted"
             @click="submit" type="primary">
           提交任务<a-icon type="check" />
         </a-button>

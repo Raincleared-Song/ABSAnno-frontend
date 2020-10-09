@@ -13,9 +13,6 @@
     <div>
       <a-textarea :read-only="editable" v-model="question.answer" />
     </div>
-    <div v-if="editable === false" style="margin: 0 50px 0 50px">
-      <a-button @click="commit" block>暂存答案</a-button>
-    </div>
   </div>
 </template>
 
@@ -43,12 +40,7 @@
         type: Boolean,
         default: false
       }
-    },  // end of props
-    methods: {
-      commit() {
-        this.$emit('inputOk', this.question.index, this.question.answer);
-      }
-    }   // end of methods
+    }   // end of props
   }
 </script>
 

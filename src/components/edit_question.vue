@@ -17,10 +17,14 @@
         </a-layout-sider>
 
         <!-- 题目预览区 -->
-        <a-layout-content style="padding: 40px">
+        <a-layout-content style="margin: 10px 40px">
           <h2>编辑任务</h2>
-          <p>任务名称：<a-input palceholder="your mission title" v-model.trim="mission_description" /></p>
-          <p>任务至少标注次数：<a-input-number v-model.trim.number="minimum_total_annotation" /></p>
+          <div style="margin: 20px">
+            任务名称：<a-input palceholder="your mission title" v-model.trim="mission_description" />
+          </div>
+          <div style="margin: 20px">
+            任务至少标注次数：<a-input-number v-model.trim.number="minimum_total_annotation" />
+          </div>
           <div v-if="nowQuestion != null">
             <JudgementGroup
                 v-if="nowQuestion.type === 'judgement_group'"
@@ -46,6 +50,17 @@
           </div>
           <a-empty v-else :description="false" />
 
+          <!-- 提交成功的消息框 -->
+          <a-modal
+              title="Success!"
+              :visible="modal.visible"
+              @ok="$router.push('/ground')"
+              @cancel="onCancelModal"
+              closable="false">
+            <div style="margin: 20px">任务提交成功！</div>
+            <div style="margin: 20px">是否返回广场？</div>
+          </a-modal>
+
           <!-- 底部分页栏和提交按钮 -->
           <div style="margin: 20px auto">
             <a-pagination
@@ -55,6 +70,7 @@
           </div>
           <a-button
               v-show="questions.length > 0 || nowQuestion != null"
+              :disabled="modal.submitted"
               type="primary" @click="submit">
             submit
           </a-button>
@@ -88,7 +104,11 @@
         minimum_total_annotation: 10,
         questions: [],
         nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
-        nowQuestion: null
+        nowQuestion: null,
+        modal: {
+          visible: false,
+          submitted: false
+        }
       };
     },  // end of data
     methods: {
@@ -143,8 +163,7 @@
         console.log(submitObj);
         postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {
           console.log(jsonObj);
-          alert("问题上传成功！");
-          this.$router.push("/ground"); // 返回广场
+          this.modal.visible = true;
         });
       },
       // 这两个方法处理子组件触发的事件
@@ -161,6 +180,11 @@
           return question.id === questionId;
         });
         this.questions[targetIdx].options.splice(optionIdx, 1);
+      },
+      // 消息框点击取消之后
+      onCancelModal() {
+        this.modal.visible = false;
+        this.modal.submitted = true;
       }
     },  // end of methods
     watch: {

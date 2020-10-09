@@ -1,11 +1,10 @@
 <template>
     <div class = "portfolio">
         <a-row type="flex" justify="space-around">
+            <p></p>
                 <a-col :span="5" v-for="msg in msgList" :key="msg">
-                    <p></p>
                     <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
 <!--                        图片尺寸：500*350            -->
-                        <img v-if="msg.questionForm === 'none'" src="@/assets/blank.jpg" alt="" width="210" >
                         <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="210" >
                         <div  class="portfolio-info">
                             <h4>{{msg.name}}</h4>
@@ -15,10 +14,9 @@
                                     <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
                                     <a-popover title="题组详情" trigger="hover">
                                         <template slot="content">
-                                            <p>题目：{{msg.name}}</p>
-                                            <p>题目数量：{{msg.questionNum}}</p>
-                                            <p>发布者：{{msg.user}}</p>
-                                            <p>题目类型：{{msg.questionForm}}</p>
+                                            <p>题目：{{msg.name}}<br />题目数量：{{msg.questionNum}}
+                                                <br />发布者：{{msg.user}}<br />题目类型：{{msg.questionForm}}
+                                            </p>
                                         </template>
                                         <router-link to="/rules">
                                             <a-icon type="info-circle" />
@@ -33,7 +31,6 @@
                         <!--                        图片尺寸：500*350            -->
                         <img src="@/assets/blank.jpg" alt="" width="210" >
                     </div>
-                    <p></p>
                 </a-col>
         </a-row>
         <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum"
@@ -50,12 +47,16 @@
                 msgList:[],
                 current: 1,
                 totalMsgNum: 100,
-                id: 1,
+                // id: 1,
                 pagesize: 12,
                 getMsgNum:0,
                 thisPageSize:12,
             }
         },
+        props:[
+            "username",
+            "id",
+        ],
         methods: {
             min(a, b){
                 if(a>b) return b;
@@ -72,7 +73,8 @@
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
                         context.totalMsgNum = data.total;
                         context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
-                       context.msgList = data.question_list
+                        context.msgList = data.question_list
+                        // console.log("backend/square?id="+this.id.toString()+"&num="+this.getMsgNum.toString());
                         while(context.msgList.length < 12){
                             context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
                                 'questionNum': 0, 'questionForm': "none"});
@@ -80,6 +82,7 @@
                     }
                 };
                 this.getMsgNum = (pageNumber-1)*12;
+                console.log("backend/square?id="+this.id.toString()+"&num="+this.getMsgNum.toString());
                 xhr.open("get","backend/square?id="+this.id.toString()+"&num="+this.getMsgNum.toString());
                 xhr.send();
             },
@@ -103,13 +106,13 @@
         text-align: center;
         background: white;
         border-radius: 50px;
-        padding: 2px 15px;
+        /*padding: 2px 15px;*/
     }
 
     .portfolio #portfolio-flters li {
         cursor: pointer;
         display: inline-block;
-        padding: 8px 20px 12px 20px;
+        /*padding: 8px 20px 12px 20px;*/
         font-size: 15px;
         font-weight: 500;
         line-height: 1;

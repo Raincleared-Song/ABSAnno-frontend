@@ -13,35 +13,31 @@
     <div>
       <a-radio-group
           v-if="question.options.length" :disabled="editable"
-          v-model="checkedOption" style="margin: 10px">
+          v-model="question.answer" style="margin: 10px">
         <div v-for="option in question.options"
             :key="option.index" style="margin: 5px">
           <a-radio :value="option">{{ option }}</a-radio>
-          <a-button v-if="editable" size="small"
-                    @click="$emit('removeOption', question.id, option.index)">X</a-button>
+          <a-button
+              v-if="editable" size="small"
+              @click="$emit('removeOption', question.id, option.index)">X</a-button>
         </div>
       </a-radio-group>
       <p v-else>No option added...</p>
     </div>
     <div v-if="editable">
-      <a-input v-model="question.new_option"
-               placeholder="add new option, press enter to commit."
-               @keydown.enter="$emit('addOption', question.id, question.new_option)" />
+      <a-input
+          v-model="question.new_option"
+          placeholder="add new option, press enter to commit."
+          @keydown.enter="$emit('addOption', question.id, question.new_option)" />
     </div>
-    <div v-else>
-      <el-button @click="$emit('inputOk', index, checkedOption)">next</el-button>
+    <div v-else style="margin: 0 50px 0 50px">
+      <a-button @click="commit" block>暂存答案</a-button>
     </div>
   </div>
 </template>
 
 <script>
   export default {
-    data() {
-      return {
-        // 做题者可编辑
-        checkedOption: null
-      };
-    },
     props: {
       index: {
         type: Number,
@@ -57,6 +53,8 @@
             description: "",
             options: [],
             new_option: "",
+            // 做题者可编辑
+            answer: null
           }
         }
       },
@@ -64,6 +62,11 @@
         type: Boolean,
         default: false
       }
+    },  // end of props
+    methods: {
+      commit() {
+        this.$emit('inputOk', this.question.index, this.question.answer);
+      }   // end of methods
     }
   }
 </script>

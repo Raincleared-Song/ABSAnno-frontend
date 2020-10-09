@@ -11,25 +11,16 @@
     </div>
     <a-radio-group
         :disabled="editable"
-        v-model="checkedOption"
+        v-model="question.answer"
         style="margin: 10px">
       <a-radio value="1">True</a-radio>
       <a-radio value="0">False</a-radio>
     </a-radio-group>
-    <div v-if="editable === false">
-      <el-button @click="commit">next</el-button>
-    </div>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      // 做题者可编辑
-      checkedOption: ""
-    };
-  },  // end of data
   props: {
     question: {
       type: Object,
@@ -39,6 +30,8 @@ export default {
           type: 'judgement_group',
           // 出题者可编辑
           description: "",
+          // 做题者可编辑
+          answer: ""
         }
       }
     },
@@ -46,13 +39,7 @@ export default {
       type: Boolean,
       default: false
     }
-  },  // end of props
-  methods: {
-    commit() {
-      this.$emit('inputOk', this.question.index, this.checkedOption);
-      console.log("click click");
-    }
-  }
+  }   // end of props
 }
 </script>
 

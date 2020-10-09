@@ -11,22 +11,16 @@
     </div>
     <p>答题区：</p>
     <div>
-      <a-textarea :read-only="editable" v-model="inputText" />
+      <a-textarea :read-only="editable" v-model="question.answer" />
     </div>
-    <div v-if="!editable">
-      <el-button @click="$emit('inputOk', index, inputText)">next</el-button>
+    <div v-if="editable === false" style="margin: 0 50px 0 50px">
+      <a-button @click="commit" block>暂存答案</a-button>
     </div>
   </div>
 </template>
 
 <script>
   export default {
-    data() {
-      return {
-        // 做题者可编辑
-        inputText: ""
-      };
-    },
     props: {
       index: {
         type: Number,
@@ -40,6 +34,8 @@
             type: 'text_edit',
             // 出题者可编辑
             description: "",
+            // 做题者可编辑
+            answer: ""
           }
         }
       },
@@ -47,7 +43,12 @@
         type: Boolean,
         default: false
       }
-    }
+    },  // end of props
+    methods: {
+      commit() {
+        this.$emit('inputOk', this.question.index, this.question.answer);
+      }
+    }   // end of methods
   }
 </script>
 

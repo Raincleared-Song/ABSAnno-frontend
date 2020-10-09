@@ -18,10 +18,10 @@
 
         <!-- 题目预览区 -->
         <a-layout-content style="padding: 40px">
+          <h2>编辑任务</h2>
+          <p>任务名称：<a-input palceholder="your mission title" v-model.trim="mission_description" /></p>
+          <p>任务至少标注次数：<a-input-number v-model.trim.number="minimum_total_annotation" /></p>
           <div v-if="nowQuestion != null">
-            <h2>编辑任务</h2>
-            <p>任务名称：<a-input palceholder="your mission title" v-model.trim="mission_description" /></p>
-            <p>任务至少标注次数：<a-input-number v-model.trim.number="minimum_total_annotation" /></p>
             <JudgementGroup
                 v-if="nowQuestion.type === 'judgement_group'"
                 :editable="true"
@@ -47,16 +47,17 @@
           <a-empty v-else :description="false" />
 
           <!-- 底部分页栏和提交按钮 -->
-          <div style="margin: 20px 0 20px 0">
+          <div style="margin: 20px auto">
             <a-pagination
-                size="small"
                 v-model="nowQuestionIndex"
                 :total="questions.length"
                 :page-size="1" />
           </div>
           <a-button
               v-show="questions.length > 0 || nowQuestion != null"
-              type="primary" @click="submit">submit</a-button>
+              type="primary" @click="submit">
+            submit
+          </a-button>
         </a-layout-content>
 
       </a-layout>

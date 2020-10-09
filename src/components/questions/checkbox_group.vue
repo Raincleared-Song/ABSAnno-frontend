@@ -13,7 +13,7 @@
     <div>
       <a-checkbox-group
           v-if="question.options.length" :disabled="editable"
-          v-model="checkedOptions" style="margin: 10px">
+          v-model="question.answer" style="margin: 10px">
         <div
             v-for="option in question.options"
             :key="option.index" style="margin: 5px">
@@ -33,20 +33,14 @@
           placeholder="add new option, press enter to commit."
           @keydown.enter="$emit('addOption', question.id, question.new_option)" />
     </div>
-    <div v-else>
-      <el-button @click="$emit('inputOk', index, checkedOptions)">next</el-button>
+    <div v-else style="margin: 0 50px 0 50px">
+      <a-button @click="commit" block>暂存答案</a-button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      // 做题者可编辑
-      checkedOptions: []
-    }
-  },
   props: {
     index: {
       type: Number,
@@ -62,7 +56,8 @@ export default {
           description: "",
           options: [],
           new_option: "",
-
+          // 做题者可编辑
+          answer: []
         }
       }
     },
@@ -70,7 +65,12 @@ export default {
       type: Boolean,
       default: false
     }
-  }
+  },  // end of props
+  methods: {
+    commit() {
+      this.$emit('inputOk', this.question.index, this.question.answer);
+    }
+  }   // end of methods
 }
 </script>
 

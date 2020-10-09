@@ -103,7 +103,7 @@
                     if (xhr.readyState === 4 && xhr.status === 201){
                         let res = JSON.parse(xhr.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
-                        context.totalMsgNum = data.ret;
+                        context.totalMsgNum = data.total;
                         context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
                         // console.log(context.thisPageSize);
                         context.msgList1 = data.question_list.slice(0, context.min(4,context.thisPageSize));

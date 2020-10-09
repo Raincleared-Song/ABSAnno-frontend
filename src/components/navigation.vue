@@ -17,18 +17,18 @@
                 <router-link to="/edit">我要发布</router-link>
             </a-menu-item>
             <a-menu-item key="4" >
-                <div>
+                <div >
                     <span>
-                        <a-popover title="USER-NAME" placement="bottom">
-                            <template slot="content">
-                              <p>
-                                <router-link to="/user">个人中心</router-link>
-                              </p>
-                                <p>
-                                  <router-link to="/admin">管理员界面</router-link>
-                                </p>
-                                <p>我的消息</p>
-                                <p><router-link to="/login">登陆/注册</router-link></p>
+                        <a-popover :title="username" placement="bottom" size="small">
+                            <template slot="content" align="center">
+                                <p v-if="id!==0"><router-link to="/user">个人中心</router-link></p>
+                                <p v-if="id!==0"><router-link to="/login">我的消息</router-link></p>
+                                <a-button block v-if="id===0" >
+                                    <router-link to="/login">登陆 & 注册</router-link>
+                                </a-button>
+                                <a-button v-if="id!==0" @click="onClick" type="danger" block size="small">
+                                    <router-link to="/ground">登出</router-link>
+                                </a-button>
                             </template>
                             <a-button type="link">
                                 <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>
@@ -46,15 +46,24 @@
         name: "navigation",
         components:{
         },
+        props:[
+            "username",
+            "id",
+        ],
         data() {
             return {
                 current: [],
             };
         },
+        methods: {
+            onClick() {
+                this.$emit('logout',true);
+            }
+        },
         watch: {
             $route(to, from) {
                 let name = this.$route.path;
-                if(name === "/login" || name === "/signin"){
+                if(name === "/login" || name === "/signin" || name === "/user"){
                     this.current = ["4"];
                 }
                 else{
@@ -65,7 +74,7 @@
         },
         mounted:function(){
             let name = this.$route.path;
-            if(name === "/login" || name === "/signin"){
+            if(name === "/login" || name === "/signin" || name === "/user"){
                 this.current = ["4"];
             }
             else{

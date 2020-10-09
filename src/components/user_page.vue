@@ -142,10 +142,9 @@ for (let i = 0; i < 23; i++) {
         user_name: 'default username',
       }
     },
-    props: {
-      id: Number,
-
-    },
+    props:[
+      "id",
+    ],
     methods: {
       change: function (index) {
         this.page_number = index;

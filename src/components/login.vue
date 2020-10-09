@@ -52,7 +52,9 @@
                 let context = this
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 201){
-                        console.log(xhr.response);
+                        let res = JSON.parse(xhr.responseText);
+                        let data = JSON.parse(res.data.replace(/'/g,'"'));
+                        context.$emit('login', {"name":data.name, "id":data.id});
                         context.$router.push('/ground');
                     }
                     else if(xhr.readyState === 4){

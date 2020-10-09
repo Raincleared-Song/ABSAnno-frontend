@@ -1,74 +1,43 @@
 <template>
     <div class = "portfolio">
         <a-row type="flex" justify="space-around">
-                <a-col :span="4" v-for="msg in msgList1" :key="msg">
+                <a-col :span="5" v-for="msg in msgList" :key="msg">
                     <p></p>
-                    <div class="portfolio-wrap">
+                    <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
 <!--                        图片尺寸：500*350            -->
+                        <img v-if="msg.questionForm === 'none'" src="@/assets/blank.jpg" alt="" width="210" >
                         <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="210" >
-                        <div class="portfolio-info">
+                        <div  class="portfolio-info">
                             <h4>{{msg.name}}</h4>
                             <p>题目数量：{{msg.questionNum}}</p>
                             <div class="portfolio-links">
                                 <div class="icons-list">
                                     <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
-                                    <router-link to="rules/"><a-icon type="info-circle" /></router-link>
+                                    <a-popover title="题组详情" trigger="hover">
+                                        <template slot="content">
+                                            <p>题目：{{msg.name}}</p>
+                                            <p>题目数量：{{msg.questionNum}}</p>
+                                            <p>发布者：{{msg.user}}</p>
+                                            <p>题目类型：{{msg.questionForm}}</p>
+                                        </template>
+                                        <router-link to="/rules">
+                                            <a-icon type="info-circle" />
+                                        </router-link>
+                                    </a-popover>
                                 </div>
                             </div>
-<!--                            <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>-->
-<!--                            <a-icon type="delete" />-->
-<!--                            <a-icon type="info-circle" />-->
-<!--                            <div class="portfolio-links">-->
-<!--                                <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>-->
-<!--                                <a-icon type="delete" />-->
-<!--                                <a-icon type="info-circle" />-->
-<!--                                <a href="assets/img/portfolio/portfolio-1.jpg" data-gall="portfolioGallery" class="venobox" title="App 1"><i class="bx bx-plus"></i></a>-->
-<!--                                <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>-->
-<!--                            </div>-->
                         </div>
+                    </div>
+<!--                    空白答题页面的填充-->
+                    <div v-if="msg.questionForm === 'none'" align="center">
+                        <!--                        图片尺寸：500*350            -->
+                        <img src="@/assets/blank.jpg" alt="" width="210" >
                     </div>
                     <p></p>
                 </a-col>
         </a-row>
-        <a-row type="flex" justify="space-around">
-            <a-col :span="4" v-for="msg in msgList2" :key="msg">
-                <p></p>
-                <div class="portfolio-wrap">
-                    <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="210" >
-                    <div class="portfolio-info">
-                        <h4>{{msg.name}}</h4>
-                        <p>题目数量：{{msg.questionNum}}</p>
-                        <div class="portfolio-links">
-                            <div class="icons-list">
-                                <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
-                                <router-link to="rules/"><a-icon type="info-circle" /></router-link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <p></p>
-            </a-col>
-        </a-row>
-        <a-row type="flex" justify="space-around">
-            <a-col :span="4" v-for="msg in msgList3" :key="msg">
-                <p></p>
-                <div class="portfolio-wrap">
-                    <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="210" >
-                    <div class="portfolio-info">
-                        <h4>{{msg.name}}</h4>
-                        <p>题目数量：{{msg.questionNum}}</p>
-                        <div class="portfolio-links">
-                            <div class="icons-list">
-                                <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
-                                <router-link to="rules/"><a-icon type="info-circle" /></router-link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <p></p>
-            </a-col>
-        </a-row>
-        <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum" :style="{textAlign: 'center' }" @change="onChange" />
+        <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum"
+                      :style="{textAlign: 'center' }" @change="onChange" />
 
     </div>
 </template>
@@ -78,9 +47,7 @@
         name: "ground",
         data(){
             return {
-                msgList1:[],
-                msgList2:[],
-                msgList3:[],
+                msgList:[],
                 current: 1,
                 totalMsgNum: 100,
                 id: 1,
@@ -103,13 +70,13 @@
                     if (xhr.readyState === 4 && xhr.status === 201){
                         let res = JSON.parse(xhr.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
-                        context.totalMsgNum = data.ret;
+                        context.totalMsgNum = data.total;
                         context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
-                        // console.log(context.thisPageSize);
-                        context.msgList1 = data.question_list.slice(0, context.min(4,context.thisPageSize));
-                        context.msgList2 = data.question_list.slice(context.min(4,context.thisPageSize), context.min(8,context.thisPageSize));
-                        context.msgList3 = data.question_list.slice(context.min(8,context.thisPageSize), context.min(12,context.thisPageSize));
-                        // console.log(context.msgList1)
+                       context.msgList = data.question_list
+                        while(context.msgList.length < 12){
+                            context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
+                                'questionNum': 0, 'questionForm': "none"});
+                        }
                     }
                 };
                 this.getMsgNum = (pageNumber-1)*12;
@@ -146,7 +113,7 @@
         font-size: 15px;
         font-weight: 500;
         line-height: 1;
-        color: #444444;
+        color: #ffffff;
         margin: 0 4px 8px 4px;
         transition: all ease-in-out 0.3s;
         border-radius: 50px;
@@ -166,8 +133,8 @@
         transition: 0.3s;
         position: relative;
         overflow: hidden;
-        z-index: 1;
-        background: rgba(84, 84, 84, 0.6);
+        z-index: 0;
+        background: rgba(84, 84, 84, 0);
     }
 
     .portfolio .portfolio-wrap::before {
@@ -179,7 +146,7 @@
         top: 30px;
         bottom: 30px;
         transition: all ease-in-out 0.3s;
-        z-index: 2;
+        z-index: 0;
         opacity: 0;
     }
 
@@ -191,7 +158,7 @@
         right: 0;
         bottom: 0;
         text-align: center;
-        z-index: 3;
+        z-index: 0;
         transition: all ease-in-out 0.3s;
         display: flex;
         flex-direction: column;
@@ -210,7 +177,7 @@
         border-top: 3px solid #fff;
         border-left: 3px solid #fff;
         transition: all 0.5s ease 0s;
-        z-index: 9994;
+        z-index: 0;
     }
 
     .portfolio .portfolio-wrap .portfolio-info::after {
@@ -224,7 +191,7 @@
         border-bottom: 3px solid #fff;
         border-right: 3px solid #fff;
         transition: all 0.5s ease 0s;
-        z-index: 9994;
+        z-index: 0;
     }
 
     .portfolio .portfolio-wrap .portfolio-info h4 {
@@ -243,7 +210,7 @@
 
     .portfolio .portfolio-wrap .portfolio-links {
         text-align: center;
-        z-index: 4;
+        z-index: 0;
     }
 
     .portfolio .portfolio-wrap .portfolio-links a {

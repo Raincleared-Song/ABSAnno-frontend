@@ -1,7 +1,7 @@
 <template>
     <a-layout id="components-layout-demo-fixed">
         <a-config-provider :autoInsertSpaceInButton="false">
-            <navigation @logout='logout'/>
+            <navigation @logout='logout' :username="userName" :id="userId"/>
         </a-config-provider>
 
         <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }">
@@ -37,13 +37,13 @@
         data(){
             return {
                 userId:0,
-                userName:"default",
+                userName:"游客，请登录/注册",
             }
         },
         methods: {
             logout(data) {
                 this.userId=0;
-                this.userName="default";
+                this.userName="游客，请登录/注册";
                 console.log("logout!");
             }
         }

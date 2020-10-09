@@ -1,7 +1,6 @@
 <template>
     <div class = "portfolio">
         <a-row type="flex" justify="space-around">
-            <p></p>
                 <a-col :span="5" v-for="msg in msgList" :key="msg">
                     <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
 <!--                        图片尺寸：500*350            -->
@@ -14,9 +13,10 @@
                                     <router-link :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
                                     <a-popover title="题组详情" trigger="hover">
                                         <template slot="content">
-                                            <p>题目：{{msg.name}}<br />题目数量：{{msg.questionNum}}
-                                                <br />发布者：{{msg.user}}<br />题目类型：{{msg.questionForm}}
-                                            </p>
+                                            题目：{{msg.name}}<br />
+                                            题目数量：{{msg.questionNum}}<br />
+                                            发布者：{{msg.user}}<br />
+                                            题目类型：{{msg.questionForm}}
                                         </template>
                                         <router-link to="/rules">
                                             <a-icon type="info-circle" />

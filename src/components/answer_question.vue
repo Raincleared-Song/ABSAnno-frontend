@@ -1,6 +1,5 @@
 <template>
   <body id="root">
-
     <!-- 显示问题的区域 -->
     <div v-if="nowQuestion != null">
       <JudgementGroup

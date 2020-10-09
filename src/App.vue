@@ -1,10 +1,12 @@
 <template>
     <a-layout id="components-layout-demo-fixed">
-        <navigation @showLogin="showLoginFunc"/>
+        <a-config-provider :autoInsertSpaceInButton="false">
+            <navigation @logout='logout'/>
+        </a-config-provider>
 
         <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }">
             <div :style="{ background: '#fff', padding: '24px', minHeight: '580px' }">
-            <router-view></router-view>
+            <router-view ></router-view>
             </div>
         </a-layout-content>
         <a-layout-footer :style="{ textAlign: 'center' }">
@@ -38,5 +40,12 @@
                 userName:"default",
             }
         },
+        methods: {
+            logout(data) {
+                this.userId=0;
+                this.userName="default";
+                console.log("logout!");
+            }
+        }
     }
 </script>

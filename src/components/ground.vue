@@ -133,7 +133,7 @@
         transition: 0.3s;
         position: relative;
         overflow: hidden;
-        z-index: 1;
+        z-index: 0;
         background: rgba(84, 84, 84, 0);
     }
 
@@ -146,7 +146,7 @@
         top: 30px;
         bottom: 30px;
         transition: all ease-in-out 0.3s;
-        z-index: 2;
+        z-index: 0;
         opacity: 0;
     }
 
@@ -158,7 +158,7 @@
         right: 0;
         bottom: 0;
         text-align: center;
-        z-index: 3;
+        z-index: 0;
         transition: all ease-in-out 0.3s;
         display: flex;
         flex-direction: column;
@@ -177,7 +177,7 @@
         border-top: 3px solid #fff;
         border-left: 3px solid #fff;
         transition: all 0.5s ease 0s;
-        z-index: 9994;
+        z-index: 0;
     }
 
     .portfolio .portfolio-wrap .portfolio-info::after {
@@ -191,7 +191,7 @@
         border-bottom: 3px solid #fff;
         border-right: 3px solid #fff;
         transition: all 0.5s ease 0s;
-        z-index: 9994;
+        z-index: 0;
     }
 
     .portfolio .portfolio-wrap .portfolio-info h4 {
@@ -210,7 +210,7 @@
 
     .portfolio .portfolio-wrap .portfolio-links {
         text-align: center;
-        z-index: 4;
+        z-index: 0;
     }
 
     .portfolio .portfolio-wrap .portfolio-links a {

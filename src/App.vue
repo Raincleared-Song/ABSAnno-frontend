@@ -1,7 +1,7 @@
 <template>
     <a-layout id="components-layout-demo-fixed">
         <a-config-provider :autoInsertSpaceInButton="false">
-            <navigation @logout='logout' :id="userId"/>
+            <navigation @logout='logout' :id="userId" />
         </a-config-provider>
 
         <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }">

@@ -1,11 +1,11 @@
 <template>
     <a-layout id="components-layout-demo-fixed">
-        <a-config-provider :autoInsertSpaceInButton="false">
+<!--        <a-config-provider :autoInsertSpaceInButton="false">-->
             <navigation @logout='logout' :id="userId" />
-        </a-config-provider>
+<!--        </a-config-provider>-->
 
         <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }">
-            <div :style="{ background: '#fff', padding: '24px', minHeight: '580px' }">
+            <div :style="{ background: '#fff', padding: '24px', minHeight: '600px' }">
             <router-view :username="userName" :id="userId" @login="login"></router-view>
             </div>
         </a-layout-content>
@@ -13,14 +13,13 @@
             ABSTRACT Testing
         </a-layout-footer>
     </a-layout>
-
 </template>
 
 <style>
     #components-layout-demo-fixed .logo {
         width: 120px;
         height: 31px;
-        background: rgba(255, 255, 255, 0.2);
+        background: #000000 url(assets/logo.jpg) no-repeat center;
         margin: 16px 24px 16px 0;
         float: left;
     }

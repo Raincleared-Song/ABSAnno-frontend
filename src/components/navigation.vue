@@ -26,7 +26,9 @@
                                 <a-button block v-if="id===0" >
                                     <router-link to="/login">登陆 & 注册</router-link>
                                 </a-button>
-                                <a-button v-if="id!==0" @click="onClick" type="danger" block size="small">登出</a-button>
+                                <a-button v-if="id!==0" @click="onClick" type="danger" block size="small">
+                                    <router-link to="/ground">登出</router-link>
+                                </a-button>
                             </template>
                             <a-button type="link">
                                 <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>

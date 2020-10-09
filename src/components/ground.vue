@@ -26,7 +26,8 @@
                     <p></p>
                 </a-col>
         </a-row>
-        <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum" :style="{textAlign: 'center' }" @change="onChange" />
+        <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum"
+                      :style="{textAlign: 'center' }" @change="onChange" />
 
     </div>
 </template>
@@ -63,7 +64,8 @@
                         context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
                        context.msgList = data.question_list
                         while(context.msgList.length < 12){
-                            context.msgList.push({ 'id': -1, 'name': "none", 'user': "none", 'questionNum': 0, 'questionForm': "none"});
+                            context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
+                                'questionNum': 0, 'questionForm': "none"});
                         }
                     }
                 };

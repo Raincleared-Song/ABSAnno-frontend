@@ -17,7 +17,7 @@
       <a-radio value="0">False</a-radio>
     </a-radio-group>
     <div v-if="editable === false">
-      <el-button @click="$emit('inputOk', question.index, checkedOption)">next</el-button>
+      <el-button @click="commit">next</el-button>
     </div>
   </div>
 </template>
@@ -29,7 +29,7 @@ export default {
       // 做题者可编辑
       checkedOption: ""
     };
-  },
+  },  // end of data
   props: {
     question: {
       type: Object,
@@ -45,6 +45,12 @@ export default {
     editable: {
       type: Boolean,
       default: false
+    }
+  },  // end of props
+  methods: {
+    commit() {
+      this.$emit('inputOk', this.question.index, this.checkedOption);
+      console.log("click click");
     }
   }
 }

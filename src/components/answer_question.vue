@@ -5,22 +5,22 @@
     <div v-if="nowQuestion != null">
       <JudgementGroup
           v-if="nowQuestion.type === 'judgement_group'"
-          @input-ok="onInputOk"
+          @inputOk="onInputOk"
           :editable="false"
           :question="nowQuestion" />
       <RadioGroup
           v-else-if="nowQuestion.type === 'select_single'"
-          @input-ok="onInputOk"
+          @inputOk="onInputOk"
           :editable="false"
           :question="nowQuestion" />
       <CheckboxGroup
           v-else-if="nowQuestion.type === 'select_multiple'"
-          @input-ok="onInputOk"
+          @inputOk="onInputOk"
           :editable="false"
           :question="nowQuestion" />
       <TextEdit
           v-else-if="nowQuestion.type === 'text_edit'"
-          @input-ok="onInputOk"
+          @inputOk="onInputOk"
           :editable="false"
           :question="nowQuestion" />
     </div>
@@ -53,15 +53,18 @@ export default {
   data() {
     return {
       missionId: 0,
-      questions: [],
-      answers: [],
+      totalNum: 0,    // 总题目数量
+      questions: [],  // 问题列表
+      answers: [],    // 答案列表
       nowQuestionIndex: 0,  // 从1开始
-      nowQuestion: null
+      nowQuestion: null     // 不要显式地去改，监听nowQuestionIndex来更改
     };
   },  // end of data
   methods: {
     // 发送题目答案
     onInputOk(index, userInput) {
+      console.log("onInputOk");
+      console.log(index, userInput);
       if (index === this.answers.length) {
         this.answers.push(userInput);
       } else if (index >= 0 && index < this.answers.length) {
@@ -70,20 +73,23 @@ export default {
         alert("wrong question index");
       }
       let nextIndex = this.questions.length;
-      // TODO: deal with index out of mission/question range
-      getBackend(API.GET_SINGLE_QUESTION, {
-        id: this.missionId,
-        num: nextIndex,
-        step: 0
-      }, jsonObj => {
-        let dataObj = getDataObj(jsonObj);
-        this.questions.push({
-          index: dataObj.ret,
-          type: 'judgement_group',  // TODO: add more type
-          description: dataObj.word
+      if (index !== this.totalNum - 1) {
+        getBackend(API.GET_SINGLE_QUESTION, {
+          id: this.missionId,
+          num: nextIndex,
+          step: 0
+        }, jsonObj => {
+          let dataObj = getDataObj(jsonObj);
+          this.questions.push({
+            index: dataObj.ret,
+            type: 'judgement_group',  // TODO: add more type
+            description: dataObj.word
+          });
+          this.nowQuestionIndex = this.questions.length;
         });
-      });
-      this.nowQuestionIndex = this.questions.length;
+      } else {
+        this.submit();
+      }
     },
     // 向后端发送数据
     submit() {
@@ -100,23 +106,22 @@ export default {
   created() {
     let name = this.$route.path;
     this.missionId = Number(name.slice(10,));
+    // console.log(this.nowQuestionIndex); // TODO: 0
     // 从后台申请数据加载
     getBackend(API.GET_SINGLE_QUESTION, {
       id: this.missionId,
       num: 0,
       step: 0
     }, jsonObj => {
-      if (jsonObj == null)
-        alert("No more question.");
       let dataObj = getDataObj(jsonObj);
+      this.totalNum = dataObj.total;
       this.questions.push({
         index: dataObj.ret,
         type: 'judgement_group',  // TODO: add more type
-        description: dataObj.word,
-        userInput: ''
+        description: dataObj.word
       });
+      this.nowQuestionIndex = this.questions.length;
     });
-    this.nowQuestionIndex = this.questions.length;
   },  // end of created
   watch: {
     nowQuestionIndex(newVal) {
@@ -127,9 +132,7 @@ export default {
 
 function getDataObj(jsonObj) {
   let dataStr = jsonObj.data;
-  console.log(dataStr);
   dataStr = dataStr.replace(/'/g, '"');
-  console.log(dataStr);
   return JSON.parse(dataStr);
 }
 </script>

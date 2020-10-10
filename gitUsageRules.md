@@ -73,6 +73,10 @@ $ git checkout dev
 $ git pull // 这里必然要更新，因为有可能已经有人在你之前更新了dev
 $ git merge dev-xxx // 注意！这里没有--no-ff参数，因为dev-xxx的声明周期到此为止，在dev-xxx上可以稳定工作的内容放到了dev分支上，dev-xxx没有存在的必要了。
 $ git push // 同理，这里如果出现提示set-upstream，照做，但是一定要将origin/<branch>中的branch和你的当前分支，即dev同名
+$ git checkout dev 
+$ git branch -d dev-xxx // 删除当前特性分支（本地），因为分支已经不再需要。
+$ git push origin --delete dev-xxx // 删除当前特性分支（对应的远端），因为分支已经不再需要。
+
 
 // 如果想要把dev中的内容merge进master，首先要拿到master上最新内容，然后更新dev分支的内容
 // 下面五行几乎不会用到！（对于咱们的开发来说）下方是在拿master中的内容，更新dev

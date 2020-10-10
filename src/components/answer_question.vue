@@ -93,6 +93,10 @@ export default {
       }
     };
   },  // end of data
+  props:[
+    "username",
+    "id",
+  ],
   methods: {
     // 向后端发送数据
     submit() {
@@ -101,7 +105,7 @@ export default {
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION, {
-        user_id: "1", // TODO: get user_id from cookie
+        user_id: this.id,
         mission_id: this.missionId.toString(),
         ans: answers
       }, jsonObj => {

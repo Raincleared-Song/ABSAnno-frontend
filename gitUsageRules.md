@@ -38,7 +38,7 @@ $ git --set-upstream origin dev-xxx
 
 首先确认：
 
-### 本地应该有且仅有三个分支！（除非你在同时开发多个特性）
+### 本地应该有且仅有两/三个分支！（除非你在同时开发多个特性）
 
 ```
 $ git branch -a
@@ -46,6 +46,7 @@ $ git branch -a
 master
 dev
 dev-xxx）
+// 可能没有dev-xxx分支，因为之前的特性分支可能已经结束了生命周期
 ```
 ### 每一次工作之前，必须走以下流程！
 
@@ -53,9 +54,10 @@ dev-xxx）
 // 准备阶段：从dev拿到现在最新的dev分支内容，然后在此基础上进行开发。
 $ git checkout dev // 
 $ git pull
-$ git checkout dev-xxx
+// 如果没有dev-xxx分支，就-b新建一个（并且切换到该分支），否则直接checkout
+$ git checkout -b dev-xxx
 $ git merge dev --no-ff // 这里可能会弹窗让你写merge信息；这一段的目的是从dev拿到最新的内容，可以这么写
-$ git push // 这里如果出现提示set-upstream，照做，但是一定要将origin/<branch>中的branch和你的当前分支，即dev同名
+$ git push // 这里如果出现提示set-upstream，照做，git push --set-upstream origin dev-xxx即可，dev-xxx最好与当前分支同名
 
 $ git checkout dev-xxx // 在自己的分支上开发！
 
@@ -65,7 +67,7 @@ $ git checkout dev-xxx // 在自己的分支上开发！
 $ git checkout dev-xxx // 在自己的特性分支上！
 $ git add .
 $ git commit -m "这是你的commit信息"
-$ git push // 这里如果出现提示set-upstream，照做，但是一定要将origin/<branch>中的branch和你的当前分支，即dev同名
+$ git push // 这里如果出现提示set-upstream，照做，git push --set-upstream origin dev-xxx即可，dev-xxx最好与当前分支同名
 
 
 // 收尾阶段：待你准备将dev-xxx分支下的内容merge进dev（merge进master同理）

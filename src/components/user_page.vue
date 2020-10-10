@@ -1,9 +1,7 @@
 <template>
-
   <div>
     <a-layout id="components-layout-demo-side" style="min-height: 100vh">
-      <a-layout-sider theme="light" v-model="collapsed" collapsible>
-        <div class="logo" />
+      <a-layout-sider theme="light" v-model="collapsed">
         <a-avatar :size="64" icon="user">USER</a-avatar>
         <!--          这里要从数据库拿名字和身份，显示在下方-->
         <h3>{{this.user_name}}</h3>
@@ -29,28 +27,28 @@
         </a-menu>
       </a-layout-sider>
       <a-layout>
-        <a-layout-header style="background: #fff; padding: 0">{{pageListChinese[this.page_number]}}</a-layout-header>
-        <a-layout-content style="margin: 0 16px">
-          <a-breadcrumb style="margin: 16px 0">
-            <a-breadcrumb-item>User</a-breadcrumb-item>
-            <a-breadcrumb-item>{{this.user_name}}</a-breadcrumb-item>
-          </a-breadcrumb>
+        <!--        <a-layout-header style="background: #fff; padding: 0">{{pageListChinese[this.page_number]}}</a-layout-header>-->
+        <a-layout-content style="background: #fff; padding: 80px">
+          <!--          <a-breadcrumb style="margin: 16px 0">-->
+          <!--            <a-breadcrumb-item>User</a-breadcrumb-item>-->
+          <!--            <a-breadcrumb-item>{{this.user_name}}</a-breadcrumb-item>-->
+          <!--          </a-breadcrumb>-->
           <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
             <!--          填写下方的四个div中的内容，预计有表格、列表、输入框等等。-->
             <div v-show="0===page_number">
               <div>
-                <a-descriptions title="User Info">
-                  <a-descriptions-item label="UserName">
-                    Zhou Maomao
+                <a-descriptions title="用户信息">
+                  <a-descriptions-item label="用户名">
+                    {{this.user_name}}
                   </a-descriptions-item>
-                  <a-descriptions-item label="Telephone">
-                    N/A
+                  <a-descriptions-item label="用户积分">
+                    {{this.user_score}}
                   </a-descriptions-item>
-                  <a-descriptions-item label="Mail">
-                    example@me.com
+                  <a-descriptions-item label="用户信誉">
+                    {{this.user_weight}}
                   </a-descriptions-item>
-                  <a-descriptions-item label="Remark">
-                    ???
+                  <a-descriptions-item label="用户答题数量/完成任务数">
+                    {{this.user_ans_num}}
                   </a-descriptions-item>
                   <a-descriptions-item label="Credit">
                     Credit
@@ -112,62 +110,92 @@ for (let i = 0; i < 23; i++) {
         'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
   });
 }
-  export default {
-    name: "user_page",
-    data () {
-      return {
-        listData,
-        pagination: {
-          onChange: page => {
-            console.log(page);
-          },
-          pageSize: 3,
+export default {
+  name: "user_page",
+  data () {
+    return {
+      listData,
+      pagination: {
+        onChange: page => {
+          console.log(page);
         },
-        actions: [
-          { type: 'star-o', text: '156' },
-          { type: 'like-o', text: '156' },
-          { type: 'message', text: '2' },
-        ],
-        collapsed: false,
-        page_number: 0,
-        // 这里需要默认值？怎么获取userid？
-        userid: 1,
-        info: [],
-        answerList: [],
-        myPublish: [],
-        pageList: ['user', 'history', 'mission', 'user'],
-        pageListChinese: ['用户信息', '答题历史', '我的发布', '用户信息（待定）'],
+        pageSize: 3,
+      },
+      actions: [
+        { type: 'star-o', text: '156' },
+        { type: 'like-o', text: '156' },
+        { type: 'message', text: '2' },
+      ],
+      collapsed: false,
+      page_number: 0,
+      userid: -1,
+      info: [],
+      answerList: [],
+      myPublish: [],
+      pageList: ['user', 'history', 'mission', 'user'],
+      pageListChinese: ['用户信息', '答题历史', '我的发布', '用户信息（待定）'],
 
 
-        user_name: 'default username',
-      }
+      user_name: 'default username',
+      user_score: 0,
+      user_weight: 0,
+      user_ans_num: 0,
+    }
+  },
+  props:[
+    "id",
+  ],
+  methods: {
+    change: function (index) {
+      this.page_number = index;
+      this.get_user_info(this.id, this.pageList[index])
+      console.log(this.id)
+
     },
-    props:[
-      "id",
-    ],
-    methods: {
-      change: function (index) {
-        this.page_number = index;
-        this.get_user_info(this.userid, this.pageList[index])
+    parseHistory: function (info) {
+      let data = JSON.parse(info.data.replace(/'/g,'"'))
+      console.log(data)
+    },
+    parseUserInfo: function (info) {
+      let data = JSON.parse(info.data.replace(/'/g,'"'))
+      console.log(data.name, data.num, data.weight, data.score)
+      this.user_name = data.name
+      this.user_ans_num = data.num
+      this.user_weight = data.weight
+      this.user_score = data.score
 
-      },
-      get_user_info: function (user_id, content) {
-        const xhr = new XMLHttpRequest()
-        let context = this
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState == 4 && xhr.status == 201) {
-            let info = xhr.responseText
-            console.log(info)
+    },
+    parseMission: function (info) {
+      let data = JSON.parse(info.data.replace(/'/g,'"'))
+      console.log(data)
+    },
+    get_user_info: function (user_id, content) {
+      const xhr = new XMLHttpRequest()
+      let context = this
+      console.log(this.id)
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 201) {
+          let info = JSON.parse(xhr.responseText)
+          console.log(info)
+          console.log(content)
+          if (content === "history")
+            context.parseHistory(info)
+          else if (content === "user")
+            context.parseUserInfo(info)
+          else if (content === "mission")
+            context.parseMission(info)
 
-          }
         }
-        xhr.open("get", content)
-      },
-      mounted: function () {
-        this.change(0);
       }
+      xhr.open("get", "backend/user?id="+user_id.toString()+"&method="+content.toString())
+      xhr.send()
+    },
+    mounted: function () {
+      this.change(0);
+      console.log("in mounted function")
     }
   }
+}
 
 </script>
 <style scoped>

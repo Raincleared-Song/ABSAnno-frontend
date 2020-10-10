@@ -1,6 +1,5 @@
 <template>
   <body id="root">
-
     <!-- 显示问题的区域 -->
     <div v-if="nowQuestion != null">
       <JudgementGroup
@@ -184,6 +183,6 @@ function getDataObj(jsonObj) {
 
 <style>
 #root {
-  padding: 50px 150px 50px 150px;
+  padding: 50px 150px;
 }
 </style>

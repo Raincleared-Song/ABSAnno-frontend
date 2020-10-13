@@ -111,6 +111,10 @@
         }
       };
     },  // end of data
+    props:[
+      "username",
+      "id",
+    ],
     methods: {
       addJudgementQuestion() {
         this.questions.push({
@@ -154,9 +158,10 @@
           name: this.mission_description,
           question_form: "judgement", // TODO: add more question_form
           question_num: this.questions.length.toString(),
-          user_id: "1",   // TODO: set user id
+          user_id: this.id.toString(),
           total: this.minimum_total_annotation.toString()
         };
+        console.log(this.id)
         submitObj.question_list = this.questions.map(element => {
           return { contains: element.description };
         });

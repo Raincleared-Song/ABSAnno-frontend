@@ -6,6 +6,40 @@ by zyz
 
 ### 所有的PUSH都是到远端的同名仓库！这样是最简洁的！
 
+## 当前环境整理
+
+方法1：在最近没有未commit的内容，未做大范围修改。直接删除本地所有内容，重新clone。
+
+```
+$ git clone git@gitlab.secoder.net:abstract/ABSanno-frontend.git // 对于前段而言
+```
+
+方法2：最近有未commit内容，并且`git branch -a`中出现了除了自己创建的分支以外的分支（或者其他各种乱七八糟的提示）。
+
+对于每一个这样的branch_name：
+
+```
+$ git checkout [branch_name]
+$ git branch --unset-upstream
+$ git push // 这里必然会提示你--set-upstream，这时照做，输入类似git push --set-upstream origin [branch_name]
+
+$ git checkout dev
+$ git branch --unset-upstream
+$ git push // 同样会出现--set-upstream，照做，输入'git push --set-upstream origin dev'
+$ git pull
+
+$ git checkout [branch_name]
+$ git merge dev --no-ff // 把dev的新内容merge进这个分支
+$ git push
+
+$ git checkout dev // 把当前分支merge进dev分支，之后删除这个特性分支
+$ git merge [branch_name]
+$ git branch -b [branch_name]
+$ git push origin --delete [branch_name]
+```
+
+
+
 ## DEV分支设置
 
 ```
@@ -34,11 +68,13 @@ $ git --set-upstream origin dev-xxx
 
 ## 工作流程（检验通过）
 
+**简单来说：在特性分支上工作，merge到dev分支时无--no-ff参数（因为特性分支生命周期停止）；当dev分支需要被merge到master上时（或者其他的merge），必须要有--no-ff参数。**
+
 完成上述建立分支并且和远程仓库连接。
 
 首先确认：
 
-### 本地应该有且仅有三个分支！（除非你在同时开发多个特性）
+### 本地应该有且仅有两/三个分支！（除非你在同时开发多个特性）
 
 ```
 $ git branch -a
@@ -46,6 +82,7 @@ $ git branch -a
 master
 dev
 dev-xxx）
+// 可能没有dev-xxx分支，因为之前的特性分支可能已经结束了生命周期
 ```
 ### 每一次工作之前，必须走以下流程！
 
@@ -53,9 +90,10 @@ dev-xxx）
 // 准备阶段：从dev拿到现在最新的dev分支内容，然后在此基础上进行开发。
 $ git checkout dev // 
 $ git pull
-$ git checkout dev-xxx
+// 如果没有dev-xxx分支，就-b新建一个（并且切换到该分支），否则直接checkout
+$ git checkout -b dev-xxx
 $ git merge dev --no-ff // 这里可能会弹窗让你写merge信息；这一段的目的是从dev拿到最新的内容，可以这么写
-$ git push // 这里如果出现提示set-upstream，照做，但是一定要将origin/<branch>中的branch和你的当前分支，即dev同名
+$ git push // 这里如果出现提示set-upstream，照做，git push --set-upstream origin dev-xxx即可，dev-xxx最好与当前分支同名
 
 $ git checkout dev-xxx // 在自己的分支上开发！
 
@@ -65,7 +103,7 @@ $ git checkout dev-xxx // 在自己的分支上开发！
 $ git checkout dev-xxx // 在自己的特性分支上！
 $ git add .
 $ git commit -m "这是你的commit信息"
-$ git push // 这里如果出现提示set-upstream，照做，但是一定要将origin/<branch>中的branch和你的当前分支，即dev同名
+$ git push // 这里如果出现提示set-upstream，照做，git push --set-upstream origin dev-xxx即可，dev-xxx最好与当前分支同名
 
 
 // 收尾阶段：待你准备将dev-xxx分支下的内容merge进dev（merge进master同理）
@@ -73,6 +111,10 @@ $ git checkout dev
 $ git pull // 这里必然要更新，因为有可能已经有人在你之前更新了dev
 $ git merge dev-xxx // 注意！这里没有--no-ff参数，因为dev-xxx的声明周期到此为止，在dev-xxx上可以稳定工作的内容放到了dev分支上，dev-xxx没有存在的必要了。
 $ git push // 同理，这里如果出现提示set-upstream，照做，但是一定要将origin/<branch>中的branch和你的当前分支，即dev同名
+$ git checkout dev 
+$ git branch -d dev-xxx // 删除当前特性分支（本地），因为分支已经不再需要。
+$ git push origin --delete dev-xxx // 删除当前特性分支（对应的远端），因为分支已经不再需要。
+
 
 // 如果想要把dev中的内容merge进master，首先要拿到master上最新内容，然后更新dev分支的内容
 // 下面五行几乎不会用到！（对于咱们的开发来说）下方是在拿master中的内容，更新dev

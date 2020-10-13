@@ -6,51 +6,33 @@
         <!-- 左侧边栏 -->
         <a-layout-sider width="300" style="background: #fff">
           <a-menu mode="inline" style="height: 100%">
-            <a-menu-item key="1" @click="addJudgementQuestion">添加判断题</a-menu-item>
-            <a-sub-menu>
-              <span slot="title">选择题</span>
-              <a-menu-item key="2" @click="addSingleChoiceQuestion">添加单选题</a-menu-item>
-              <a-menu-item key="3" @click="addMultipleChoiceQuestion">添加多选题</a-menu-item>
-            </a-sub-menu>
-            <a-menu-item key="4" @click="addTextEditQuestion">添加文字题</a-menu-item>
+            <a-menu-item key="1" @click="missionType = 'judgement'">添加判断题任务</a-menu-item>
+            <a-menu-item key="2" @click="missionType = 'checkbox'">添加选择题任务</a-menu-item>
+            <a-menu-item key="3" @click="missionType = 'text'">添加文字题任务</a-menu-item>
           </a-menu>
         </a-layout-sider>
 
-        <!-- 题目预览区 -->
+        <!-- 任务预览区 -->
         <a-layout-content style="margin: 10px 40px">
           <h2>编辑任务</h2>
           <div style="margin: 20px">
-            任务名称：<a-input palceholder="your mission title" v-model.trim="mission_description" />
+            任务名称：
+            <a-input
+                v-model.trim="missionDescription"
+                palceholder="your mission title" />
           </div>
           <div style="margin: 20px">
-            任务至少标注次数：<a-input-number v-model.trim.number="minimum_total_annotation" />
+            任务至少标注次数：
+            <a-input-number
+                v-model.trim.number="minimumTotalAnnotation" />
           </div>
 
-          <!-- 提交成功的消息框 -->
-          <a-modal
-              title="Success!"
-              :visible="modal.visible"
-              @ok="$router.push('/ground')"
-              @cancel="onCancelModal"
-              closable="false">
-            <div style="margin: 20px">任务提交成功！</div>
-            <div style="margin: 20px">是否返回广场？</div>
-          </a-modal>
-
-          <!-- 底部分页栏和提交按钮 -->
-          <div style="margin: 20px auto">
-            <a-pagination
-                v-model="nowQuestionIndex"
-                :total="questions.length"
-                :page-size="1" />
-          </div>
-          <a-button
-              v-show="questions.length > 0 || nowQuestion != null"
-              :disabled="modal.submitted"
-              type="primary" @click="submit">
-            submit
-          </a-button>
-        </a-layout-content>
+          <edit_question
+              :username="'l18'"
+              :id="5"
+              :type="missionType"
+              :mission_description="missionDescription"
+              :minimum_total_annotation="minimumTotalAnnotation" />
 
       </a-layout>
     </a-layout-content>
@@ -58,8 +40,22 @@
 </template>
 
 <script>
+import edit_question from "@/components/edit_question";
 export default {
-  name: "create_mission"
+  name: "create_mission",
+  components: {
+    edit_question: edit_question
+  },
+  data() {
+    return {
+      missionType: "",
+      missionDescription: "",
+      minimumTotalAnnotation: 10,
+    }
+  },
+  methods: {
+
+  }
 }
 </script>
 

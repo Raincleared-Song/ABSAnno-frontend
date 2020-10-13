@@ -93,8 +93,6 @@
     },  // end of components
     data() {
       return {
-        mission_description: "",
-        minimum_total_annotation: 10,
         questions: [],
         nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
         nowQuestion: null,
@@ -104,10 +102,32 @@
         }
       };
     },  // end of data
-    props:[
-      "username",
-      "id",
-    ],
+    props: {
+      username: {
+        type: String,
+        default() {
+          return "joe doe";
+        }
+      },
+      id: {
+        type: Number,
+        default() {
+          return 0;
+        }
+      },
+      mission_description: {
+        type: String,
+        default() {
+          return "";
+        }
+      },
+      minimum_total_annotation: {
+        type: Number,
+        default() {
+          return 10;
+        }
+      }
+    },
     methods: {
       addJudgementQuestion() {
         this.questions.push({

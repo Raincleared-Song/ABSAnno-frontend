@@ -5,15 +5,7 @@
 
         <!-- 左侧边栏 -->
         <a-layout-sider width="300" style="background: #fff">
-          <a-menu mode="inline" style="height: 100%">
-            <a-menu-item key="1" @click="addJudgementQuestion">添加判断题</a-menu-item>
-            <a-sub-menu>
-              <span slot="title">选择题</span>
-              <a-menu-item key="2" @click="addSingleChoiceQuestion">添加单选题</a-menu-item>
-              <a-menu-item key="3" @click="addMultipleChoiceQuestion">添加多选题</a-menu-item>
-            </a-sub-menu>
-            <a-menu-item key="4" @click="addTextEditQuestion">添加文字题</a-menu-item>
-          </a-menu>
+          <!-- TODO: add mission info & add_question button -->
         </a-layout-sider>
 
         <!-- 题目预览区 -->
@@ -27,7 +19,7 @@
           </div>
           <div v-if="nowQuestion != null">
             <JudgementGroup
-                v-if="nowQuestion.type === 'judgement_group'"
+                v-if="nowQuestion.type === 'judgement'"
                 :editable="true"
                 :question="nowQuestion" />
             <RadioGroup
@@ -92,6 +84,7 @@
   let nowId = 0;
 
   export default {
+    name: "edit_question",
     components: {
       JudgementGroup: JudgementGroup,
       TextEdit: TextEdit,
@@ -119,7 +112,7 @@
       addJudgementQuestion() {
         this.questions.push({
           id: nowId++,
-          type: 'judgement_group',
+          type: 'judgement',
           description: ""
         });
         this.nowQuestionIndex = this.questions.length;

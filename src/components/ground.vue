@@ -57,6 +57,7 @@
         props:[
             "username",
             "id",
+            "iden",
         ],
         methods: {
             min(a, b){

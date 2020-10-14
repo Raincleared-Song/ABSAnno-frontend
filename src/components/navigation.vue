@@ -13,7 +13,7 @@
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>
             </a-menu-item>
-            <a-menu-item v-if="id!==0" key="/edit">
+            <a-menu-item v-if="iden === 1" key="/edit">
                 <router-link to="/edit">发布题目</router-link>
             </a-menu-item>
             <a-menu-item v-if="id!==0" key="/user">
@@ -63,6 +63,7 @@
         props:[
             "username",
             "id",
+            "iden",
         ],
         data() {
             return {
@@ -76,26 +77,12 @@
         },
         watch: {
             $route(to, from) {
-                // let name = this.$route.path;
                 this.current = [this.$route.path];
-                // if(name === "/login" || name === "/signin" || name === "/user"){
-                //     this.current = ["0"];
-                // }
-                // else{
-                //
-                // }
                 console.log(this.current);
             }
         },
         mounted:function(){
-            // let name = this.$route.path;
             this.current = [this.$route.path];
-            // if(name === "/login" || name === "/signin" || name === "/user"){
-            //     this.current = ["0"];
-            // }
-            // else{
-            //     this.current = [this.$route.path];
-            // }
             console.log(this.current);
         }
     }

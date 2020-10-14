@@ -40,8 +40,8 @@
                     <span>
                         <a-popover :title="'欢迎，'+username" placement="bottom" >
                             <template slot="content">
-                                <p>用户名：{{this.username}}</p>
-                                <p>您的权限：{{this.power}}</p>
+                                用户名：{{this.username}}<br/>
+                                您的权限：{{this.power}}
                             </template>
                             <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>
                         </a-popover>

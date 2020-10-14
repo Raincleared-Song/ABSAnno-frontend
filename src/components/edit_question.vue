@@ -47,10 +47,8 @@
           </div>
           <a-button
               v-show="questions.length > 0 || nowQuestion != null"
-              :disabled="modal.submitted"
-              type="primary" @click="submit">
-            submit
-          </a-button>
+              type="primary" @click="submit"
+          >submit</a-button>
         </a-layout-content>
 
       </a-layout>
@@ -78,11 +76,7 @@
       return {
         questions: [],
         nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
-        nowQuestion: null,
-        modal: {
-          visible: false,
-          submitted: false
-        }
+        nowQuestion: null
       };
     },  // end of data
     props: {
@@ -151,7 +145,7 @@
       submit() {
         let submitObj = {
           name: this.mission_description,
-          question_form: "judgement", // TODO: add more question_form
+          question_form: this.mission_type,
           question_num: this.questions.length.toString(),
           user_id: this.id.toString(),
           total: this.minimum_total_annotation.toString()
@@ -163,7 +157,8 @@
         console.log(submitObj);
         postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {
           console.log(jsonObj);
-          this.modal.visible = true;
+          this.$message.success("提交成功！即将返回首页！");
+          this.$router.push("/ground");
         });
       },
       // 这两个方法处理子组件触发的事件
@@ -180,11 +175,6 @@
           return question.id === questionId;
         });
         this.questions[targetIdx].options.splice(optionIdx, 1);
-      },
-      // 消息框点击取消之后
-      onCancelModal() {
-        this.modal.visible = false;
-        this.modal.submitted = true;
       }
     },  // end of methods
     watch: {

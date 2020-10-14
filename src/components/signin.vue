@@ -27,7 +27,7 @@
             <input type="submit" name="" value="注册" @click="sendMsg">
         </div>
         <p></p>
-        <p>已有账号？请<router-link to="/login">登录</router-link></p>
+        <p style="color: #ffffff">已有账号？请<router-link to="/login">登录</router-link></p>
     </div>
     <iframe id="iframe" name="iframe" style="display:none;"></iframe>
     </body>
@@ -64,8 +64,7 @@
                     if (xhr.readyState === 4 && xhr.status === 201){
                         let res = JSON.parse(xhr.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
-                        context.$emit('login', {"name":data.name, "id":data.id, "iden": data.identity});
-                        // TODO 权限管理
+                        context.$emit('login', {"name":data.name, "power": data.power});
                         context.$router.push('/ground');
                     }
                     else if(xhr.readyState === 4){

@@ -6,7 +6,8 @@
 
                         <!--                        图片尺寸：500*350            -->
 
-                        <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="210" >
+                        <img v-if="msg.questionForm === 'judgement'" src="@/assets/ground/judgement2.jpg" alt="" width="210" >
+                        <img v-if="msg.questionForm === 'choice'" src="@/assets/ground/choice2.jpg" alt="" width="210" >
                         <div  class="portfolio-info">
                             <h4>{{msg.name}}</h4>
                             <p>题目数量：{{msg.questionNum}}</p>
@@ -21,8 +22,10 @@
                                             题目类型：{{msg.questionForm}}<br/>
                                             点击按钮，查看规则说明
                                         </template>
+                                        <router-link to="/rules">
+                                            <a-icon type="info-circle" />
+                                        </router-link>
                                     </a-popover>
-                                    <router-link v-if="id!==0" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
                                     <router-link v-if="iden===2" to="/ground">
                                         <a-icon type="delete" @click="deleteMsg(msg.id)"/>
                                     </router-link>
@@ -34,7 +37,7 @@
                     <!--                    空白答题页面的填充-->
                     <div v-if="msg.questionForm === 'none'" align="center">
                         <!--                        图片尺寸：500*350            -->
-                        <img src="@/assets/blank.jpg" alt="" width="210" >
+                        <img src="@/assets/ground/blank2.jpg" alt="" width="210" >
                     </div>
 
                 </a-col>
@@ -63,8 +66,8 @@
         },
         props:[
             "username",
-            "id",
-            "iden",
+            // "id",
+            "power",
         ],
         methods: {
             min(a, b){
@@ -90,8 +93,8 @@
                     }
                 };
                 this.getMsgNum = (pageNumber-1)*12;
-                console.log("backend/square?id="+this.id.toString()+"&num="+this.getMsgNum.toString());
-                xhr.open("get","backend/square?id="+this.id.toString()+"&num="+this.getMsgNum.toString());
+                console.log("backend/square?num="+this.getMsgNum.toString());
+                xhr.open("get","backend/square?num="+this.getMsgNum.toString());
                 xhr.send();
             },
 

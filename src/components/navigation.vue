@@ -42,10 +42,10 @@
                 <div >
                     <span>
                         <a-popover :title="'欢迎，'+username" placement="bottom" >
-<!--                            <template slot="content">-->
-<!--                                <p>用户名：{{this.username}}</p>-->
-<!--                                <p>id：{{this.id}}</p>-->
-<!--                            </template>-->
+                            <template slot="content">
+                                <p>用户名：{{this.username}}</p>
+                                <p>您的权限：{{this.power}}</p>
+                            </template>
                             <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>
                         </a-popover>
                     </span>
@@ -62,8 +62,7 @@
         },
         props:[
             "username",
-            "id",
-            "iden",
+            "power",
         ],
         data() {
             return {

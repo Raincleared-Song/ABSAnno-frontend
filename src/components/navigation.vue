@@ -13,7 +13,7 @@
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>
             </a-menu-item>
-            <a-menu-item v-if="power === 1" key="/edit">
+            <a-menu-item v-if="power > 0" key="/edit">
                 <router-link to="/edit">发布题目</router-link>
             </a-menu-item>
             <a-menu-item v-if="power!==-1" key="/user">

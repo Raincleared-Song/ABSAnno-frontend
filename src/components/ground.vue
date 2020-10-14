@@ -6,27 +6,28 @@
 
                         <!--                        图片尺寸：500*350            -->
 
-                        <img v-if="msg.questionForm === 'judgement'" src="@/assets/ground/judgement2.jpg" alt="" width="210" >
-                        <img v-if="msg.questionForm === 'choice'" src="@/assets/ground/choice2.jpg" alt="" width="210" >
+                        <img v-if="msg.questionForm === 'judgement'" src="@/assets/ground/judgement2.jpg" alt="" width="230" >
+                        <img v-if="msg.questionForm === 'choice'" src="@/assets/ground/choice2.jpg" alt="" width="230" >
                         <div  class="portfolio-info">
                             <h4>{{msg.name}}</h4>
                             <p>题目数量：{{msg.questionNum}}</p>
                             <div class="portfolio-links">
                                 <div class="icons-list">
-                                    <router-link v-if="id!==0" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
+                                    <router-link v-if="power!==-1" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
+
                                     <a-popover title="题组详情" trigger="hover">
                                         <template slot="content">
                                             题目：{{msg.name}}<br />
                                             题目数量：{{msg.questionNum}}<br />
                                             发布者：{{msg.user}}<br />
                                             题目类型：{{msg.questionForm}}<br/>
-                                            点击按钮，查看规则说明
+<!--                                            点击按钮，查看规则说明-->
                                         </template>
                                         <router-link to="/rules">
                                             <a-icon type="info-circle" />
                                         </router-link>
                                     </a-popover>
-                                    <router-link v-if="iden===2" to="/ground">
+                                    <router-link v-if="power===2" to="/ground">
                                         <a-icon type="delete" @click="deleteMsg(msg.id)"/>
                                     </router-link>
                                 </div>
@@ -37,7 +38,7 @@
                     <!--                    空白答题页面的填充-->
                     <div v-if="msg.questionForm === 'none'" align="center">
                         <!--                        图片尺寸：500*350            -->
-                        <img src="@/assets/ground/blank2.jpg" alt="" width="210" >
+                        <img src="@/assets/ground/blank2.jpg" alt="" width="230" >
                     </div>
 
                 </a-col>
@@ -99,17 +100,17 @@
             },
 
             deleteMsg(msgId){
-                const xhr = new XMLHttpRequest()
-                let context = this
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4 && xhr.status === 201){
-                        context.$router.push('/ground'); // 重新加载题目广场
-                        // TODO 检查分页符
-                    }
-                };
-                xhr.open("get","backend/delete?msgid="+msgId);
+                // const xhr = new XMLHttpRequest()
+                // let context = this
+                // xhr.onreadystatechange = function () {
+                //     if (xhr.readyState === 4 && xhr.status === 201){
+                //         context.$router.push('/ground'); // 重新加载题目广场
+                //         // TODO 检查分页符
+                //     }
+                // };
+                // xhr.open("get","backend/delete?msgid="+msgId);
                 console.log("backend/deletemsg?msgid="+msgId);
-                xhr.send();
+                // xhr.send();
             }
         },
         mounted:function () {   //自动触发写入的函数

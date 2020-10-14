@@ -48,7 +48,7 @@
             },
             login(data){
                 this.userName=data.name;
-                this.power=data.iden;
+                this.power=data.power;
                 console.log(this.userName);
             }
         }

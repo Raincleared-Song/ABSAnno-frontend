@@ -22,7 +22,7 @@
 
             <a-menu-item v-if="power===-1" key="/login" style="float: right;">
                     <a-button ghost>
-                        <router-link to="/login">登陆</router-link>
+                        <router-link to="/login">登录</router-link>
                     </a-button>
             </a-menu-item>
             <a-menu-item v-if="power===-1" key="/signin" style="float: right;">

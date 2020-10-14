@@ -13,32 +13,29 @@
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>
             </a-menu-item>
-            <a-menu-item v-if="iden === 1" key="/edit">
+            <a-menu-item v-if="power === 1" key="/edit">
                 <router-link to="/edit">发布题目</router-link>
             </a-menu-item>
-            <a-menu-item v-if="id!==0" key="/user">
+            <a-menu-item v-if="power!==-1" key="/user">
                 <router-link to="/user">个人中心</router-link>
             </a-menu-item>
 
-            <a-menu-item v-if="id===0" key="/login" style="float: right;">
-<!--                <a-button-group>-->
+            <a-menu-item v-if="power===-1" key="/login" style="float: right;">
                     <a-button ghost>
                         <router-link to="/login">登陆</router-link>
                     </a-button>
-
-<!--                </a-button-group>-->
             </a-menu-item>
-            <a-menu-item v-if="id===0" key="/signin" style="float: right;">
+            <a-menu-item v-if="power===-1" key="/signin" style="float: right;">
                 <a-button ghost>
                     <router-link to="/signin">注册</router-link>
                 </a-button>
             </a-menu-item>
-            <a-menu-item v-if="id!==0" style="float: right;">
-                <a-button v-if="id!==0" @click="onClick" type="danger" ghost >
+            <a-menu-item v-if="power!==-1" style="float: right;">
+                <a-button v-if="power!==-1" @click="onClick" type="danger" ghost >
                     <router-link to="/ground">登出</router-link>
                 </a-button>
             </a-menu-item>
-            <a-menu-item v-if="id!==0" key="0" style="float: right;">
+            <a-menu-item v-if="power!==-1" key="0" style="float: right;">
                 <div >
                     <span>
                         <a-popover :title="'欢迎，'+username" placement="bottom" >

@@ -107,7 +107,7 @@
                         // TODO 检查分页符
                     }
                 };
-                xhr.open("get","backend/delege?msgid="+msgId);
+                xhr.open("get","backend/delete?msgid="+msgId);
                 console.log("backend/deletemsg?msgid="+msgId);
                 xhr.send();
             }

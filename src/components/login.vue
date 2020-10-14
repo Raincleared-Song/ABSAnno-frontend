@@ -47,13 +47,15 @@
         },
         methods: {
             sendMsg(){
-                console.log(this.name, this.secret)
+                // console.log(this.name, this.secret)
                 const xhr = new XMLHttpRequest()
                 let context = this
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 201){
                         let res = JSON.parse(xhr.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
+                        console.log(data)
+                        console.log(data.name, data.power);
                         context.$emit('login', {"name":data.name, "power":data.power});
                         context.$router.push('/ground');
                     }

@@ -12,13 +12,13 @@
                     题目类型
                     <a-select
                             mode="multiple"
-                            :default-value="['a1', 'b2']"
+                            :default-value="type"
                             style="width: 70%"
                             placeholder="请选择您期待的题目类型"
-                            @change="handleChange"
+                            @change="handleChangeType"
                     >
-                        <a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">
-                            {{ (i + 9).toString(36) + i }}
+                        <a-select-option v-for="t in typeTotal" :key="t">
+                            {{t}}
                         </a-select-option>
                     </a-select>
                 </a-col>
@@ -26,18 +26,18 @@
                     题目主题
                     <a-select
                             mode="multiple"
-                            :default-value="['a1', 'b2']"
+                            :default-value="theme"
                             style="width: 70%"
                             placeholder="请选择您期待的题目主题"
-                            @change="handleChange"
+                            @change="handleChangeTheme"
                     >
-                        <a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">
-                            {{ (i + 9).toString(36) + i }}
+                        <a-select-option v-for="t in themeTotal" :key="t">
+                            {{t}}
                         </a-select-option>
                     </a-select>
                 </a-col>
                 <a-col :span="2">
-                    <a-button>确定</a-button>
+                    <a-button @click="sendSelect">确定</a-button>
                 </a-col>
             </a-row>
         </div>
@@ -104,7 +104,10 @@
                 pagesize: 12,
                 getMsgNum:0,
                 thisPageSize:12,
-                type:["total"],
+                type:["全部"],
+                theme:["全部"],
+                themeTotal:["全部","食物", "风景","宠物","运动"],
+                typeTotal:["全部","文字","图片","选择","判断"],
             }
         },
         props:[
@@ -157,9 +160,18 @@
             onSearch(value) {
                 console.log(value);
             },
-            handleChange(value) {
-                console.log(`selected ${value}`);
+            handleChangeTheme(value) {
+                // console.log(`selected ${value}`);
+                this.theme.push(value);
             },
+            handleChangeType(value) {
+                // console.log(`selected ${value}`);
+                this.type.push(value);
+            },
+            sendSelect(){
+                console.log(this.theme);
+                console.log(this.type);
+            }
         },
         mounted:function () {   //自动触发写入的函数
             this.onChange(1);

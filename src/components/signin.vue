@@ -27,7 +27,7 @@
             <input type="submit" name="" value="注册" @click="sendMsg">
         </div>
         <p></p>
-        <p>已有账号？请<router-link to="/login">登录</router-link></p>
+        <p style="color: #ffffff">已有账号？请<router-link to="/login">登录</router-link></p>
     </div>
     <iframe id="iframe" name="iframe" style="display:none;"></iframe>
     </body>
@@ -57,14 +57,15 @@
         },
         methods: {
             sendMsg(){
-                console.log(this.name, this.secret)
+                // console.log(this.name, this.secret)
                 const xhr = new XMLHttpRequest()
                 let context = this
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 201){
                         let res = JSON.parse(xhr.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
-                        context.$emit('login', {"name":data.name, "id":data.id});
+                        console.log(data.name, data.power);
+                        context.$emit('login', {"name":data.name, "power": data.power});
                         context.$router.push('/ground');
                     }
                     else if(xhr.readyState === 4){

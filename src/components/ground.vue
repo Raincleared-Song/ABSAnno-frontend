@@ -1,5 +1,47 @@
 <template>
     <div class = "portfolio">
+        <div>
+            <a-row >
+                <a-col :span="7">
+                    <a-input-search placeholder="请输入题目关键词" enter-button @search="onSearch" />
+                </a-col>
+            </a-row>
+            <br/>
+            <a-row >
+                <a-col :span="8">
+                    题目类型
+                    <a-select
+                            mode="multiple"
+                            :default-value="['a1', 'b2']"
+                            style="width: 70%"
+                            placeholder="请选择您期待的题目类型"
+                            @change="handleChange"
+                    >
+                        <a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">
+                            {{ (i + 9).toString(36) + i }}
+                        </a-select-option>
+                    </a-select>
+                </a-col>
+                <a-col :span="8">
+                    题目主题
+                    <a-select
+                            mode="multiple"
+                            :default-value="['a1', 'b2']"
+                            style="width: 70%"
+                            placeholder="请选择您期待的题目主题"
+                            @change="handleChange"
+                    >
+                        <a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">
+                            {{ (i + 9).toString(36) + i }}
+                        </a-select-option>
+                    </a-select>
+                </a-col>
+                <a-col :span="2">
+                    <a-button>确定</a-button>
+                </a-col>
+            </a-row>
+        </div>
+        <a-divider />
         <a-row type="flex" justify="space-around">
                 <a-col :span="5" v-for="msg in msgList" :key="msg">
                     <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
@@ -111,7 +153,13 @@
                 // xhr.open("get","backend/delete?msgid="+msgId);
                 console.log("backend/deletemsg?msgid="+msgId);
                 // xhr.send();
-            }
+            },
+            onSearch(value) {
+                console.log(value);
+            },
+            handleChange(value) {
+                console.log(`selected ${value}`);
+            },
         },
         mounted:function () {   //自动触发写入的函数
             this.onChange(1);

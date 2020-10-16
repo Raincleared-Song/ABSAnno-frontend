@@ -1,5 +1,47 @@
 <template>
     <div class = "portfolio">
+        <div>
+            <a-row >
+                <a-col :span="7">
+                    <a-input-search placeholder="请输入题目关键词" enter-button @search="onSearch" />
+                </a-col>
+            </a-row>
+            <br/>
+            <a-row >
+                <a-col :span="8">
+                    题目类型
+                    <a-select
+                            mode="multiple"
+                            :default-value="type"
+                            style="width: 70%"
+                            placeholder="请选择您期待的题目类型"
+                            @change="handleChangeType"
+                    >
+                        <a-select-option v-for="t in typeTotal" :key="t">
+                            {{t}}
+                        </a-select-option>
+                    </a-select>
+                </a-col>
+                <a-col :span="8">
+                    题目主题
+                    <a-select
+                            mode="multiple"
+                            :default-value="theme"
+                            style="width: 70%"
+                            placeholder="请选择您期待的题目主题"
+                            @change="handleChangeTheme"
+                    >
+                        <a-select-option v-for="t in themeTotal" :key="t">
+                            {{t}}
+                        </a-select-option>
+                    </a-select>
+                </a-col>
+                <a-col :span="2">
+                    <a-button @click="sendSelect">确定</a-button>
+                </a-col>
+            </a-row>
+        </div>
+        <a-divider />
         <a-row type="flex" justify="space-around">
                 <a-col :span="5" v-for="msg in msgList" :key="msg">
                     <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
@@ -62,7 +104,10 @@
                 pagesize: 12,
                 getMsgNum:0,
                 thisPageSize:12,
-                type:["total"],
+                type:["全部"],
+                theme:["全部"],
+                themeTotal:["全部","食物", "风景","宠物","运动"],
+                typeTotal:["全部","文字","图片","选择","判断"],
             }
         },
         props:[
@@ -111,6 +156,21 @@
                 // xhr.open("get","backend/delete?msgid="+msgId);
                 console.log("backend/deletemsg?msgid="+msgId);
                 // xhr.send();
+            },
+            onSearch(value) {
+                console.log(value);
+            },
+            handleChangeTheme(value) {
+                // console.log(`selected ${value}`);
+                this.theme.push(value);
+            },
+            handleChangeType(value) {
+                // console.log(`selected ${value}`);
+                this.type.push(value);
+            },
+            sendSelect(){
+                console.log(this.theme);
+                console.log(this.type);
             }
         },
         mounted:function () {   //自动触发写入的函数

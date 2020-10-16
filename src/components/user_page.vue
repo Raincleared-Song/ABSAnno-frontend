@@ -22,7 +22,7 @@
           </a-menu-item>
           <a-menu-item key="4" @click="change(3)">
             <a-icon type="sliders" />
-            <span>待定</span>
+            <span>修改用户信息</span>
           </a-menu-item>
         </a-menu>
       </a-layout-sider>
@@ -86,8 +86,28 @@
               <p>这是我的发布界面</p>
             </div>
             <div v-show="3===page_number">
-              <p>这是待定界面</p>
+              <div class="components-input-demo-presuffix">
+                <a-input ref="userNameInput" placeholder="User name">
+                  <a-icon slot="prefix" type="user" />
+                  <a-tooltip slot="suffix" title="You can change your username here">
+                    <a-icon type="info-circle" style="color: rgba(0,0,0,.45)" />
+                  </a-tooltip>
+                </a-input>
+                <br />
+              </div>
+              <h3>选择你喜欢的题目类型</h3>
+              <div>
+                <div :style="{ borderBottom: '1px solid #E9E9E9' }">
+                  <a-checkbox :indeterminate="indeterminate" :checked="classCheckAll" @change="onAllClassCheckedChange">
+                    全选
+                  </a-checkbox>
+                </div>
+                <br />
+                <a-checkbox-group v-model="classCheckedList" :options="classOptions" @change="onSelectClassChange" />
+              </div>
+
             </div>
+
           </div>
         </a-layout-content>
       </a-layout>
@@ -99,6 +119,8 @@
 
 <script>
 const listData = [];
+export const classOptions = ['题目类型1', '题目类型2', '题目类型3'];
+export const defaultClassOptionsList = ['题目类型1', '题目类型2', '题目类型3'];
 for (let i = 0; i < 23; i++) {
   listData.push({
     href: 'https://www.antdv.com/',
@@ -126,6 +148,11 @@ export default {
         { type: 'like-o', text: '156' },
         { type: 'message', text: '2' },
       ],
+      indeterminate: true,
+      classCheckAll: false,
+      classCheckedList: defaultClassOptionsList,
+      classOptions,
+
       collapsed: false,
       page_number: 0,
       userid: -1,
@@ -133,7 +160,7 @@ export default {
       answerList: [],
       myPublish: [],
       pageList: ['user', 'history', 'mission', 'user'],
-      pageListChinese: ['用户信息', '答题历史', '我的发布', '用户信息（待定）'],
+      pageListChinese: ['用户信息', '答题历史', '我的发布', '修改个人信息'],
 
 
       user_name: 'default username',
@@ -142,14 +169,14 @@ export default {
       user_ans_num: 0,
     }
   },
-  props:[
-    "id",
+  props: [
+    "power",
   ],
   methods: {
     change: function (index) {
       this.page_number = index;
-      this.get_user_info(this.id, this.pageList[index])
-      console.log(this.id)
+      console.log(this.pageList)
+      this.get_user_info(this.pageList[index])
 
     },
     parseHistory: function (info) {
@@ -169,10 +196,9 @@ export default {
       let data = JSON.parse(info.data.replace(/'/g,'"'))
       console.log(data)
     },
-    get_user_info: function (user_id, content) {
+    get_user_info: function (content) {
       const xhr = new XMLHttpRequest()
       let context = this
-      console.log(this.id)
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 201) {
           let info = JSON.parse(xhr.responseText)
@@ -187,8 +213,19 @@ export default {
 
         }
       }
-      xhr.open("get", "backend/user?id="+user_id.toString()+"&method="+content.toString())
+      xhr.open("get", "backend/user?method="+content.toString())
       xhr.send()
+    },
+    onAllClassCheckedChange: function(checkedList) {
+      this.indeterminate = !!checkedList.length && checkedList.length < classOptions.length;
+      this.classCheckAll = checkedList.length === classOptions.length;
+    },
+    onSelectClassChange: function(e) {
+      Object.assign(this, {
+        classCheckedList: e.target.checked ? classOptions : [],
+        indeterminate: false,
+        classCheckAll: e.target.checked,
+      });
     },
     mounted: function () {
       this.change(0);

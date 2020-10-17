@@ -5,15 +5,18 @@
 
         <!-- 左侧边栏 -->
         <a-layout-sider width="300" style="background: #fff">
-          <div>
-            任务描述：{{ mission_description }}
+          <div style="margin: 20px">
+            任务名称：{{ mission_info.name }}
           </div>
-          <div>
-            任务类型：{{ mission_type }}
+          <div style="margin: 20px">
+            任务类型：{{ missionType() }}
           </div>
-          <a-button type="dashed" block>
-            <a-icon type="plus" />
-            <div>添加新题目</div>
+          <a-button
+              type="dashed" block
+              @click="addQuestion"
+              style="{ position: absolute; bottom: 0; height: 50px; }">
+            <a-icon type="plus" style="margin: 5px 0" />
+            <p>添加新题目</p>
           </a-button>
         </a-layout-sider>
 
@@ -21,20 +24,20 @@
         <a-layout-content style="margin: 10px 40px">
           <div v-if="nowQuestion != null">
             <JudgementGroup
-                v-if="mission_type === 'judgement'"
+                v-if="mission_info.type === 'judgement'"
                 :editable="true"
                 :question="nowQuestion" />
             <CheckboxGroup
-                v-else-if="mission_type === 'select_multiple'"
+                v-else-if="mission_info.type === 'checkbox'"
                 @addOption="addOption"
                 @removeOption="removeOption"
                 :editable="true"
                 :question="nowQuestion" />
             <TextEdit
-                v-else-if="mission_type === 'text_edit'"
+                v-else-if="mission_info.type === 'text'"
                 :editable="true"
                 :question="nowQuestion" />
-            <p v-else>{{ mission_type }}</p>
+            <p v-else>{{ mission_info.type }}</p>
           </div>
           <a-empty v-else :description="false" />
 
@@ -46,8 +49,9 @@
                 :page-size="1" />
           </div>
           <a-button
+              @click="$emit('on-submit-questions')"
               v-show="questions.length > 0 || nowQuestion != null"
-              type="primary" @click="submit"
+              type="primary"
           >submit</a-button>
         </a-layout-content>
 
@@ -60,8 +64,6 @@
   import JudgementGroup from "@/components/questions/judgement_group";
   import TextEdit from "@/components/questions/text_edit";
   import CheckboxGroup from "@/components/questions/checkbox_group";
-  import API from "@/utils/API"
-  import postBackend from "@/utils/postBackend";
 
   let nowId = 0;
 
@@ -74,44 +76,38 @@
     },  // end of components
     data() {
       return {
-        questions: [],
         nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
         nowQuestion: null
-      };
+      }
     },  // end of data
     props: {
-      mission_type: {
-        type: String,
-        default: ""
-      },
-      username: {
-        type: String,
-        default: "joe doe"
-      },
-      id: {
-        type: Number,
+      mission_info: {
+        type: Object,
         default() {
-          return 0;
+          return {
+            name: '',
+            type: '',
+            min: 10,
+            ddl: null,
+            tags: []
+          };
         }
       },
-      mission_description: {
-        type: String,
-        default: ""
-      },
-      minimum_total_annotation: {
-        type: Number,
+      questions: {
+        type: Array,
         default() {
-          return 10;
+          return [];
         }
       }
     },
     methods: {
+      // 增加题目
       addQuestion() {
-        if (this.mission_type === 'judgement') {
+        if (this.mission_info.type === 'judgement') {
           this.addJudgementQuestion();
-        } else if (this.mission_type === 'select_multiple') {
+        } else if (this.mission_info.type === 'checkbox') {
           this.addMultipleChoiceQuestion();
-        } else if (this.mission_type === 'text_edit') {
+        } else if (this.mission_info.type === 'text') {
           this.addTextEditQuestion();
         }
       },
@@ -126,7 +122,7 @@
       addMultipleChoiceQuestion() {
         this.questions.push({
           id: nowId++,
-          type: 'select_multiple',
+          type: 'checkbox',
           description: "",
           options: [],
           new_option: ""
@@ -136,30 +132,19 @@
       addTextEditQuestion() {
         this.questions.push({
           id: nowId++,
-          type: 'text_edit',
+          type: 'text',
           description: ""
         });
         this.nowQuestionIndex = this.questions.length;
       },
-      // 向后端发送数据
-      submit() {
-        let submitObj = {
-          name: this.mission_description,
-          question_form: this.mission_type,
-          question_num: this.questions.length.toString(),
-          user_id: this.id.toString(),
-          total: this.minimum_total_annotation.toString()
-        };
-        console.log(this.id)
-        submitObj.question_list = this.questions.map(element => {
-          return { contains: element.description };
-        });
-        console.log(submitObj);
-        postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {
-          console.log(jsonObj);
-          this.$message.success("提交成功！即将返回首页！");
-          this.$router.push("/ground");
-        });
+      // 返回题型的中文名称
+      missionType() {
+        if (this.mission_info.type === 'judgement')
+          return '判断题';
+        else if (this.mission_info.type === 'checkbox')
+          return '选择题';
+        else if (this.mission_info.type === 'text')
+          return '文字描述题';
       },
       // 这两个方法处理子组件触发的事件
       addOption(questionId, newOption) {
@@ -186,7 +171,4 @@
 </script>
 
 <style>
-  /*div {*/
-  /*  margin: 20px;*/
-  /*}*/
 </style>

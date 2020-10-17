@@ -5,51 +5,56 @@
     <a-layout-content style="margin: 10px 40px;">
       <h1>编辑任务</h1>
       <a-form-model
-          :model="form"
-          :label-col="{ span: 4, offset: 1 }"
-          :wrapper-col="{ span: 13 }">
+          ref="mission_form"
+          :model="mission_info"
+          :rules="rules"
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 15, offset: 1 }">
         <a-form-model-item
-            ref="missionDescription"
+            ref="name"
             label="任务名称"
-            prop="name"
-            style="margin: 0 10px;">
+            prop="name">
           <a-input
-              v-model.trim="form.missionDescription"
-              palceholder="your mission title"
+              v-model.trim="mission_info.name"
+              @blur="$refs.name.onFieldBlur()"
+              @change="$refs.name.onFieldChange()"
               allow-clear />
         </a-form-model-item>
         <a-form-model-item
-            ref="missionType"
+            ref="type"
             label="任务类型"
-            prop="type" required>
-          <a-select v-model="form.selectedTags">
+            prop="type">
+          <a-select
+              v-model="mission_info.type"
+              @blur="$refs.type.onFieldBlur()"
+              @change="$refs.type.onFieldChange()">
             <a-select-option value="judgement">判断题任务</a-select-option>
             <a-select-option value="checkbox">选择题任务</a-select-option>
             <a-select-option value="text">文字描述题任务</a-select-option>
           </a-select>
         </a-form-model-item>
         <a-form-model-item
-            ref="minimumTotalAnnotation"
-            label="任务至少标注次数"
-            prop="min">
+            label="标注次数下限" prop="min">
             <a-input-number
-                v-model.trim.number="form.minimumTotalAnnotation" />
+                v-model.trim.number="mission_info.min" />
         </a-form-model-item>
         <a-form-model-item
-            ref="missionDDL"
-            label="任务截止期限"
-            prop="ddl">
-          <a-date-picker v-model="form.missionDDL" />
+            label="任务截止期限" prop="ddl">
+          <a-date-picker v-model="mission_info.ddl" />
         </a-form-model-item>
         <a-form-model-item
-            ref="selectedTags"
-            label="分发对象"
-            prop="tags">
+            label="分发对象" prop="tags">
           <a-select
-              v-model="form.selectedTags"
-              mode="multiple">
-            <a-select-option v-for="i in 25" :key="(i + 9).toString(36) + i">
-              {{ (i + 9).toString(36) + i }}
+              v-model="mission_info.tags"
+              mode="tags">
+            <a-select-option :key="'student'">
+              学生
+            </a-select-option>
+            <a-select-option :key="'teacher'">
+              教师
+            </a-select-option>
+            <a-select-option :key="'me'">
+              程序员
             </a-select-option>
           </a-select>
         </a-form-model-item>
@@ -57,23 +62,18 @@
 
       <div>
         请上传文件或者
-        <a-button type="link">
-          <router-link to="/edit">
+        <a-button type="link" @click="onEditClick">
             手动添加题目
-          </router-link>
         </a-button>
       </div>
-      <a-upload-dragger
-          name="file"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          style="margin: 10px 50px; height: 80%;">
-        <p class="ant-upload-drag-icon">
-          <a-icon type="inbox" />
-        </p>
-        <p>
-          Click or drag file to this area to upload
-        </p>
-      </a-upload-dragger>
+      <div style="margin: 20px;">
+        <a-upload-dragger
+            name="file"
+            action="https://www.mocky.io/v2/5cc8019d300000980a055e76">
+          <p><a-icon type="inbox" /></p>
+          <p>Click or drag file to this area to upload</p>
+        </a-upload-dragger>
+      </div>
 
     </a-layout-content>
   </a-layout>
@@ -82,19 +82,37 @@
 <script>
 export default {
   name: "create_mission",
-  props: [
-    "username",
-    "id"
-  ],
   data() {
     return {
-      form: {
-        missionType: "",
-        missionDescription: "",
-        minimumTotalAnnotation: 10,
-        missionDDL: null,
-        selectedTags: []
+      rules: {
+        name: [{ required: true, message: 'Mission name cannot be null.', trigger: 'blur' }],
+        type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }]
       }
+    };
+  },
+  props: {
+    mission_info: {
+      type: Object,
+      default() {
+        return {
+          name: '',
+          type: '',
+          min: 10,
+          ddl: null,
+          tags: []
+        };
+      }
+    }
+  },
+  methods: {
+    onEditClick() {
+      this.$refs.mission_form.validate(valid => {
+        if (valid) {
+          this.$emit('on-submit-info', this.mission_info);
+        } else {
+          this.$message.warning("error submit");
+        }
+      });
     }
   }
 }

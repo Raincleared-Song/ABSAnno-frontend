@@ -1,36 +1,88 @@
 <template>
     <div class = "portfolio">
+        <div>
+            <a-row >
+                <a-col :span="7">
+                    <a-input-search placeholder="请输入题目关键词" enter-button @search="onSearch" />
+                </a-col>
+            </a-row>
+            <br/>
+            <a-row >
+                <a-col :span="8">
+                    题目类型
+                    <a-select
+                            mode="multiple"
+                            :default-value="type"
+                            style="width: 70%"
+                            placeholder="请选择您期待的题目类型"
+                            @change="handleChangeType"
+                    >
+                        <a-select-option v-for="t in typeTotal" :key="t">
+                            {{t}}
+                        </a-select-option>
+                    </a-select>
+                </a-col>
+                <a-col :span="8">
+                    题目主题
+                    <a-select
+                            mode="multiple"
+                            :default-value="theme"
+                            style="width: 70%"
+                            placeholder="请选择您期待的题目主题"
+                            @change="handleChangeTheme"
+                    >
+                        <a-select-option v-for="t in themeTotal" :key="t">
+                            {{t}}
+                        </a-select-option>
+                    </a-select>
+                </a-col>
+                <a-col :span="2">
+                    <a-button @click="sendSelect">确定</a-button>
+                </a-col>
+            </a-row>
+        </div>
+        <a-divider />
         <a-row type="flex" justify="space-around">
                 <a-col :span="5" v-for="msg in msgList" :key="msg">
                     <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
-<!--                        图片尺寸：500*350            -->
-                        <img v-if="msg.questionForm === 'judgement'" src="@/assets/judge.jpg" alt="" width="210" >
+
+                        <!--                        图片尺寸：500*350            -->
+
+                        <img v-if="msg.questionForm === 'judgement'" src="@/assets/ground/judgement2.jpg" alt="" width="230" >
+                        <img v-if="msg.questionForm === 'choice'" src="@/assets/ground/choice2.jpg" alt="" width="230" >
                         <div  class="portfolio-info">
                             <h4>{{msg.name}}</h4>
                             <p>题目数量：{{msg.questionNum}}</p>
                             <div class="portfolio-links">
                                 <div class="icons-list">
-                                    <router-link v-if="id!==0" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
+                                    <router-link v-if="power!==-1" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
+
                                     <a-popover title="题组详情" trigger="hover">
                                         <template slot="content">
                                             题目：{{msg.name}}<br />
                                             题目数量：{{msg.questionNum}}<br />
                                             发布者：{{msg.user}}<br />
-                                            题目类型：{{msg.questionForm}}
+                                            题目类型：{{msg.questionForm}}<br/>
+<!--                                            点击按钮，查看规则说明-->
                                         </template>
                                         <router-link to="/rules">
                                             <a-icon type="info-circle" />
                                         </router-link>
                                     </a-popover>
+                                    <router-link v-if="power===2" to="/ground">
+                                        <a-icon type="delete" @click="deleteMsg(msg.id)"/>
+                                    </router-link>
                                 </div>
                             </div>
                         </div>
                     </div>
-<!--                    空白答题页面的填充-->
+
+                    <!--                    空白答题页面的填充-->
                     <div v-if="msg.questionForm === 'none'" align="center">
                         <!--                        图片尺寸：500*350            -->
-                        <img src="@/assets/blank.jpg" alt="" width="210" >
+                        <img src="@/assets/ground/blank2.jpg" alt="" width="230" >
                     </div>
+
                 </a-col>
         </a-row>
         <p></p>
@@ -52,11 +104,16 @@
                 pagesize: 12,
                 getMsgNum:0,
                 thisPageSize:12,
+                type:["全部"],
+                theme:["全部"],
+                themeTotal:["全部","食物", "风景","宠物","运动"],
+                typeTotal:["全部","文字","图片","选择","判断"],
             }
         },
         props:[
             "username",
-            "id",
+            // "id",
+            "power",
         ],
         methods: {
             min(a, b){
@@ -74,8 +131,7 @@
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
                         context.totalMsgNum = data.total;
                         context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
-                        context.msgList = data.question_list
-                        // console.log("backend/square?id="+this.id.toString()+"&num="+this.getMsgNum.toString());
+                        context.msgList = data.question_list;
                         while(context.msgList.length < 12){
                             context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
                                 'questionNum': 0, 'questionForm': "none"});
@@ -83,10 +139,39 @@
                     }
                 };
                 this.getMsgNum = (pageNumber-1)*12;
-                console.log("backend/square?id="+this.id.toString()+"&num="+this.getMsgNum.toString());
-                xhr.open("get","backend/square?id="+this.id.toString()+"&num="+this.getMsgNum.toString());
+                console.log("backend/square?num="+this.getMsgNum.toString());
+                xhr.open("get","backend/square?num="+this.getMsgNum.toString());
                 xhr.send();
             },
+
+            deleteMsg(msgId){
+                // const xhr = new XMLHttpRequest()
+                // let context = this
+                // xhr.onreadystatechange = function () {
+                //     if (xhr.readyState === 4 && xhr.status === 201){
+                //         context.$router.push('/ground'); // 重新加载题目广场
+                //         // TODO 检查分页符
+                //     }
+                // };
+                // xhr.open("get","backend/delete?msgid="+msgId);
+                console.log("backend/deletemsg?msgid="+msgId);
+                // xhr.send();
+            },
+            onSearch(value) {
+                console.log(value);
+            },
+            handleChangeTheme(value) {
+                // console.log(`selected ${value}`);
+                this.theme.push(value);
+            },
+            handleChangeType(value) {
+                // console.log(`selected ${value}`);
+                this.type.push(value);
+            },
+            sendSelect(){
+                console.log(this.theme);
+                console.log(this.type);
+            }
         },
         mounted:function () {   //自动触发写入的函数
             this.onChange(1);

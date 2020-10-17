@@ -32,6 +32,7 @@ const routes=[
     {
         path: '/mission',
         component: mission_field,
+        redirect: '/mission/create',
         children: [
             { path: 'create', component: create_mission },
             { path: 'edit', component: edit_question }

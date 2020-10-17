@@ -9,11 +9,14 @@
             任务名称：{{ mission_info.name }}
           </div>
           <div style="margin: 20px">
-            任务类型：{{ mission_info.type }}
+            任务类型：{{ missionType() }}
           </div>
-          <a-button type="dashed" block>
-            <a-icon type="plus" />
-            <div style="margin: 15px">添加新题目</div>
+          <a-button
+              type="dashed" block
+              @click="addQuestion"
+              style="{ position: absolute; bottom: 0; height: 50px; }">
+            <a-icon type="plus" style="margin: 5px 0" />
+            <p>添加新题目</p>
           </a-button>
         </a-layout-sider>
 
@@ -46,8 +49,9 @@
                 :page-size="1" />
           </div>
           <a-button
+              @click="$emit('on-submit-questions')"
               v-show="questions.length > 0 || nowQuestion != null"
-              type="primary" @click="submit"
+              type="primary"
           >submit</a-button>
         </a-layout-content>
 
@@ -60,24 +64,22 @@
   import JudgementGroup from "@/components/questions/judgement_group";
   import TextEdit from "@/components/questions/text_edit";
   import CheckboxGroup from "@/components/questions/checkbox_group";
-  import API from "@/utils/API"
-  import postBackend from "@/utils/postBackend";
 
   let nowId = 0;
 
   export default {
     name: "edit_question",
-    data() {
-      return {
-        nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
-        nowQuestion: null
-      }
-    },
     components: {
       JudgementGroup: JudgementGroup,
       TextEdit: TextEdit,
       CheckboxGroup: CheckboxGroup
     },  // end of components
+    data() {
+      return {
+        nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
+        nowQuestion: null
+      }
+    },  // end of data
     props: {
       mission_info: {
         type: Object,
@@ -86,7 +88,7 @@
             name: '',
             type: '',
             min: 10,
-            ddl: undefined,
+            ddl: null,
             tags: []
           };
         }
@@ -99,6 +101,7 @@
       }
     },
     methods: {
+      // 增加题目
       addQuestion() {
         if (this.mission_info.type === 'judgement') {
           this.addJudgementQuestion();
@@ -119,7 +122,7 @@
       addMultipleChoiceQuestion() {
         this.questions.push({
           id: nowId++,
-          type: 'select_multiple',
+          type: 'checkbox',
           description: "",
           options: [],
           new_option: ""
@@ -129,30 +132,19 @@
       addTextEditQuestion() {
         this.questions.push({
           id: nowId++,
-          type: 'text_edit',
+          type: 'text',
           description: ""
         });
         this.nowQuestionIndex = this.questions.length;
       },
-      // 向后端发送数据
-      submit() {
-        let submitObj = {
-          name: this.mission_description,
-          question_form: this.mission_type,
-          question_num: this.questions.length.toString(),
-          user_id: this.id.toString(),
-          total: this.minimum_total_annotation.toString()
-        };
-        console.log(this.id)
-        submitObj.question_list = this.questions.map(element => {
-          return { contains: element.description };
-        });
-        console.log(submitObj);
-        postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {
-          console.log(jsonObj);
-          this.$message.success("提交成功！即将返回首页！");
-          this.$router.push("/ground");
-        });
+      // 返回题型的中文名称
+      missionType() {
+        if (this.mission_info.type === 'judgement')
+          return '判断题';
+        else if (this.mission_info.type === 'checkbox')
+          return '选择题';
+        else if (this.mission_info.type === 'text')
+          return '文字描述题';
       },
       // 这两个方法处理子组件触发的事件
       addOption(questionId, newOption) {

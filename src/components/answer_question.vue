@@ -6,10 +6,6 @@
           v-if="nowQuestion.type === 'judgement'"
           :editable="false"
           :question="nowQuestion" />
-      <RadioGroup
-          v-else-if="nowQuestion.type === 'select_single'"
-          :editable="false"
-          :question="nowQuestion" />
       <CheckboxGroup
           v-else-if="nowQuestion.type === 'select_multiple'"
           :editable="false"
@@ -67,7 +63,6 @@
 <script>
 import JudgementGroup from "@/components/questions/judgement_group";
 import TextEdit from "@/components/questions/text_edit";
-import RadioGroup from "@/components/questions/radio_group";
 import CheckboxGroup from "@/components/questions/checkbox_group";
 import getBackend from "@/utils/getBackend";
 import postBackend from "@/utils/postBackend";
@@ -76,7 +71,6 @@ import API from "@/utils/API";
 export default {
   components: {
     JudgementGroup: JudgementGroup,
-    RadioGroup: RadioGroup,
     CheckboxGroup: CheckboxGroup,
     TextEdit: TextEdit
   },  // end of components

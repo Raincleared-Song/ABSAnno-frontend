@@ -98,7 +98,7 @@ export default {
           name: '',
           type: '',
           min: 10,
-          ddl: undefined,
+          ddl: null,
           tags: []
         };
       }
@@ -108,7 +108,7 @@ export default {
     onEditClick() {
       this.$refs.mission_form.validate(valid => {
         if (valid) {
-          this.$emit('on-submit-info');
+          this.$emit('on-submit-info', this.mission_info);
         } else {
           this.$message.warning("error submit");
         }

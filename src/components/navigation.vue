@@ -13,9 +13,8 @@
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>
             </a-menu-item>
-            <a-menu-item v-if="power!==-1" key="/create">
-              发布题目
-<!--                <router-link to="/create">发布题目</router-link>-->
+            <a-menu-item v-if="power!==-1" key="/mission">
+                <router-link to="/mission/create">发布题目</router-link>
             </a-menu-item>
             <a-menu-item v-if="power!==-1" key="/user">
                 <router-link to="/user">个人中心</router-link>

@@ -9,6 +9,7 @@ import login from "@/components/login"
 import signin from "@/components/signin"
 import edit_question from "@/components/edit_question";
 import create_mission from "@/components/create_mission";
+import mission_field from "@/components/mission_field";
 
 import user_page from "@/components/user_page";
 import admin_page from "@/components/admin_page";
@@ -28,8 +29,14 @@ const routes=[
     { path: '/user', component: user_page },
     { path: '/admin', component: admin_page },
     { path: '/question/:id', component: answer_question },
-    { path: '/create', component: create_mission },
-    { path: '/edit/:type', component: edit_question }
+    {
+        path: '/mission',
+        component: mission_field,
+        children: [
+            { path: 'create', component: create_mission },
+            { path: 'edit', component: edit_question }
+        ]
+    }
 ]
 
 const router = new VueRouter({

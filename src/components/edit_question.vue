@@ -5,15 +5,15 @@
 
         <!-- 左侧边栏 -->
         <a-layout-sider width="300" style="background: #fff">
-          <div>
-            任务描述：{{ mission_description }}
+          <div style="margin: 20px">
+            任务名称：{{ mission_info.name }}
           </div>
-          <div>
-            任务类型：{{ mission_type }}
+          <div style="margin: 20px">
+            任务类型：{{ mission_info.type }}
           </div>
           <a-button type="dashed" block>
             <a-icon type="plus" />
-            <div>添加新题目</div>
+            <div style="margin: 15px">添加新题目</div>
           </a-button>
         </a-layout-sider>
 
@@ -21,20 +21,20 @@
         <a-layout-content style="margin: 10px 40px">
           <div v-if="nowQuestion != null">
             <JudgementGroup
-                v-if="mission_type === 'judgement'"
+                v-if="mission_info.type === 'judgement'"
                 :editable="true"
                 :question="nowQuestion" />
             <CheckboxGroup
-                v-else-if="mission_type === 'select_multiple'"
+                v-else-if="mission_info.type === 'checkbox'"
                 @addOption="addOption"
                 @removeOption="removeOption"
                 :editable="true"
                 :question="nowQuestion" />
             <TextEdit
-                v-else-if="mission_type === 'text_edit'"
+                v-else-if="mission_info.type === 'text'"
                 :editable="true"
                 :question="nowQuestion" />
-            <p v-else>{{ mission_type }}</p>
+            <p v-else>{{ mission_info.type }}</p>
           </div>
           <a-empty v-else :description="false" />
 
@@ -67,48 +67,44 @@
 
   export default {
     name: "edit_question",
+    data() {
+      return {
+        nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
+        nowQuestion: null
+      }
+    },
     components: {
       JudgementGroup: JudgementGroup,
       TextEdit: TextEdit,
       CheckboxGroup: CheckboxGroup
     },  // end of components
-    data() {
-      return {
-        mission_type: this.$route.params.type,
-        questions: [],
-        nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
-        nowQuestion: null
-      };
-    },  // end of data
     props: {
-      username: {
-        type: String,
-        default: "joe doe"
-      },
-      id: {
-        type: Number,
+      mission_info: {
+        type: Object,
         default() {
-          return 0;
+          return {
+            name: '',
+            type: '',
+            min: 10,
+            ddl: undefined,
+            tags: []
+          };
         }
       },
-      mission_description: {
-        type: String,
-        default: ""
-      },
-      minimum_total_annotation: {
-        type: Number,
+      questions: {
+        type: Array,
         default() {
-          return 10;
+          return [];
         }
       }
     },
     methods: {
       addQuestion() {
-        if (this.mission_type === 'judgement') {
+        if (this.mission_info.type === 'judgement') {
           this.addJudgementQuestion();
-        } else if (this.mission_type === 'select_multiple') {
+        } else if (this.mission_info.type === 'checkbox') {
           this.addMultipleChoiceQuestion();
-        } else if (this.mission_type === 'text_edit') {
+        } else if (this.mission_info.type === 'text') {
           this.addTextEditQuestion();
         }
       },

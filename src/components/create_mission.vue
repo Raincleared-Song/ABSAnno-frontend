@@ -6,7 +6,7 @@
       <h1>编辑任务</h1>
       <a-form-model
           ref="mission_form"
-          :model="form"
+          :model="mission_info"
           :rules="rules"
           :label-col="{ span: 4 }"
           :wrapper-col="{ span: 15, offset: 1 }">
@@ -15,9 +15,9 @@
             label="任务名称"
             prop="name">
           <a-input
-              v-model.trim="form.name"
-              @blur="() => { $refs.name.onFieldBlur(); }"
-              @change="() => { $refs.name.onFieldChange(); }"
+              v-model.trim="mission_info.name"
+              @blur="$refs.name.onFieldBlur()"
+              @change="$refs.name.onFieldChange()"
               allow-clear />
         </a-form-model-item>
         <a-form-model-item
@@ -25,7 +25,7 @@
             label="任务类型"
             prop="type">
           <a-select
-              v-model="form.type"
+              v-model="mission_info.type"
               @blur="$refs.type.onFieldBlur()"
               @change="$refs.type.onFieldChange()">
             <a-select-option value="judgement">判断题任务</a-select-option>
@@ -36,24 +36,24 @@
         <a-form-model-item
             label="标注次数下限" prop="min">
             <a-input-number
-                v-model.trim.number="form.min" />
+                v-model.trim.number="mission_info.min" />
         </a-form-model-item>
         <a-form-model-item
             label="任务截止期限" prop="ddl">
-          <a-date-picker v-model="form.ddl" />
+          <a-date-picker v-model="mission_info.ddl" />
         </a-form-model-item>
         <a-form-model-item
             label="分发对象" prop="tags">
           <a-select
-              v-model="form.tags"
-              mode="multiple">
-            <a-select-option :key="1">
+              v-model="mission_info.tags"
+              mode="tags">
+            <a-select-option :key="'student'">
               学生
             </a-select-option>
-            <a-select-option :key="2">
+            <a-select-option :key="'teacher'">
               教师
             </a-select-option>
-            <a-select-option :key="3">
+            <a-select-option :key="'me'">
               程序员
             </a-select-option>
           </a-select>
@@ -82,33 +82,33 @@
 <script>
 export default {
   name: "create_mission",
-  props: [
-    "username",
-    "id"
-  ],
   data() {
     return {
-      form: {
-        name: '',
-        type: '',
-        min: 10,
-        ddl: undefined,
-        tags: []
-      },
       rules: {
         name: [{ required: true, message: 'Mission name cannot be null.', trigger: 'blur' }],
-        type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }],
-        min: [{ required: false }],
-        ddl: [{ required: false }],
-        tags: [{ required: false }]
+        type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }]
       }
     };
+  },
+  props: {
+    mission_info: {
+      type: Object,
+      default() {
+        return {
+          name: '',
+          type: '',
+          min: 10,
+          ddl: undefined,
+          tags: []
+        };
+      }
+    }
   },
   methods: {
     onEditClick() {
       this.$refs.mission_form.validate(valid => {
         if (valid) {
-          this.$router.push(`/edit/${this.form.type}`);
+          this.$emit('on-submit-info');
         } else {
           this.$message.warning("error submit");
         }

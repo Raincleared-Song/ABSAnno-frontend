@@ -15,7 +15,7 @@
             </a-menu-item>
             <a-menu-item v-if="power!==-1" key="/create">
               发布题目
-<!--                <router-link to="/create">发布题目</router-link>-->
+                <router-link to="/create">发布题目</router-link>
             </a-menu-item>
             <a-menu-item v-if="power!==-1" key="/user">
                 <router-link to="/user">个人中心</router-link>

@@ -186,11 +186,6 @@
 </script>
 
 <style>
-  #components-layout-top-side .logo {
-    background: rgba(255, 255, 255, 0.2);
-    margin: 16px 28px 16px 0;
-    float: left;
-  }
   div {
     margin: 20px;
   }

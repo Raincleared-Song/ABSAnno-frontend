@@ -74,16 +74,13 @@
     },  // end of components
     data() {
       return {
+        mission_type: this.$route.params.type,
         questions: [],
         nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
         nowQuestion: null
       };
     },  // end of data
     props: {
-      mission_type: {
-        type: String,
-        default: ""
-      },
       username: {
         type: String,
         default: "joe doe"
@@ -186,7 +183,4 @@
 </script>
 
 <style>
-  div {
-    margin: 20px;
-  }
 </style>

@@ -6,13 +6,12 @@
       <h1>编辑任务</h1>
       <a-form-model
           :model="form"
-          :label-col="{ span: 4, offset: 1 }"
-          :wrapper-col="{ span: 13 }">
+          :label-col="{ span: 4 }"
+          :wrapper-col="{ span: 15, offset: 1 }">
         <a-form-model-item
             ref="missionDescription"
             label="任务名称"
-            prop="name"
-            style="margin: 0 10px;">
+            prop="name" required>
           <a-input
               v-model.trim="form.missionDescription"
               palceholder="your mission title"
@@ -22,7 +21,7 @@
             ref="missionType"
             label="任务类型"
             prop="type" required>
-          <a-select v-model="form.selectedTags">
+          <a-select v-model="form.missionType">
             <a-select-option value="judgement">判断题任务</a-select-option>
             <a-select-option value="checkbox">选择题任务</a-select-option>
             <a-select-option value="text">文字描述题任务</a-select-option>
@@ -30,7 +29,7 @@
         </a-form-model-item>
         <a-form-model-item
             ref="minimumTotalAnnotation"
-            label="任务至少标注次数"
+            label="标注次数下限"
             prop="min">
             <a-input-number
                 v-model.trim.number="form.minimumTotalAnnotation" />
@@ -58,22 +57,19 @@
       <div>
         请上传文件或者
         <a-button type="link">
-          <router-link to="/edit">
+          <router-link to="/edit/judgement">
             手动添加题目
           </router-link>
         </a-button>
       </div>
-      <a-upload-dragger
-          name="file"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          style="margin: 10px 50px; height: 80%;">
-        <p class="ant-upload-drag-icon">
-          <a-icon type="inbox" />
-        </p>
-        <p>
-          Click or drag file to this area to upload
-        </p>
-      </a-upload-dragger>
+      <div style="margin: 20px;">
+        <a-upload-dragger
+            name="file"
+            action="https://www.mocky.io/v2/5cc8019d300000980a055e76">
+          <p><a-icon type="inbox" /></p>
+          <p>Click or drag file to this area to upload</p>
+        </a-upload-dragger>
+      </div>
 
     </a-layout-content>
   </a-layout>

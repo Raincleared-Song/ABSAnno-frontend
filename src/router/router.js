@@ -21,16 +21,15 @@ import answer_question from "@/components/answer_question";
 
 const routes=[
     { path: '/ground', component: ground },
-    { path: '/edit', component: edit_question },
-    { path: '/create', component: create_mission },
     { path: '/rules', component: rules },
     { path: '', redirect: "ground" },
     { path: '/login', component: login },
     { path: '/signin', component: signin },
     { path: '/user', component: user_page },
     { path: '/admin', component: admin_page },
-    { path: '/question/:id', component: answer_question }
-
+    { path: '/question/:id', component: answer_question },
+    { path: '/create', component: create_mission },
+    { path: '/edit/:type', component: edit_question }
 ]
 
 const router = new VueRouter({

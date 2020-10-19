@@ -19,7 +19,9 @@
             <a-menu-item v-if="power!==-1" key="/user">
                 <router-link to="/user">个人中心</router-link>
             </a-menu-item>
-
+            <a-menu-item v-if="power===2" key="/users">
+                <router-link to="/users">管理用户</router-link>
+            </a-menu-item>
             <a-menu-item v-if="power===-1" key="/login" style="float: right;">
                     <a-button ghost>
                         <router-link to="/login">登录</router-link>
@@ -69,6 +71,7 @@
         methods: {
             onClick() {
                 this.$emit('logout',true);
+                // TODO 加入真正的logout逻辑！！之前居然忘记了？
             },
         },
         watch: {

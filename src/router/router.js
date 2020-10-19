@@ -13,8 +13,7 @@ import user_page from "@/components/user_page";
 import admin_page from "@/components/admin_page";
 
 import answer_question from "@/components/answer_question";
-
-// import login from "../static/login.html"
+import banuser from "@/components/banuser"
 
 //定义routes路由的集合，数组类型
 
@@ -27,8 +26,8 @@ const routes=[
     {path:'/signin',component: signin},
     {path:'/user',component: user_page},
     {path:'/admin',component: admin_page},
-    {path:'/question/:id', component: answer_question}
-
+    {path:'/question/:id', component: answer_question},
+    {path:'/users',component: banuser},
 ]
 
 const router = new VueRouter({

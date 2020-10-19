@@ -155,6 +155,7 @@
 </template>
 
 <script>
+    import dealAdmin from "@/utils/admin"
     export default {
         name: "ground",
         data(){
@@ -220,7 +221,8 @@
                 //     }
                 // };
                 // xhr.open("get","backend/delete?msgid="+msgId);
-                console.log("backend/deletemsg?msgid="+msgId);
+                dealAdmin(msgId, 'mission_ban');
+                console.log("delete message"+msgId);
                 // xhr.send();
             },
             onSearch(value) {

@@ -2,7 +2,7 @@
     <a-list item-layout="horizontal" :data-source="userList">
         <a-list-item slot="renderItem" slot-scope="user">
             <a slot="extra" v-if="user.is_banned === true">
-                <a-button type="link" @click="dealUser(user.id, 'user_free')">
+                <a-button type="link" @click="dealUser(user.id, 'user_free', user)">
                     解禁
                 </a-button>
                 <a-button type="link" disabled>
@@ -13,7 +13,7 @@
                 <a-button type="link" disabled="">
                     解禁
                 </a-button>
-                <a-button type="link" @click="dealUser(user.id, 'user_ban')">
+                <a-button type="link" @click="dealUser(user.id, 'user_ban', user)">
                     禁言
                 </a-button>
             </a>
@@ -24,6 +24,9 @@
                     </a-tag>
                     <a-tag v-if="user.power === 1" color="orange">
                         VIP用户
+                    </a-tag>
+                    <a-tag v-if="user.is_banned === true" color="#f50">
+                        banned
                     </a-tag>
                 </a>
                 <a slot="description">
@@ -63,7 +66,13 @@
             "power",
         ],
         methods:{
-            dealUser(id, method){
+            dealUser(id, method, user){
+                if(user.is_banned === true){
+                    user.is_banned = false;
+                }
+                else{
+                    user.is_banned = true;
+                }
                 dealAdmin(id, method);
             },
             onChange(pageNumber) {

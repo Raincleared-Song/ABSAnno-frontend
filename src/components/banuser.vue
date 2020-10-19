@@ -1,21 +1,31 @@
 <template>
     <a-list item-layout="horizontal" :data-source="userList">
         <a-list-item slot="renderItem" slot-scope="user">
-            <a slot="extra" v-if="user.is_banned === true">
-                <a-button type="link" @click="dealUser(user.id, 'user_free')">
-                    解禁
-                </a-button>
-                <a-button type="link" disabled>
-                    禁言
-                </a-button>
-            </a>
-            <a slot="extra" v-if="user.is_banned === false">
-                <a-button type="link" disabled="">
-                    解禁
-                </a-button>
-                <a-button type="link" @click="dealUser(user.id, 'user_ban')">
-                    禁言
-                </a-button>
+<!--            <a slot="extra" v-if="user.is_banned === true">-->
+<!--                <a-button type="link" @click="dealUser(user.id, 'user_free')">-->
+<!--                    解禁-->
+<!--                </a-button>-->
+<!--                <a-button type="link" disabled>-->
+<!--                    禁言-->
+<!--                </a-button>-->
+<!--&lt;!&ndash;            </a>&ndash;&gt;-->
+            <a slot="extra">
+                <div v-if="user.is_banned === 1">
+                    <a-button type="link" @click="dealUser(user.id, 'user_free')">
+                        解禁
+                    </a-button>
+                    <a-button type="link" disabled>
+                        禁言
+                    </a-button>
+                </div>
+                <div v-if="user.is_banned === 0">
+                    <a-button type="link" disabled>
+                        解禁
+                    </a-button>
+                    <a-button type="link" @click="dealUser(user.id, 'user_ban')">
+                        禁言
+                    </a-button>
+                </div>
             </a>
             <a-list-item-meta>
                 <a slot="title" >{{ user.name }}
@@ -25,7 +35,7 @@
                     <a-tag v-if="user.power === 1" color="orange">
                         VIP用户
                     </a-tag>
-                    <a-tag v-if="user.is_banned === true" color="#f50">
+                    <a-tag v-if="user.is_banned === 1" color="#f50">
                         banned
                     </a-tag>
                 </a>
@@ -56,9 +66,9 @@
                 userList:[],
                 current: 1,
                 totalUserNum: 1,
-                pageSize: 12,
+                pageSize: 20,
                 getUserNum:0,
-                thisPageSize:12,
+                // thisPageSize:12,
             }
         },
         props:[
@@ -69,11 +79,11 @@
             dealUser(id, method){
                 this.userList.forEach(function(item, index, arr) {
                     if(item.id === id) {
-                        if(item.is_banned === true){
-                            item.is_banned = false;
+                        if(item.is_banned === 1){
+                            item.is_banned = 0;
                         }
                         else{
-                            item.is_banned = true;
+                            item.is_banned = 1;
                         }
                     }
                 });
@@ -88,9 +98,10 @@
                     if (xhr.readyState === 4 && xhr.status === 201){
                         let res = JSON.parse(xhr.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
+                        console.log(data)
                         context.totalUserNum = data.total;
-                        context.thisPageSize = data.num - context.getUserNum;
-                        context.userList = data.quser_list;
+                        // context.thisPageSize = data.num - context.getUserNum;
+                        context.userList = data.user_list;
                         context.getUserNum = data.num;
                     }
                 };

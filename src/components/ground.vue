@@ -1,5 +1,6 @@
 <template>
-    <div class = "portfolio">
+    <div>
+        <!--   导航栏，提供检索功能     -->
         <div>
             <a-row >
                 <a-col :span="7">
@@ -41,8 +42,22 @@
                 </a-col>
             </a-row>
         </div>
-        <a-divider />
-        <a-row type="flex" justify="space-around">
+        <a-divider></a-divider>
+<!--        <div style="text-align:right;" >图片广场<a-icon type="swap" @click="changeType"  />文字列表</div>-->
+<!--        <a-divider><div v-bind="groundType=1">图片广场</div><a-divider type="vertical" /><div v-bind="groundType=2">文字列表</div> </a-divider>-->
+
+        <!--    样式1，图片广场    -->
+        <div v-if="groundType === 1" class = "portfolio">
+            <div style="text-align:right;" >
+                <a-button type="link" disabled>
+                    图片广场
+                </a-button>
+                <a-divider type="vertical" />
+                <a-button type="link" @click="changeType" >
+                    文字列表
+                </a-button>
+            </div>
+            <a-row type="flex" justify="space-around">
                 <a-col :span="5" v-for="msg in msgList" :key="msg">
                     <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
 
@@ -63,7 +78,7 @@
                                             题目数量：{{msg.questionNum}}<br />
                                             发布者：{{msg.user}}<br />
                                             题目类型：{{msg.questionForm}}<br/>
-<!--                                            点击按钮，查看规则说明-->
+                                            <!--                                            点击按钮，查看规则说明-->
                                         </template>
                                         <router-link to="/rules">
                                             <a-icon type="info-circle" />
@@ -84,11 +99,58 @@
                     </div>
 
                 </a-col>
-        </a-row>
+            </a-row>
+
+        </div>
+
+        <!--   样式2，题目列表     -->
+        <div v-if="groundType===2">
+            <div style="text-align:right;" >
+                <a-button type="link" @click="changeType">
+                    图片广场
+                </a-button>
+                <a-divider type="vertical" />
+                <a-button type="link" disabled>
+                    文字列表
+                </a-button>
+            </div>
+            <a-list item-layout="horizontal" :data-source="msgList">
+                <a-list-item slot="renderItem" slot-scope="msg">
+<!--                    <a slot="actions" v-if="power!==-1">-->
+<!--                        <router-link  :to="{path:'/question/'+ msg.id}">做题</router-link>-->
+<!--                    </a>-->
+                    <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)">删除</a>
+                    <a-list-item-meta>
+                        <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}
+                            <a-tag color="cyan">
+                                {{msg.questionForm}}
+                            </a-tag>
+                        </a>
+                        <a v-if="power===-1" slot="title" >{{ msg.name }}
+                            <a-tag color="cyan">
+                                {{msg.questionForm}}
+                            </a-tag>
+                        </a>
+                        <a slot="description">
+                            <div style="color: #5e5e5e">
+                                题目数量：{{msg.questionNum}}
+                                <a-divider type="vertical" />
+                                发布者：{{msg.user}}
+                            </div>
+                        </a>
+                    </a-list-item-meta>
+<!--                    <div>-->
+<!--                        <a-tag color="cyan">-->
+<!--                            {{msg.questionForm}}-->
+<!--                        </a-tag>-->
+<!--                    </div>-->
+                </a-list-item>
+            </a-list>
+        </div>
+
         <p></p>
         <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum"
                       :style="{textAlign: 'center' }" @change="onChange" />
-
     </div>
 </template>
 
@@ -98,6 +160,7 @@
         data(){
             return {
                 msgList:[],
+                // msgList2:[],
                 current: 1,
                 totalMsgNum: 1,
                 // id: 1,
@@ -108,6 +171,7 @@
                 theme:["全部"],
                 themeTotal:["全部","食物", "风景","宠物","运动"],
                 typeTotal:["全部","文字","图片","选择","判断"],
+                groundType: 1,
             }
         },
         props:[
@@ -132,9 +196,11 @@
                         context.totalMsgNum = data.total;
                         context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
                         context.msgList = data.question_list;
-                        while(context.msgList.length < 12){
-                            context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
-                                'questionNum': 0, 'questionForm': "none"});
+                        if(context.groundType === 1){
+                            while(context.msgList.length < 12){
+                                context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
+                                    'questionNum': 0, 'questionForm': "none"});
+                            }
                         }
                     }
                 };
@@ -171,7 +237,26 @@
             sendSelect(){
                 console.log(this.theme);
                 console.log(this.type);
-            }
+            },
+            changeType(){
+                if(this.groundType === 1){
+                    this.groundType = 2;
+                    for(var i = 0; i < 12; i++){
+                        console.log(this.msgList[i].name)
+                        if(this.msgList[i].questionNum === 0){
+                            this.msgList = this.msgList.slice(0, i);
+                            break;
+                        }
+                    }
+                }
+                else{
+                    this.groundType = 1;
+                    while(this.msgList.length < 12){
+                        this.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
+                            'questionNum': 0, 'questionForm': "none"});
+                    }
+                }
+            },
         },
         mounted:function () {   //自动触发写入的函数
             this.onChange(1);

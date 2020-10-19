@@ -43,7 +43,7 @@
                                 用户名：{{this.username}}<br/>
                                 您的权限：{{this.power}}
                             </template>
-                            <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>
+                            <a-avatar shape="square" icon="user"/>
                         </a-popover>
                     </span>
                 </div>

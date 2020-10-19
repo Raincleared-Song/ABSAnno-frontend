@@ -149,8 +149,9 @@
         </div>
 
         <p></p>
+<!--   分页符     -->
         <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum"
-                      :style="{textAlign: 'center' }" @change="onChange" />
+                      :style="{textAlign: 'center' }" @change="onChange" v-if="isRouterAlive"/>
     </div>
 </template>
 
@@ -165,7 +166,7 @@
                 totalMsgNum: 1,
                 pagesize: 12,
                 getMsgNum:0,
-                thisPageSize:12,
+                // thisPageSize:12,
                 type:["全部"],
                 theme:["全部"],
                 themeTotal:["全部","食物", "风景","宠物","运动"],
@@ -193,14 +194,12 @@
                         let res = JSON.parse(xhr.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
                         context.totalMsgNum = data.total;
-                        context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
+                        // context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
                         context.msgList = data.question_list;
-                        // if(context.groundType === 1){
-                            while(context.msgList.length < 12){
-                                context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
-                                    'questionNum': 0, 'questionForm': "none"});
-                            }
-                        // }
+                        while(context.msgList.length < 12){
+                            context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
+                                'questionNum': 0, 'questionForm': "none"});
+                        }
                     }
                 };
                 this.getMsgNum = (pageNumber-1)*12;
@@ -212,13 +211,23 @@
             deleteMsg(msgId){
                 dealAdmin(msgId, 'mission_ban');
                 console.log("delete message"+msgId);
+                var count = 0;
                 this.msgList.forEach(function(item, index, arr) {
                     if(item.id === msgId) {
                         arr[index] = { 'id': -1, 'name': "none", 'user': "none",
                             'questionNum': 0, 'questionForm': "none"};
                     }
+                    if(item.questionNum === 0){
+                        count = count + 1;
+                    }
                 });
-
+                console.log(count)
+                if(count === 11){ // all deleted
+                    this.current = this.current - 1;
+                    this.onChange(this.current);
+                    // this.totalMsgNum = this.totalMsgNum - 1;
+                    console.log(this.totalMsgNum)
+                }
                 // reload
                 this.isRouterAlive = false
                 this.$nextTick(() => (this.isRouterAlive = true))

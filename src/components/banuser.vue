@@ -2,7 +2,7 @@
     <a-list item-layout="horizontal" :data-source="userList">
         <a-list-item slot="renderItem" slot-scope="user">
             <a slot="extra" v-if="user.is_banned === true">
-                <a-button type="link" @click="dealUser(user.id, 'user_free', user)">
+                <a-button type="link" @click="dealUser(user.id, 'user_free')">
                     解禁
                 </a-button>
                 <a-button type="link" disabled>
@@ -13,7 +13,7 @@
                 <a-button type="link" disabled="">
                     解禁
                 </a-button>
-                <a-button type="link" @click="dealUser(user.id, 'user_ban', user)">
+                <a-button type="link" @click="dealUser(user.id, 'user_ban')">
                     禁言
                 </a-button>
             </a>
@@ -66,13 +66,17 @@
             "power",
         ],
         methods:{
-            dealUser(id, method, user){
-                if(user.is_banned === true){
-                    user.is_banned = false;
-                }
-                else{
-                    user.is_banned = true;
-                }
+            dealUser(id, method){
+                this.userList.forEach(function(item, index, arr) {
+                    if(item.id === id) {
+                        if(item.is_banned === true){
+                            item.is_banned = false;
+                        }
+                        else{
+                            item.is_banned = true;
+                        }
+                    }
+                });
                 dealAdmin(id, method);
             },
             onChange(pageNumber) {

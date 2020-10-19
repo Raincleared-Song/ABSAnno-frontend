@@ -54,6 +54,7 @@
 
                 xmlRequestPost.onreadystatechange = function() {
                     if (xmlRequestPost.readyState === 4 && xmlRequestPost.status === 201){
+                        // console.log(xmlRequestPost.responseText)
                         let res = JSON.parse(xmlRequestPost.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
                         console.log(data)
@@ -81,8 +82,6 @@
                 xmlRequestGet.onreadystatechange = function () {
                     if (xmlRequestGet.readyState === 4 && xmlRequestGet.status === 200) {  // 注意返回码是 200
                         let csrfToken = this.responseText;  // 获取 CSRF token
-                        console.log(csrfToken)
-                        // this.$cookies.set("csrf", csrfToken, "1d");
                         xmlRequestPost.open("post","backend/login", true);
                         xmlRequestPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
                         xmlRequestPost.setRequestHeader('content-type', 'application/json');
@@ -90,7 +89,6 @@
                             "method":"LogIn", "email":""}));
                     }
                 }
-
                 xmlRequestGet.send();
             },
         },

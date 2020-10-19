@@ -57,19 +57,21 @@
         },
         methods: {
             sendMsg(){
-                // console.log(this.name, this.secret)
-                const xhr = new XMLHttpRequest()
-                let context = this
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4 && xhr.status === 201){
-                        let res = JSON.parse(xhr.responseText);
+                let context = this;
+                let xmlRequestGet = new XMLHttpRequest();
+                xmlRequestGet.open("get", "backend/csrf", true);
+                let xmlRequestPost = new XMLHttpRequest();
+
+                xmlRequestPost.onreadystatechange = function() {
+                    if (xmlRequestPost.readyState === 4 && xmlRequestPost.status === 201){
+                        let res = JSON.parse(xmlRequestPost.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
                         console.log(data.name, data.power);
                         context.$emit('login', {"name":data.name, "power": data.power});
                         context.$router.push('/ground');
                     }
-                    else if(xhr.readyState === 4){
-                        let res = JSON.parse(xhr.response);
+                    else if(xmlRequestPost.readyState === 4){
+                        let res = JSON.parse(xmlRequestPost.response);
                         let error = res.data;
                         console.log(error)
                         if(error === "User Name Error"){
@@ -85,11 +87,22 @@
                             context.OK = false;
                         }
                     }
-                };
-                xhr.open("post","backend/signin");
-                xhr.setRequestHeader('content-type', 'application/json');
-                xhr.send(JSON.stringify({"name":this.name,"password":this.secret,
-                    "method":"SignIn","email":""}))
+                }
+
+                // xmlRequestPost.setRequestHeader('content-type', 'application/json');
+                xmlRequestGet.onreadystatechange = function () {
+                    if (xmlRequestGet.readyState === 4 && xmlRequestGet.status === 200) {  // 注意返回码是 200
+                        let csrfToken = this.responseText;  // 获取 CSRF token
+                        xmlRequestPost.open("post","backend/signin");
+                        xmlRequestPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
+                        xmlRequestPost.setRequestHeader('content-type', 'application/json');
+                        xmlRequestPost.send(JSON.stringify({"name":context.name,"password":context.secret,
+                            "method":"SignIn","email":""}));
+                    }
+                }
+
+                xmlRequestGet.send();
+
             },
         },
 

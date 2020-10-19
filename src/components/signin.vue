@@ -68,7 +68,7 @@
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
                         console.log(data.name, data.power);
                         context.$emit('login', {"name":data.name, "power": data.power});
-                        context.$router.push('/ground');
+                        context.$router.push('/user');
                     }
                     else if(xmlRequestPost.readyState === 4){
                         let res = JSON.parse(xmlRequestPost.response);

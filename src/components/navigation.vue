@@ -70,8 +70,33 @@
         },
         methods: {
             onClick() {
-                this.$emit('logout',true);
-                // TODO 加入真正的logout逻辑！！之前居然忘记了？
+                let context = this;
+                let xmlRequestGet = new XMLHttpRequest();
+                xmlRequestGet.open("get", "backend/csrf", true);
+                let xmlRequestPost = new XMLHttpRequest();
+
+                xmlRequestPost.onreadystatechange = function() {
+                    if (xmlRequestPost.readyState === 4 && xmlRequestPost.status === 201){
+                        console.log("successfully logged out")
+                        context.$emit('logout',true);
+                    }
+                    else if(xmlRequestPost.readyState === 4){
+                        console.log("can't logout")
+                    }
+                }
+
+                // xmlRequestPost.setRequestHeader('content-type', 'application/json');
+                xmlRequestGet.onreadystatechange = function () {
+                    if (xmlRequestGet.readyState === 4 && xmlRequestGet.status === 200) {  // 注意返回码是 200
+                        let csrfToken = this.responseText;  // 获取 CSRF token
+                        xmlRequestPost.open("post","backend/logout", true);
+                        xmlRequestPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
+                        xmlRequestPost.setRequestHeader('content-type', 'application/json');
+                        xmlRequestPost.send(JSON.stringify({}));
+                    }
+                }
+
+                xmlRequestGet.send();
             },
         },
         watch: {

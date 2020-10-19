@@ -127,15 +127,17 @@
                             </a-tag>
                         </a>
                         <a v-if="power===-1" slot="title" >{{ msg.name }}
-                            <a-tag color="cyan">
-                                {{msg.questionForm}}
-                            </a-tag>
+
                         </a>
                         <a slot="description">
                             <div style="color: #5e5e5e">
                                 题目数量：{{msg.questionNum}}
                                 <a-divider type="vertical" />
                                 发布者：{{msg.user}}
+                                <a-divider type="vertical" />
+                                <a-tag color="cyan">
+                                    {{msg.questionForm}}
+                                </a-tag>
                             </div>
                         </a>
                     </a-list-item-meta>

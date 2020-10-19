@@ -9,7 +9,7 @@
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
-    <p v-if="editable">编辑选项：</p>
+    <p v-if="editable" style="margin-top: 15px">编辑选项：</p>
     <div>
       <a-checkbox-group
           v-if="question.options.length" :disabled="editable"
@@ -18,10 +18,10 @@
             v-for="option in question.options"
             :key="option.index" style="margin: 5px">
           <a-checkbox :value="option">{{ option }}</a-checkbox>
-          <a-button
+          <a-button ghost
               v-if="editable" size="small"
               @click="$emit('removeOption', question.id, option.index)">
-            X
+            <a-icon type="delete" />
           </a-button>
         </div>
       </a-checkbox-group>

@@ -5,8 +5,8 @@
         <a-avatar :size="64" icon="user">USER</a-avatar>
         <!--          这里要从数据库拿名字和身份，显示在下方-->
         <h3>{{this.user_name}}</h3>
-        <h4>用户权限：用户，发布者，管理员</h4>
-        <a-menu theme="light" :default-selected-keys="['1']" mode="inline">
+        <h4>用户权限:{{this.user_power[this.power+1]}}</h4>
+        <a-menu theme="light" mode="inline">
           <a-menu-item key="1" @click="change(0)">
             <a-icon type="pie-chart" />
             <span>基本信息</span>
@@ -96,15 +96,45 @@
                 <br />
               </div>
               <h3>选择你喜欢的题目类型</h3>
-              <div>
-                <div :style="{ borderBottom: '1px solid #E9E9E9' }">
-                  <a-checkbox :indeterminate="indeterminate" :checked="classCheckAll" @change="onAllClassCheckedChange">
-                    全选
-                  </a-checkbox>
-                </div>
-                <br />
-                <a-checkbox-group v-model="classCheckedList" :options="classOptions" @change="onSelectClassChange" />
-              </div>
+              <a-checkbox-group @change="onClass1Change">
+                <a-row>
+                  <a-col :span="8">
+                    <a-checkbox value="A">
+                      Class A
+                    </a-checkbox>
+                  </a-col>
+                  <a-col :span="8">
+                    <a-checkbox value="B">
+                      Class B
+                    </a-checkbox>
+                  </a-col>
+                  <a-col :span="8">
+                    <a-checkbox value="C">
+                      Class C
+                    </a-checkbox>
+                  </a-col>
+                  <a-col :span="8">
+                    <a-checkbox value="D">
+                      Class D
+                    </a-checkbox>
+                  </a-col>
+                </a-row>
+              </a-checkbox-group>
+              <h3>选择你偏好的题目数量</h3>
+              <a-select default-value="lucy" style="width: 120px" @change="handleNumberChange">
+                <a-select-option value="jack">
+                  题目数量1
+                </a-select-option>
+                <a-select-option value="lucy">
+                  题目数量2
+                </a-select-option>
+                <a-select-option value="disabled">
+                  题目数量3
+                </a-select-option>
+                <a-select-option value="Yiminghe">
+                  题目数量4
+                </a-select-option>
+              </a-select>
 
             </div>
 
@@ -161,6 +191,7 @@ export default {
       myPublish: [],
       pageList: ['user', 'history', 'mission', 'user'],
       pageListChinese: ['用户信息', '答题历史', '我的发布', '修改个人信息'],
+      user_power: ['未登录', '用户', '发布者', '管理员'],
 
 
       user_name: 'default username',
@@ -216,16 +247,11 @@ export default {
       xhr.open("get", "backend/user?method="+content.toString())
       xhr.send()
     },
-    onAllClassCheckedChange: function(checkedList) {
-      this.indeterminate = !!checkedList.length && checkedList.length < classOptions.length;
-      this.classCheckAll = checkedList.length === classOptions.length;
+    onClassChange(checkedValues) {
+        console.log('checked = ', checkedValues);
     },
-    onSelectClassChange: function(e) {
-      Object.assign(this, {
-        classCheckedList: e.target.checked ? classOptions : [],
-        indeterminate: false,
-        classCheckAll: e.target.checked,
-      });
+    handleNumberChange(value) {
+      console.log(`selected ${value}`);
     },
     mounted: function () {
       this.change(0);

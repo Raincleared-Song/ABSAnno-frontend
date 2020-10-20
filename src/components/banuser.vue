@@ -1,14 +1,6 @@
 <template>
     <a-list item-layout="horizontal" :data-source="userList">
         <a-list-item slot="renderItem" slot-scope="user">
-<!--            <a slot="extra" v-if="user.is_banned === true">-->
-<!--                <a-button type="link" @click="dealUser(user.id, 'user_free')">-->
-<!--                    解禁-->
-<!--                </a-button>-->
-<!--                <a-button type="link" disabled>-->
-<!--                    禁言-->
-<!--                </a-button>-->
-<!--&lt;!&ndash;            </a>&ndash;&gt;-->
             <a slot="extra">
                 <div v-if="user.is_banned === 1">
                     <a-button type="link" @click="dealUser(user.id, 'user_free')">
@@ -41,9 +33,9 @@
                 </a>
                 <a slot="description">
                     <div style="color: #5e5e5e">
-                        信誉：{{user.weight}}
+                        信誉积分：{{user.weight}}
                         <a-divider type="vertical" />
-                        积分：{{user.score}}
+                        金币值：{{user.score}}
                         <a-divider type="vertical" />
                         已完成任务：{{user.fin_num}}
                     </div>
@@ -68,7 +60,6 @@
                 totalUserNum: 1,
                 pageSize: 20,
                 getUserNum:0,
-                // thisPageSize:12,
             }
         },
         props:[

@@ -5,6 +5,8 @@ Vue.use(VueRouter)
 
 import ground from "@/components/ground";
 import rules from "@/components/rules";
+import mission_field from "@/components/mission_field";
+import create_mission from "@/components/create_mission";
 import edit_question from "@/components/edit_question";
 import login from "@/components/login"
 import signin from "@/components/signin"
@@ -18,16 +20,24 @@ import banuser from "@/components/banuser"
 //定义routes路由的集合，数组类型
 
 const routes=[
-    {path:'/ground',component:ground},
-    {path:"/edit",component:edit_question},
-    {path:"/rules",component:rules},
-    {path:'',redirect:"ground"},
-    {path:'/login',component:login},
-    {path:'/signin',component: signin},
-    {path:'/user',component: user_page},
-    {path:'/admin',component: admin_page},
-    {path:'/question/:id', component: answer_question},
-    {path:'/users',component: banuser},
+    { path:'/ground', component:ground },
+    { path:'/rules', component:rules },
+    { path:'', redirect:"ground" },
+    { path:'/login', component:login },
+    { path:'/signin', component: signin },
+    { path:'/user', component: user_page },
+    { path:'/admin', component: admin_page },
+    { path:'/question/:id', component: answer_question },
+    { path:'/users', component: banuser },
+    {
+        path: '/mission',
+        component: mission_field,
+        redirect: '/mission/create',
+        children: [
+            { path: 'create', component: create_mission },
+            { path: 'edit', component: edit_question }
+        ]
+    }
 ]
 
 const router = new VueRouter({

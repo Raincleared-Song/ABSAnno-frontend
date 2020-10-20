@@ -10,7 +10,10 @@
   },
   "jest": {
     "collectCoverage": true,
-    "collectCoverageFrom": ["**/*.{js,vue}", "!**/node_modules/**"],
+    "collectCoverageFrom": [
+      "**/*.{js,vue}",
+      "!**/node_modules/**"
+    ],
     "moduleFileExtensions": [
       "js",
       "json",

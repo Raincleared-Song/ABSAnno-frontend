@@ -70,12 +70,22 @@
                                 <div class="icons-list">
                                     <router-link v-if="power!==-1" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
 
-                                    <a-popover title="题组详情" trigger="hover">
+                                    <a-popover :title="msg.title+' 题组'" trigger="hover">
                                         <template slot="content">
-                                            题目：{{msg.name}}<br />
                                             题目数量：{{msg.questionNum}}<br />
+<!--                                            <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />-->
+                                            悬赏金额：{{msg.cash}}<br/>
+<!--                                            <a-icon type="user" />-->
                                             发布者：{{msg.user}}<br />
-                                            题目类型：{{msg.questionForm}}<br/>
+<!--                                            <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />-->
+                                            截止时间：{{msg.deadline}}<br/>
+<!--                                            <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />-->
+                                            完成情况：{{msg.ans_num}}/{{msg.total_ans}}<br/>
+                                            <a-icon type="tags" />
+                                            {{msg.tags.toString()}}
+<!--                                            <div v-bind:key="tag" v-for="tag in msg.tags">-->
+<!--                                                {{tag}}-->
+<!--                                            </div>-->
                                             <!--                                            点击按钮，查看规则说明-->
                                         </template>
                                         <router-link to="/rules">
@@ -117,24 +127,33 @@
                     <a slot="actions" v-if="power!==-1">
                         <router-link  :to="{path:'/question/'+ msg.id}">做题</router-link>
                     </a>
-                    <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)" style="color: #ff4d4f">删除</a>
+                    <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)" style="color: #ff5c4d">删除</a>
                     <a-list-item-meta>
                         <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}
 <!--                            <a-tag color="cyan">-->
 <!--                                {{msg.questionForm}}-->
 <!--                            </a-tag>-->
                         </a>
-                        <a v-if="power===-1" slot="title" >{{ msg.name }}
+                        <a v-if="power===-1" slot="title"  style="font-size: 15pt" >{{ msg.name }}
 
                         </a>
                         <a slot="description">
                             <div style="color: #5e5e5e">
+                                <a-tag color="green">
+                                    {{msg.questionForm}}
+                                </a-tag>
                                 题目数量：{{msg.questionNum}}
                                 <a-divider type="vertical" />
-                                发布者：{{msg.user}}
+                                <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />{{msg.cash}}
                                 <a-divider type="vertical" />
-                                <a-tag color="cyan">
-                                    {{msg.questionForm}}
+                                <a-icon type="user" />{{msg.user}}
+                                <a-divider type="vertical" />
+                                <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />{{msg.deadline}}
+                                <a-divider type="vertical" />
+                                <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.ans_num}}/{{msg.total_ans}}
+                                <a-divider type="vertical" />
+                                <a-tag v-bind:key="tag" v-for="tag in msg.tags">
+                                    {{tag}}
                                 </a-tag>
                             </div>
                         </a>
@@ -167,12 +186,17 @@
                 pagesize: 12,
                 getMsgNum:0,
                 // thisPageSize:12,
-                type:["全部"],
-                theme:["全部"],
-                themeTotal:["全部","食物", "风景","宠物","运动"],
-                typeTotal:["全部","文字","图片","选择","判断"],
+                // type:["全部"],
+                // theme:["全部"],
+                // themeTotal:["全部","食物", "风景","宠物","运动"],
+                // typeTotal:["全部","文字","图片","选择","判断"],
+                type:["total"],
+                theme:["total"],
+                themeTotal:["total","food", "sports","pet","face detection"],
+                typeTotal:["total","text","picture","judge","choice"],
                 groundType: 1,
                 isRouterAlive: true,
+                keyword:"",
             }
         },
         props:[
@@ -184,6 +208,7 @@
                 if(a>b) return b;
                 return a;
             },
+
             onChange(pageNumber) {
                 this.current = pageNumber;
                 console.log('Page: ', pageNumber);
@@ -198,14 +223,28 @@
                         context.msgList = data.question_list;
                         while(context.msgList.length < 12){
                             context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
-                                'questionNum': 0, 'questionForm': "none"});
+                                'questionNum': 0, 'questionForm': "none", 'is_banned':0,
+                                'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
+                                'tags':[]});
                         }
                     }
                 };
                 this.getMsgNum = (pageNumber-1)*12;
-                console.log("backend/square?num="+this.getMsgNum.toString());
-                xhr.open("get","backend/square?num="+this.getMsgNum.toString());
+                // 请求带上所有的标签和关键词，一个请求就可以发送
+                console.log("backend/square?num="+this.getMsgNum.toString()
+                    +"&type="+this.type.toString()+"&theme="+this.theme.toString()+
+                    "&kw="+this.keyword.toString());
+                xhr.open("get","backend/square?num="+this.getMsgNum.toString()
+                    +"&type="+this.type.toString()+"&theme="+this.theme.toString());
                 xhr.send();
+
+                // for test only
+                // while(context.msgList.length < 12){
+                //     context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
+                //         'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
+                //         'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
+                //         'tags':['food', 'sports']});
+                // }
             },
 
             deleteMsg(msgId){
@@ -215,7 +254,8 @@
                 this.msgList.forEach(function(item, index, arr) {
                     if(item.id === msgId) {
                         arr[index] = { 'id': -1, 'name': "none", 'user': "none",
-                            'questionNum': 0, 'questionForm': "none"};
+                            'questionNum': 0, 'questionForm': "none", 'is_banned':0,
+                            'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none", 'tags':[]};
                     }
                     if(item.questionNum === 0){
                         count = count + 1;
@@ -233,19 +273,17 @@
                 this.$nextTick(() => (this.isRouterAlive = true))
             },
             onSearch(value) {
-                console.log(value);
+                this.keyword = value;
+                this.onChange(1);
             },
             handleChangeTheme(value) {
-                // console.log(`selected ${value}`);
-                this.theme.push(value);
+                this.theme = value;
             },
             handleChangeType(value) {
-                // console.log(`selected ${value}`);
-                this.type.push(value);
+                this.type = value;
             },
             sendSelect(){
-                console.log(this.theme);
-                console.log(this.type);
+                this.onChange(1);
             },
             changeType(){
                 if(this.groundType === 1){

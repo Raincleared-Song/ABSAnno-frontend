@@ -5,27 +5,38 @@ import triggerEvent from "ant-design-vue/lib/_util/triggerEvent";
 *  param requestBody: POST的request.body，传进一个object
 *  param onRespond: 一个函数，参数是返回的json object */
 export default function postBackend(api, requestBody, onRespond) {
-    let xmlHttp = null;
-    if (window.XMLHttpRequest)
-        xmlHttp = new XMLHttpRequest();
-    else
+    let xmlHttpPost;
+    let xmlHttpCsrf;
+    if (window.XMLHttpRequest) {
+        xmlHttpPost = new XMLHttpRequest();
+        xmlHttpCsrf = new XMLHttpRequest();
+        xmlHttpCsrf.open('GET', 'backend/csrf', true);
+    } else {
         // eslint-disable-next-line no-undef
-        xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-
-    if (xmlHttp != null) {
-        xmlHttp.onreadystatechange = function () {
-            if (xmlHttp.readyState === 4) {
-                if (parseInt(xmlHttp.status / 100) === 2) {
-                    const jsonObj = JSON.parse(xmlHttp.responseText);
-                    onRespond(jsonObj);
-                } else {
-                    alert(`response status ${xmlHttp.status}`);
-                }
+        xmlHttpPost = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlHttpPost.onreadystatechange = function () {
+        if (xmlHttpPost.readyState === 4) {
+            if (xmlHttpPost.status === 201) {
+                const jsonObj = JSON.parse(xmlHttpPost.responseText);
+                onRespond(jsonObj);
+            } else {
+                console.log(xmlHttpPost.responseText);
             }
         }
-        xmlHttp.open('POST', api.path, true);
-        xmlHttp.send(JSON.stringify(requestBody));
-    } else {
-        alert("Your browser does not support XmlHTTP...");
     }
+    xmlHttpCsrf.onreadystatechange = function () {
+        if (xmlHttpCsrf.readyState === 4) {
+            if (xmlHttpCsrf.status === 200) {
+                const csrfToken = xmlHttpCsrf.responseText;  // 获取 CSRF token
+                xmlHttpPost.open('POST', api.path, true);
+                xmlHttpPost.setRequestHeader('content-type', 'application/json');
+                xmlHttpPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
+                xmlHttpPost.send(JSON.stringify(requestBody));  // ?
+            } else {
+                console.log(xmlHttpCsrf.responseText);
+            }
+        }
+    }
+    xmlHttpCsrf.send();
 }

@@ -1,5 +1,6 @@
 <template>
-    <div class = "portfolio">
+    <div>
+        <!--   导航栏，提供检索功能     -->
         <div>
             <a-row >
                 <a-col :span="7">
@@ -41,8 +42,20 @@
                 </a-col>
             </a-row>
         </div>
-        <a-divider />
-        <a-row type="flex" justify="space-around">
+        <a-divider></a-divider>
+
+        <!--    样式1，图片广场    -->
+        <div v-if="groundType === 1" class = "portfolio" >
+            <div style="text-align:right;" >
+                <a-button type="link" disabled>
+                    图片广场
+                </a-button>
+                <a-divider type="vertical" />
+                <a-button type="link" @click="changeType" >
+                    文字列表
+                </a-button>
+            </div>
+            <a-row type="flex" justify="space-around" v-if="isRouterAlive">
                 <a-col :span="5" v-for="msg in msgList" :key="msg">
                     <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
 
@@ -63,7 +76,7 @@
                                             题目数量：{{msg.questionNum}}<br />
                                             发布者：{{msg.user}}<br />
                                             题目类型：{{msg.questionForm}}<br/>
-<!--                                            点击按钮，查看规则说明-->
+                                            <!--                                            点击按钮，查看规则说明-->
                                         </template>
                                         <router-link to="/rules">
                                             <a-icon type="info-circle" />
@@ -84,15 +97,66 @@
                     </div>
 
                 </a-col>
-        </a-row>
-        <p></p>
-        <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum"
-                      :style="{textAlign: 'center' }" @change="onChange" />
+            </a-row>
 
+        </div>
+
+        <!--   样式2，题目列表     -->
+        <div v-if="groundType===2">
+            <div style="text-align:right;" >
+                <a-button type="link" @click="changeType">
+                    图片广场
+                </a-button>
+                <a-divider type="vertical" />
+                <a-button type="link" disabled>
+                    文字列表
+                </a-button>
+            </div>
+            <a-list item-layout="horizontal" :data-source="msgList" v-if="isRouterAlive">
+                <a-list-item slot="renderItem" slot-scope="msg" v-if="msg.questionNum !== 0">
+                    <a slot="actions" v-if="power!==-1">
+                        <router-link  :to="{path:'/question/'+ msg.id}">做题</router-link>
+                    </a>
+                    <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)" style="color: #ff4d4f">删除</a>
+                    <a-list-item-meta>
+                        <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}
+<!--                            <a-tag color="cyan">-->
+<!--                                {{msg.questionForm}}-->
+<!--                            </a-tag>-->
+                        </a>
+                        <a v-if="power===-1" slot="title" >{{ msg.name }}
+
+                        </a>
+                        <a slot="description">
+                            <div style="color: #5e5e5e">
+                                题目数量：{{msg.questionNum}}
+                                <a-divider type="vertical" />
+                                发布者：{{msg.user}}
+                                <a-divider type="vertical" />
+                                <a-tag color="cyan">
+                                    {{msg.questionForm}}
+                                </a-tag>
+                            </div>
+                        </a>
+                    </a-list-item-meta>
+<!--                    <div>-->
+<!--                        <a-tag color="cyan">-->
+<!--                            {{msg.questionForm}}-->
+<!--                        </a-tag>-->
+<!--                    </div>-->
+                </a-list-item>
+            </a-list>
+        </div>
+
+        <p></p>
+<!--   分页符     -->
+        <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum"
+                      :style="{textAlign: 'center' }" @change="onChange" v-if="isRouterAlive"/>
     </div>
 </template>
 
 <script>
+    import dealAdmin from "@/utils/admin"
     export default {
         name: "ground",
         data(){
@@ -100,19 +164,19 @@
                 msgList:[],
                 current: 1,
                 totalMsgNum: 1,
-                // id: 1,
                 pagesize: 12,
                 getMsgNum:0,
-                thisPageSize:12,
+                // thisPageSize:12,
                 type:["全部"],
                 theme:["全部"],
                 themeTotal:["全部","食物", "风景","宠物","运动"],
                 typeTotal:["全部","文字","图片","选择","判断"],
+                groundType: 1,
+                isRouterAlive: true,
             }
         },
         props:[
             "username",
-            // "id",
             "power",
         ],
         methods: {
@@ -130,7 +194,7 @@
                         let res = JSON.parse(xhr.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
                         context.totalMsgNum = data.total;
-                        context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
+                        // context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
                         context.msgList = data.question_list;
                         while(context.msgList.length < 12){
                             context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
@@ -145,17 +209,28 @@
             },
 
             deleteMsg(msgId){
-                // const xhr = new XMLHttpRequest()
-                // let context = this
-                // xhr.onreadystatechange = function () {
-                //     if (xhr.readyState === 4 && xhr.status === 201){
-                //         context.$router.push('/ground'); // 重新加载题目广场
-                //         // TODO 检查分页符
-                //     }
-                // };
-                // xhr.open("get","backend/delete?msgid="+msgId);
-                console.log("backend/deletemsg?msgid="+msgId);
-                // xhr.send();
+                dealAdmin(msgId, 'mission_ban');
+                console.log("delete message"+msgId);
+                var count = 0;
+                this.msgList.forEach(function(item, index, arr) {
+                    if(item.id === msgId) {
+                        arr[index] = { 'id': -1, 'name': "none", 'user': "none",
+                            'questionNum': 0, 'questionForm': "none"};
+                    }
+                    if(item.questionNum === 0){
+                        count = count + 1;
+                    }
+                });
+                console.log(count)
+                if(count === 11){ // all deleted
+                    this.current = this.current - 1;
+                    this.onChange(this.current);
+                    // this.totalMsgNum = this.totalMsgNum - 1;
+                    console.log(this.totalMsgNum)
+                }
+                // reload
+                this.isRouterAlive = false
+                this.$nextTick(() => (this.isRouterAlive = true))
             },
             onSearch(value) {
                 console.log(value);
@@ -171,7 +246,15 @@
             sendSelect(){
                 console.log(this.theme);
                 console.log(this.type);
-            }
+            },
+            changeType(){
+                if(this.groundType === 1){
+                    this.groundType = 2;
+                }
+                else{
+                    this.groundType = 1;
+                }
+            },
         },
         mounted:function () {   //自动触发写入的函数
             this.onChange(1);

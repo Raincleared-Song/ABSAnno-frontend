@@ -239,12 +239,12 @@
                 xhr.send();
 
                 // for test only
-                while(context.msgList.length < 12){
-                    context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
-                        'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
-                        'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
-                        'tags':['food', 'sports']});
-                }
+                // while(context.msgList.length < 12){
+                //     context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
+                //         'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
+                //         'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
+                //         'tags':['food', 'sports']});
+                // }
             },
 
             deleteMsg(msgId){

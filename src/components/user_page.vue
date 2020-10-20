@@ -6,8 +6,9 @@
         <!--          这里要从数据库拿名字和身份，显示在下方-->
         <h3>{{this.user_name}}</h3>
         <h4>用户权限:{{this.user_power[this.power+1]}}</h4>
-        <a-menu theme="light" mode="inline">
-          <a-menu-item key="1" @click="change(0)">
+<!--        :default-selected-keys="['4']"-->
+        <a-menu theme="light" :defaultSelectedKeys="['4']" :defaultOpenKeys="['4']" mode="inline">
+          <a-menu-item key="1" @click="change(0)" @select="simplefunc()">
             <a-icon type="pie-chart" />
             <span>基本信息</span>
           </a-menu-item>
@@ -35,6 +36,8 @@
           <!--          </a-breadcrumb>-->
           <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
             <!--          填写下方的四个div中的内容，预计有表格、列表、输入框等等。-->
+
+
             <div v-show="0===page_number">
               <div>
                 <a-descriptions title="用户信息">
@@ -56,35 +59,41 @@
                 </a-descriptions>
               </div>
             </div>
+
+
             <div v-show="1===page_number">
               <div>
-                <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
-                  <div slot="footer"><b>ant design vue</b> footer part</div>
+                <a-list item-layout="vertical" size="medium" :pagination="pagination" :data-source="answerListData">
                   <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
                     <template v-for="{ type, text } in actions" slot="actions">
                       <span :key="type">
                         <a-icon :type="type" style="margin-right: 8px" />
-                        {{ text }}
+                        {{ text + item[type] }}
                       </span>
                     </template>
                     <img
                         slot="extra"
                         width="272"
                         alt="logo"
-                        src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
                     />
-                    <a-list-item-meta :description="item.description">
-                      <a slot="title" :href="item.href">{{ item.title + index}}</a>
-                      <a-avatar slot="avatar" :src="item.avatar" />
+                    <a-list-item-meta :description="item.qName">
+                      <a slot="title" >{{ item.qName + index}}</a>
+<!--                      <a-avatar slot="avatar" :src="item.avatar" />-->
                     </a-list-item-meta>
-                    {{ item.content }}
+                    published by :{{ item.qUser }}
+                    published on : {{ item.qTime }}
+
                   </a-list-item>
                 </a-list>
               </div>
             </div>
+
+
             <div v-show="2===page_number">
               <p>这是我的发布界面</p>
             </div>
+
+
             <div v-show="3===page_number">
               <div class="components-input-demo-presuffix">
                 <a-input ref="userNameInput" placeholder="User name">
@@ -96,7 +105,7 @@
                 <br />
               </div>
               <h3>选择你喜欢的题目类型</h3>
-              <a-checkbox-group @change="onClass1Change">
+              <a-checkbox-group>
                 <a-row>
                   <a-col :span="8">
                     <a-checkbox value="A">
@@ -122,16 +131,16 @@
               </a-checkbox-group>
               <h3>选择你偏好的题目数量</h3>
               <a-select default-value="lucy" style="width: 120px" @change="handleNumberChange">
-                <a-select-option value="jack">
+                <a-select-option value="qNum1">
                   题目数量1
                 </a-select-option>
-                <a-select-option value="lucy">
+                <a-select-option value="qNum2">
                   题目数量2
                 </a-select-option>
-                <a-select-option value="disabled">
+                <a-select-option value="qNum3">
                   题目数量3
                 </a-select-option>
-                <a-select-option value="Yiminghe">
+                <a-select-option value="qNum4">
                   题目数量4
                 </a-select-option>
               </a-select>
@@ -148,25 +157,29 @@
 </template>
 
 <script>
-const listData = [];
+const answerListData = [];
 export const classOptions = ['题目类型1', '题目类型2', '题目类型3'];
 export const defaultClassOptionsList = ['题目类型1', '题目类型2', '题目类型3'];
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    href: 'https://www.antdv.com/',
-    title: `ant design vue part ${i}`,
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    description:
-        'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-    content:
-        'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+for (let i = 0; i < 10; i++) {
+  answerListData.push({
+    qName: "Do you like apples",
+    qUser: "Mat",
+    qClass: "Single Choice",
+    qTime: new Date().setFullYear(2020, 10, 20)
+    // href: 'https://www.antdv.com/',
+    // title: `ant design vue part ${i}`,
+    // avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    // description:
+    //     'Ant Design, a design language for background applications, is refined by Ant UED Team.',
+    // content:
+    //     'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
   });
 }
 export default {
   name: "user_page",
   data () {
     return {
-      listData,
+      answerListData,
       pagination: {
         onChange: page => {
           console.log(page);
@@ -174,9 +187,8 @@ export default {
         pageSize: 3,
       },
       actions: [
-        { type: 'star-o', text: '156' },
-        { type: 'like-o', text: '156' },
-        { type: 'message', text: '2' },
+        { type: 'qUser', text: 'Published by: ' },
+        { type: 'qTime', text: 'Published on: ' },
       ],
       indeterminate: true,
       classCheckAll: false,
@@ -189,7 +201,7 @@ export default {
       info: [],
       answerList: [],
       myPublish: [],
-      pageList: ['user', 'history', 'mission', 'user'],
+      pageList: ['user', 'history', 'mission', 'editUser'],
       pageListChinese: ['用户信息', '答题历史', '我的发布', '修改个人信息'],
       user_power: ['未登录', '用户', '发布者', '管理员'],
 
@@ -198,6 +210,8 @@ export default {
       user_score: 0,
       user_weight: 0,
       user_ans_num: 0,
+
+      qNum: 10, // 总共回答了多少道题
     }
   },
   props: [
@@ -241,6 +255,7 @@ export default {
             context.parseUserInfo(info)
           else if (content === "mission")
             context.parseMission(info)
+          // else if (content === "editUser)
 
         }
       }
@@ -253,9 +268,13 @@ export default {
     handleNumberChange(value) {
       console.log(`selected ${value}`);
     },
-    mounted: function () {
+    created: function () {
       this.change(0);
-      console.log("in mounted function")
+      console.log("in created function")
+    },
+    simplefunc: function() {
+      this.change(0)
+      console.log("in simplefunc function")
     }
   }
 }

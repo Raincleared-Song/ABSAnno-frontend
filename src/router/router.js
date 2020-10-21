@@ -5,9 +5,12 @@ Vue.use(VueRouter)
 
 import ground from "@/components/ground";
 import rules from "@/components/rules";
+
 import mission_field from "@/components/mission_field";
 import create_mission from "@/components/create_mission";
 import edit_question from "@/components/edit_question";
+import upload_mission from "@/components/upload_mission";
+
 import login from "@/components/login"
 import signin from "@/components/signin"
 
@@ -35,7 +38,8 @@ const routes=[
         redirect: '/mission/create',
         children: [
             { path: 'create', component: create_mission },
-            { path: 'edit', component: edit_question }
+            { path: 'edit', component: edit_question },
+            { path: 'upload', component: upload_mission }
         ]
     }
 ]

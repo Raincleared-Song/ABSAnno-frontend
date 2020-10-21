@@ -4,7 +4,7 @@
       <a-layout-sider theme="light" v-model="collapsed">
         <a-avatar :size="64" icon="user">USER</a-avatar>
         <!--          这里要从数据库拿名字和身份，显示在下方-->
-        <h3>{{this.user_name}}</h3>
+        <h3>{{this.username}}</h3>
         <h4>用户权限:{{this.user_power[this.power+1]}}</h4>
 <!--        :default-selected-keys="['4']"-->
         <a-menu theme="light" :defaultSelectedKeys="['4']" :defaultOpenKeys="['4']" mode="inline">
@@ -16,7 +16,7 @@
             <a-icon type="desktop"/>
             <span>答题历史</span>
           </a-menu-item>
-          <a-menu-item key="3" @click="change(2)">
+          <a-menu-item key="3" @click="change(2)" :selectable="this.power===1">
             <!-- 当且仅当当前用户为发布者时，可以看到这一条 -->
             <a-icon type="edit" />
             <span>我的发布</span>
@@ -42,7 +42,7 @@
               <div>
                 <a-descriptions title="用户信息">
                   <a-descriptions-item label="用户名">
-                    {{this.user_name}}
+                    {{this.username}}
                   </a-descriptions-item>
                   <a-descriptions-item label="用户积分">
                     {{this.user_score}}
@@ -62,30 +62,31 @@
 
 
             <div v-show="1===page_number">
-              <div>
-                <a-list item-layout="vertical" size="medium" :pagination="pagination" :data-source="answerListData">
-                  <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
-                    <template v-for="{ type, text } in actions" slot="actions">
+              <template>
+                <div>
+                  <a-list item-layout="vertical" size="medium" :pagination="pagination" :data-source="answerListData">
+                    <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
+                      <template v-for="{ type, text } in actions" slot="actions">
                       <span :key="type">
                         <a-icon :type="type" style="margin-right: 8px" />
                         {{ text + item[type] }}
                       </span>
-                    </template>
-                    <img
-                        slot="extra"
-                        width="272"
-                        alt="logo"
-                    />
-                    <a-list-item-meta :description="item.qName">
-                      <a slot="title" >{{ item.qName + index}}</a>
-<!--                      <a-avatar slot="avatar" :src="item.avatar" />-->
-                    </a-list-item-meta>
-                    published by :{{ item.qUser }}
-                    published on : {{ item.qTime }}
+                      </template>
+                      <img
+                          slot="extra"
+                          width="272"
+                          alt="logo"
+                      />
+                      <a-list-item-meta :description="item.qName">
+                        <a slot="title" >{{ item.qName + index}}</a>
+                        <!--                      <a-avatar slot="avatar" :src="item.avatar" />-->
+                      </a-list-item-meta>
 
-                  </a-list-item>
-                </a-list>
-              </div>
+                    </a-list-item>
+                  </a-list>
+                </div>
+              </template>
+
             </div>
 
 
@@ -96,7 +97,7 @@
 
             <div v-show="3===page_number">
               <div class="components-input-demo-presuffix">
-                <a-input ref="userNameInput" placeholder="User name">
+                <a-input ref="userNameInput" placeholder="User name" default-value={{this.username}}>
                   <a-icon slot="prefix" type="user" />
                   <a-tooltip slot="suffix" title="You can change your username here">
                     <a-icon type="info-circle" style="color: rgba(0,0,0,.45)" />
@@ -130,8 +131,8 @@
                 </a-row>
               </a-checkbox-group>
               <h3>选择你偏好的题目数量</h3>
-              <a-select default-value="lucy" style="width: 120px" @change="handleNumberChange">
-                <a-select-option value="qNum1">
+              <a-select default-value="小于10道" style="width: 120px" @change="handleNumberChange">
+                <a-select-option value="小于10道">
                   题目数量1
                 </a-select-option>
                 <a-select-option value="qNum2">
@@ -144,7 +145,12 @@
                   题目数量4
                 </a-select-option>
               </a-select>
-
+                <a-button-group>
+                  <a-button @click="change(0)">Cancel</a-button>
+                  <a-button type="primary" @click="submitChange">
+                    OK
+                  </a-button>
+                </a-button-group>
             </div>
 
           </div>
@@ -196,7 +202,7 @@ export default {
       classOptions,
 
       collapsed: false,
-      page_number: 0,
+      page_number: 3,
       userid: -1,
       info: [],
       answerList: [],
@@ -216,13 +222,13 @@ export default {
   },
   props: [
     "power",
+    "username"
   ],
   methods: {
     change: function (index) {
       this.page_number = index;
       console.log(this.pageList)
-      this.get_user_info(this.pageList[index])
-
+      this.getUserInfo(this.pageList[index])
     },
     parseHistory: function (info) {
       let data = JSON.parse(info.data.replace(/'/g,'"'))
@@ -241,7 +247,7 @@ export default {
       let data = JSON.parse(info.data.replace(/'/g,'"'))
       console.log(data)
     },
-    get_user_info: function (content) {
+    getUserInfo: function (content) {
       const xhr = new XMLHttpRequest()
       let context = this
       xhr.onreadystatechange = function () {
@@ -262,6 +268,9 @@ export default {
       xhr.open("get", "backend/user?method="+content.toString())
       xhr.send()
     },
+    submitChange() {
+
+    },
     onClassChange(checkedValues) {
         console.log('checked = ', checkedValues);
     },
@@ -272,10 +281,7 @@ export default {
       this.change(0);
       console.log("in created function")
     },
-    simplefunc: function() {
-      this.change(0)
-      console.log("in simplefunc function")
-    }
+
   }
 }
 

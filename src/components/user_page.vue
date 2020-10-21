@@ -7,7 +7,7 @@
         <h3>{{this.username}}</h3>
         <h4>用户权限:{{this.user_power[this.power+1]}}</h4>
 <!--        :default-selected-keys="['4']"-->
-        <a-menu theme="light" :defaultSelectedKeys="['4']" :defaultOpenKeys="['4']" mode="inline">
+        <a-menu theme="light"  :defaultOpenKeys="['4']" mode="inline">
           <a-menu-item key="1" @click="change(0)" @select="simplefunc()">
             <a-icon type="pie-chart" />
             <span>基本信息</span>
@@ -97,88 +97,75 @@
 
             <div v-show="3===page_number">
               <div class="components-input-demo-presuffix">
-                <a-input ref="userNameInput" placeholder="User name" default-value={{this.username}}>
-                  <a-icon slot="prefix" type="user" />
-                  <a-tooltip slot="suffix" title="You can change your username here">
-                    <a-icon type="info-circle" style="color: rgba(0,0,0,.45)" />
-                  </a-tooltip>
-                </a-input>
-                <br />
+                <h3>你可以在此改变你的用户名（留空来保持不变）</h3>
+                <a-input-group compact>
+                  <a-input ref="userNameInput" placeholder="User name" v-model="user_name">
+                    <a-icon slot="prefix" type="user" />
+                    <a-tooltip slot="suffix" title="You can change your username here">
+                      <a-icon type="info-circle" style="color: rgba(0,0,0,.45)" />
+                    </a-tooltip>
+                  </a-input>
+                </a-input-group>
+                <br/>
               </div>
-              <h3>选择你喜欢的题目类型</h3>
-              <a-checkbox-group>
-                <a-row>
-                  <a-col :span="8">
-                    <a-checkbox value="A">
-                      Class A
+              <div>
+                <h3>选择你喜欢的题目类型</h3>
+                <div>
+                  <div :style="{ borderBottom: '1px solid #E9E9E9' }">
+                    <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="onCheckAllChange">
+                      Check all
                     </a-checkbox>
-                  </a-col>
-                  <a-col :span="8">
-                    <a-checkbox value="B">
-                      Class B
-                    </a-checkbox>
-                  </a-col>
-                  <a-col :span="8">
-                    <a-checkbox value="C">
-                      Class C
-                    </a-checkbox>
-                  </a-col>
-                  <a-col :span="8">
-                    <a-checkbox value="D">
-                      Class D
-                    </a-checkbox>
-                  </a-col>
-                </a-row>
-              </a-checkbox-group>
-              <h3>选择你偏好的题目数量</h3>
-              <a-select default-value="小于10道" style="width: 120px" @change="handleNumberChange">
-                <a-select-option value="小于10道">
-                  题目数量1
-                </a-select-option>
-                <a-select-option value="qNum2">
-                  题目数量2
-                </a-select-option>
-                <a-select-option value="qNum3">
-                  题目数量3
-                </a-select-option>
-                <a-select-option value="qNum4">
-                  题目数量4
-                </a-select-option>
-              </a-select>
+                  </div>
+                  <br />
+                  <a-checkbox-group v-model="checkedList" :options="plainOptions" @change="onCheckListChange" />
+                </div>
+              </div>
+              <div>
+                <h3>选择你偏好的题目数量</h3>
+                <a-select default-value="num1" style="width: 120px" @change="handleNumberChange">
+                  <a-select-option value="num1">
+                    题目数量1
+                  </a-select-option>
+                  <a-select-option value="num2">
+                    题目数量2
+                  </a-select-option>
+                  <a-select-option value="num3">
+                    题目数量3
+                  </a-select-option>
+                  <a-select-option value="num4">
+                    题目数量4
+                  </a-select-option>
+                </a-select>
+              </div>
+              <div>
+                <h3>是否提交？</h3>
                 <a-button-group>
                   <a-button @click="change(0)">Cancel</a-button>
                   <a-button type="primary" @click="submitChange">
                     OK
                   </a-button>
                 </a-button-group>
+              </div>
             </div>
-
           </div>
         </a-layout-content>
       </a-layout>
     </a-layout>
-
   </div>
 
 </template>
 
 <script>
 const answerListData = [];
-export const classOptions = ['题目类型1', '题目类型2', '题目类型3'];
-export const defaultClassOptionsList = ['题目类型1', '题目类型2', '题目类型3'];
+const plainOptions = ['Apple', 'Pear', 'Orange'];
+const defaultCheckedList = ['Apple', 'Orange'];
 for (let i = 0; i < 10; i++) {
   answerListData.push({
     qName: "Do you like apples",
     qUser: "Mat",
     qClass: "Single Choice",
-    qTime: new Date().setFullYear(2020, 10, 20)
-    // href: 'https://www.antdv.com/',
-    // title: `ant design vue part ${i}`,
-    // avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    // description:
-    //     'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-    // content:
-    //     'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+    qTime: new Date().setFullYear(2020, 10, 20),
+    // add more info
   });
 }
 export default {
@@ -196,10 +183,6 @@ export default {
         { type: 'qUser', text: 'Published by: ' },
         { type: 'qTime', text: 'Published on: ' },
       ],
-      indeterminate: true,
-      classCheckAll: false,
-      classCheckedList: defaultClassOptionsList,
-      classOptions,
 
       collapsed: false,
       page_number: 3,
@@ -212,12 +195,19 @@ export default {
       user_power: ['未登录', '用户', '发布者', '管理员'],
 
 
-      user_name: 'default username',
+      user_name: this.username,
       user_score: 0,
       user_weight: 0,
       user_ans_num: 0,
 
-      qNum: 10, // 总共回答了多少道题
+      totalNum: 10, // 总共回答了多少道题
+
+      desireNum: "",
+
+      checkedList: defaultCheckedList,
+      indeterminate: true,
+      checkAll: false,
+      plainOptions,
     }
   },
   props: [
@@ -269,13 +259,31 @@ export default {
       xhr.send()
     },
     submitChange() {
-
+      const xhr = new XMLHttpRequest()
+      // let context = this
+      // xhr.onreadystatechange = function () {
+      //   if (xhr.readyState === 4 && xhr.status === 201) {
+      //
+      //   }
+      //   xhr.open("post", "backend/user?method="+"modify")
+      //   xhr.send()
+      // }
     },
-    onClassChange(checkedValues) {
-        console.log('checked = ', checkedValues);
+    onCheckListChange(checkedList) {
+      this.indeterminate = !!checkedList.length && checkedList.length < plainOptions.length;
+      this.checkAll = checkedList.length === plainOptions.length;
+      console.log(checkedList)
+    },
+    onCheckAllChange(e) {
+      Object.assign(this, {
+        checkedList: e.target.checked ? plainOptions : [],
+        indeterminate: false,
+        checkAll: e.target.checked,
+      });
     },
     handleNumberChange(value) {
       console.log(`selected ${value}`);
+      this.desireNum = value
     },
     created: function () {
       this.change(0);

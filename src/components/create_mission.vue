@@ -60,7 +60,10 @@
         </a-form-model-item>
       </a-form-model>
 
-      <a-button type="primary" @click="onEditClick" block>
+      <a-button
+          type="dashed"
+          @click="onEditClick"
+          block>
         手动添加题目
       </a-button>
 
@@ -69,9 +72,6 @@
 </template>
 
 <script>
-import API from "@/utils/API";
-import postFile from "@/utils/postFile";
-import postBackend from "@/utils/postBackend";
 
 export default {
   name: "create_mission",

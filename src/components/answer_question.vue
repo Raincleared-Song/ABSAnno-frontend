@@ -103,8 +103,12 @@ export default {
         mission_id: this.missionId.toString(),
         ans: answers
       }, jsonObj => {
-        console.log(jsonObj);
-        this.modal.visible = true;
+        if (jsonObj.code === 201) {
+          console.log(jsonObj);
+          this.modal.visible = true;
+        } else {
+          this.$message.error("Try later!");
+        }
       });
     },
     // 下一题
@@ -117,14 +121,18 @@ export default {
           num: nextIndex,
           step: 0
         }, jsonObj => {
-          let dataObj = getDataObj(jsonObj);
-          this.questions.push({
-            index: dataObj.ret,
-            type: 'judgement',  // TODO: add more type
-            description: dataObj.word,
-            answer: ""
-          });
-          this.nowQuestionIndex = this.questions.length - 1;
+          if (jsonObj.code === 201) {
+            let dataObj = getDataObj(jsonObj);
+            this.questions.push({
+              index: dataObj.ret,
+              type: 'judgement',  // TODO: add more type
+              description: dataObj.word,
+              answer: ""
+            });
+            this.nowQuestionIndex = this.questions.length - 1;
+          } else {
+            this.$message.error("Try later!");
+          }
         });
       } else {
         // 下一题已经加载过了
@@ -154,15 +162,19 @@ export default {
       num: 0,
       step: 0
     }, jsonObj => {
-      let dataObj = getDataObj(jsonObj);
-      this.totalNum = dataObj.total;
-      this.questions.push({
-        index: dataObj.ret,
-        type: 'judgement',  // TODO: add more type
-        description: dataObj.word,
-        answer: ""
-      });
-      this.nowQuestionIndex = this.questions.length - 1;
+      if (jsonObj.code === 201) {
+        let dataObj = getDataObj(jsonObj);
+        this.totalNum = dataObj.total;
+        this.questions.push({
+          index: dataObj.ret,
+          type: 'judgement',  // TODO: add more type
+          description: dataObj.word,
+          answer: ""
+        });
+        this.nowQuestionIndex = this.questions.length - 1;
+      } else {
+        this.$message.error("Try later!");
+      }
     });
   },  // end of created
   watch: {

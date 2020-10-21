@@ -92,6 +92,7 @@
 
 <script>
 import API from "@/utils/API";
+import postFile from "@/utils/postFile";
 import postBackend from "@/utils/postBackend";
 
 export default {
@@ -132,12 +133,12 @@ export default {
     },
     onBeforeUpload(file) {
       this.formData = new FormData();
-      this.formData.append("zip", file.file);
+      this.formData.append("zip", file);
       return true;
     },
     handleUploadFile() {
       console.log(this.formData.get("zip"));
-      postBackend(API.POST_NEW_MISSION, this.formData, jsonObj => {
+      postFile(API.POST_NEW_MISSION, this.formData, jsonObj => {
         console.log(jsonObj);
         if (jsonObj.code === 201) {
           this.$message.success("File Upload Success!");
@@ -145,7 +146,7 @@ export default {
         } else {
           this.$message.error("File Upload Failed!");
         }
-      }, false);
+      });
     }
   }
 }

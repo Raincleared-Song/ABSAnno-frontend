@@ -28,7 +28,7 @@
         default() {
           return {
             id: 0,
-            type: 'text_edit',
+            type: 'text',
             // 出题者可编辑
             description: "",
             // 做题者可编辑

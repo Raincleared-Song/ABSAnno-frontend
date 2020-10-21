@@ -7,11 +7,11 @@
           :editable="false"
           :question="nowQuestion" />
       <CheckboxGroup
-          v-else-if="nowQuestion.type === 'select_multiple'"
+          v-else-if="nowQuestion.type === 'choice'"
           :editable="false"
           :question="nowQuestion" />
       <TextEdit
-          v-else-if="nowQuestion.type === 'text_edit'"
+          v-else-if="nowQuestion.type === 'text'"
           :editable="false"
           :question="nowQuestion" />
     </div>
@@ -123,12 +123,16 @@ export default {
         }, jsonObj => {
           if (jsonObj.code === 201) {
             let dataObj = getDataObj(jsonObj);
-            this.questions.push({
+            let newQuestion = {
               index: dataObj.ret,
-              type: 'judgement',  // TODO: add more type
+              type: dataObj.type,
               description: dataObj.word,
               answer: ""
-            });
+            }
+            // 对于选择题
+            if (newQuestion.type === 'choice')
+              newQuestion.options = dataObj.options.split('|');
+            this.questions.push(newQuestion);
             this.nowQuestionIndex = this.questions.length - 1;
           } else {
             this.$message.error("Try later!");
@@ -165,12 +169,16 @@ export default {
       if (jsonObj.code === 201) {
         let dataObj = getDataObj(jsonObj);
         this.totalNum = dataObj.total;
-        this.questions.push({
+        let newQuestion = {
           index: dataObj.ret,
-          type: 'judgement',  // TODO: add more type
+          type: dataObj.type,
           description: dataObj.word,
           answer: ""
-        });
+        };
+        // 对于选择题
+        if (newQuestion.type === 'choice')
+          newQuestion.options = dataObj.options.split('|');
+        this.questions.push(newQuestion);
         this.nowQuestionIndex = this.questions.length - 1;
       } else {
         this.$message.error("Try later!");

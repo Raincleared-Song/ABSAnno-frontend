@@ -65,8 +65,16 @@ export default {
         total: this.mission.min.toString()
       };
       submitObj.question_list = this.questions.map(element => {
-        if (this.mission.type === 'judgement')
+        if (this.mission.type === 'judgement') {
           return { contains: element.description };
+        } else if (this.mission.type === 'choice') {
+          return {
+            contains: element.description,
+            options: element.options.join('|')
+          };
+        } else if (this.mission.type === 'text') {
+          return { contains: element.description };
+        }
       });
       console.log(submitObj);
       postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {

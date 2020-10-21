@@ -48,7 +48,7 @@ export default {
       default() {
         return {
           id: 0,
-          type: 'select_multiple',
+          type: 'choice',
           // 出题者可编辑
           description: "",
           options: [],

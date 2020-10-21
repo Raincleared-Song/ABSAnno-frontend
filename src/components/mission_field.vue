@@ -50,7 +50,8 @@ export default {
         name: this.mission.name,
         question_form: this.mission.type,
         question_num: this.questions.length.toString(),
-        user_id: this.id.toString(),
+        mission_tags: this.mission.tags,
+        // user_id: this.id.toString(),
         total: this.mission.min.toString()
       };
       submitObj.question_list = this.questions.map(element => {

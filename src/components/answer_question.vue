@@ -99,7 +99,7 @@ export default {
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION, {
-        user_id: this.id.toString(),
+        // user_id: this.id.toString(),
         mission_id: this.missionId.toString(),
         ans: answers
       }, jsonObj => {

@@ -157,6 +157,7 @@
         let targetIdx = this.questions.findIndex(question => {
           return question.id === questionId;
         });
+        console.log(targetIdx, optionIdx);
         this.questions[targetIdx].options.splice(optionIdx, 1);
       }
     },  // end of methods

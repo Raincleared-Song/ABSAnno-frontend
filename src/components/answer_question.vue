@@ -95,7 +95,11 @@ export default {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        return question.answer;
+        if (question.type === 'choice') {
+          return question.answer.join('|');
+        } else {
+          return question.answer;
+        }
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION, {

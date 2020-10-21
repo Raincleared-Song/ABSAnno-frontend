@@ -3,29 +3,38 @@
   <div>
     <h2>多选题</h2>
     <div v-if="editable">
-      <p>编辑题目：</p>
+      <div style="margin: 15px 10px 5px 10px">
+        编辑题目：
+      </div>
       <a-textarea v-model="question.description" placeholder="your question" />
     </div>
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
-    <p v-if="editable" style="margin-top: 15px">编辑选项：</p>
+    <div
+        v-if="editable"
+        style="margin: 15px 10px">
+      编辑选项：
+    </div>
     <div>
       <a-checkbox-group
           v-if="question.options.length" :disabled="editable"
           v-model="question.answer" style="margin: 10px">
         <div
-            v-for="option in question.options"
-            :key="option.index" style="margin: 5px">
+            v-for="(option, index) in question.options"
+            :key="index" style="margin: 5px">
           <a-checkbox :value="option">{{ option }}</a-checkbox>
           <a-button ghost
               v-if="editable" size="small"
-              @click="$emit('removeOption', question.id, option.index)">
+              @click="$emit('removeOption', question.id, index)">
             <a-icon type="delete" />
           </a-button>
         </div>
       </a-checkbox-group>
-      <p v-else>No option added...</p>
+      <div
+          v-else style="margin: 10px">
+        No option added...
+      </div>
     </div>
     <div v-if="editable">
       <a-input

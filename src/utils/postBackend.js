@@ -2,11 +2,12 @@
 import triggerEvent from "ant-design-vue/lib/_util/triggerEvent";
 
 /* 这是一个高阶函数，负责向后端发送请求，包装在communication.js里也许方便一些？？？
-*  param requestBody: POST的request.body，传进一个object
-*  param onRespond: 一个函数，参数是返回的json object */
-export default function postBackend(api, requestBody, onRespond) {
+ * param api: API.js里面的常量，url等等
+ * param requestBody: POST的request.body，传进一个object */
+export default function postBackend(api, requestBody, onRespond, isJson = true) {
     let xmlHttpPost;
     let xmlHttpCsrf;
+    let jsonObj;    // 返回的东西
     if (window.XMLHttpRequest) {
         xmlHttpPost = new XMLHttpRequest();
         xmlHttpCsrf = new XMLHttpRequest();
@@ -17,12 +18,9 @@ export default function postBackend(api, requestBody, onRespond) {
     }
     xmlHttpPost.onreadystatechange = function () {
         if (xmlHttpPost.readyState === 4) {
-            if (xmlHttpPost.status === 201) {
-                const jsonObj = JSON.parse(xmlHttpPost.responseText);
-                onRespond(jsonObj);
-            } else {
-                console.log(xmlHttpPost.responseText);
-            }
+            jsonObj = JSON.parse(xmlHttpPost.responseText);
+            onRespond(jsonObj);
+            // return jsonObj
         }
     }
     xmlHttpCsrf.onreadystatechange = function () {
@@ -32,7 +30,10 @@ export default function postBackend(api, requestBody, onRespond) {
                 xmlHttpPost.open('POST', api.path, true);
                 xmlHttpPost.setRequestHeader('content-type', 'application/json');
                 xmlHttpPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
-                xmlHttpPost.send(JSON.stringify(requestBody));  // ?
+                if (isJson)
+                    xmlHttpPost.send(JSON.stringify(requestBody));
+                else
+                    xmlHttpPost.send(requestBody);
             } else {
                 console.log(xmlHttpCsrf.responseText);
             }

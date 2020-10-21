@@ -67,12 +67,23 @@
         </a-button>
       </div>
       <div style="margin: 20px;">
-        <a-upload-dragger
-            name="file"
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76">
-          <p><a-icon type="inbox" /></p>
+        <el-upload
+            drag
+            ref="upload_file"
+            action="#"
+            :limit="1"
+            :file-list="fileList"
+            :before-upload="onBeforeUpload"
+            :http-request="handleUploadFile"
+        >
+          <i class="el-icon-upload"></i>
           <p>Click or drag file to this area to upload</p>
-        </a-upload-dragger>
+        </el-upload>
+<!--        <a-button-->
+<!--            @click="handleUploadFile"-->
+<!--            :disabled="formData === undefined">-->
+<!--          Submit File-->
+<!--        </a-button>-->
       </div>
 
     </a-layout-content>
@@ -80,6 +91,9 @@
 </template>
 
 <script>
+import API from "@/utils/API";
+import postBackend from "@/utils/postBackend";
+
 export default {
   name: "create_mission",
   data() {
@@ -87,7 +101,9 @@ export default {
       rules: {
         name: [{ required: true, message: 'Mission name cannot be null.', trigger: 'blur' }],
         type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }]
-      }
+      },
+      formData: undefined,
+      fileList: []
     };
   },
   props: {
@@ -113,6 +129,23 @@ export default {
           this.$message.warning("error submit");
         }
       });
+    },
+    onBeforeUpload(file) {
+      this.formData = new FormData();
+      this.formData.append("zip", file.file);
+      return true;
+    },
+    handleUploadFile() {
+      console.log(this.formData.get("zip"));
+      postBackend(API.POST_NEW_MISSION, this.formData, jsonObj => {
+        console.log(jsonObj);
+        if (jsonObj.code === 201) {
+          this.$message.success("File Upload Success!");
+          this.$router.push('/ground');
+        } else {
+          this.$message.error("File Upload Failed!");
+        }
+      }, false);
     }
   }
 }

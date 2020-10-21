@@ -60,32 +60,9 @@
         </a-form-model-item>
       </a-form-model>
 
-      <div>
-        请上传文件或者
-        <a-button type="link" @click="onEditClick">
-            手动添加题目
-        </a-button>
-      </div>
-      <div style="margin: 20px;">
-        <el-upload
-            drag
-            ref="upload_file"
-            action="backend/upload"
-            :headers="this.headers"
-            name="zip"
-            :limit="1"
-            :file-list="fileList"
-            :before-upload="onBeforeUpload"
-        >
-          <i class="el-icon-upload"></i>
-          <p>Click or drag file to this area to upload</p>
-        </el-upload>
-<!--        <a-button-->
-<!--            @click="handleUploadFile"-->
-<!--            :disabled="formData === undefined">-->
-<!--          Submit File-->
-<!--        </a-button>-->
-      </div>
+      <a-button type="primary" @click="onEditClick" block>
+        手动添加题目
+      </a-button>
 
     </a-layout-content>
   </a-layout>
@@ -103,9 +80,7 @@ export default {
       rules: {
         name: [{ required: true, message: 'Mission name cannot be null.', trigger: 'blur' }],
         type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }]
-      },
-      fileList: [],
-      headers: {"X-CSRFToken": ""}
+      }
     };
   },
   props: {
@@ -131,25 +106,6 @@ export default {
           this.$message.warning("error submit");
         }
       });
-    },
-    onBeforeUpload(file) {
-      let xmlHttpCsrf = new XMLHttpRequest();
-      xmlHttpCsrf.open('GET', 'backend/csrf', false);
-      let csrf;
-      xmlHttpCsrf.onreadystatechange = function () {
-        if (xmlHttpCsrf.readyState === 4) {
-            if (xmlHttpCsrf.status === 200) {
-                csrf = xmlHttpCsrf.responseText;
-            } else {
-                console.log(xmlHttpCsrf.responseText);
-            }
-        }
-      }
-      xmlHttpCsrf.send();
-      console.log(csrf)
-      this.headers['X-CSRFToken'] = csrf;
-      console.log(this.headers)
-      return true;
     }
   }
 }

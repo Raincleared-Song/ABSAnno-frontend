@@ -1,6 +1,6 @@
 <template>
-  <div>
-    {{ this.id }}
+  <div class="card-container">
+
     <router-view
         :mission_info="mission"
         :questions="questions"
@@ -8,11 +8,14 @@
         @on-submit-questions="submit"
     />
     <a-steps
-        v-model="current" type="navigation"
+        v-model="current"
+        v-if="showSteps"
+        type="navigation"
         :style="{ marginBottom: '60px', boxShadow: '0px -1px 0 0 #e8e8e8 inset' }">
       <a-step title="编辑任务信息" disabled />
       <a-step title="编辑/上传题目" disabled />
     </a-steps>
+
   </div>
 </template>
 
@@ -36,7 +39,8 @@ export default {
         tags: []
       },
       questions: [],
-      current: 0
+      current: 0,
+      showSteps: true
     };
   },
   methods: {
@@ -68,14 +72,47 @@ export default {
   },
   watch: {
     '$route.path': function (newVal) {
-      if (newVal === '/mission/create')
+      if (newVal === '/mission/create') {
         this.current = 0;
-      else if (newVal === '/mission/edit')
+        this.showSteps = true;
+      } else if (newVal === '/mission/edit') {
         this.current = 1;
+        this.showSteps = true;
+      } else if (newVal === '/mission/upload') {
+        this.showSteps = false;
+      }
     }
   }
 }
 </script>
 
 <style scoped>
+.card-container {
+  background: #f5f5f5;
+  overflow: hidden;
+  padding: 24px;
+}
+.card-container > .ant-tabs-card > .ant-tabs-content {
+  height: 120px;
+  margin-top: -16px;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
+  background: #fff;
+  padding: 16px;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-bar {
+  border-color: #fff;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
+  border-color: transparent;
+  background: transparent;
+}
+
+.card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
+  border-color: #fff;
+  background: #fff;
+}
 </style>

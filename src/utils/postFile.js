@@ -29,7 +29,7 @@ export default function postFile(api, requestBody, onRespond) {
             if (xmlHttpCsrf.status === 200) {
                 const csrfToken = xmlHttpCsrf.responseText;  // 获取 CSRF token
                 xmlHttpPost.open('POST', api.path, true);
-                xmlHttpPost.setRequestHeader('content-type', 'multipart/form-data');
+                xmlHttpPost.setRequestHeader('content-type', 'multipart/form-data; boundary=----378272391');
                 xmlHttpPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
                 xmlHttpPost.send(requestBody);
             } else {

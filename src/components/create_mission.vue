@@ -70,11 +70,12 @@
         <el-upload
             drag
             ref="upload_file"
-            action="#"
+            action="backend/upload"
+            :headers="this.headers"
+            name="zip"
             :limit="1"
             :file-list="fileList"
             :before-upload="onBeforeUpload"
-            :http-request="handleUploadFile"
         >
           <i class="el-icon-upload"></i>
           <p>Click or drag file to this area to upload</p>
@@ -103,8 +104,8 @@ export default {
         name: [{ required: true, message: 'Mission name cannot be null.', trigger: 'blur' }],
         type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }]
       },
-      formData: undefined,
-      fileList: []
+      fileList: [],
+      headers: {"X-CSRFToken": ""}
     };
   },
   props: {
@@ -132,21 +133,23 @@ export default {
       });
     },
     onBeforeUpload(file) {
-      this.formData = new FormData();
-      this.formData.append("zip", file);
-      return true;
-    },
-    handleUploadFile() {
-      console.log(this.formData.get("zip"));
-      postFile(API.POST_NEW_MISSION, this.formData, jsonObj => {
-        console.log(jsonObj);
-        if (jsonObj.code === 201) {
-          this.$message.success("File Upload Success!");
-          this.$router.push('/ground');
-        } else {
-          this.$message.error("File Upload Failed!");
+      let xmlHttpCsrf = new XMLHttpRequest();
+      xmlHttpCsrf.open('GET', 'backend/csrf', false);
+      let csrf;
+      xmlHttpCsrf.onreadystatechange = function () {
+        if (xmlHttpCsrf.readyState === 4) {
+            if (xmlHttpCsrf.status === 200) {
+                csrf = xmlHttpCsrf.responseText;
+            } else {
+                console.log(xmlHttpCsrf.responseText);
+            }
         }
-      });
+      }
+      xmlHttpCsrf.send();
+      console.log(csrf)
+      this.headers['X-CSRFToken'] = csrf;
+      console.log(this.headers)
+      return true;
     }
   }
 }

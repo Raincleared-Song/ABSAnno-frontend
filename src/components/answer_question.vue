@@ -6,16 +6,12 @@
           v-if="nowQuestion.type === 'judgement'"
           :editable="false"
           :question="nowQuestion" />
-      <RadioGroup
-          v-else-if="nowQuestion.type === 'select_single'"
-          :editable="false"
-          :question="nowQuestion" />
       <CheckboxGroup
-          v-else-if="nowQuestion.type === 'select_multiple'"
+          v-else-if="nowQuestion.type === 'choice'"
           :editable="false"
           :question="nowQuestion" />
       <TextEdit
-          v-else-if="nowQuestion.type === 'text_edit'"
+          v-else-if="nowQuestion.type === 'text'"
           :editable="false"
           :question="nowQuestion" />
     </div>
@@ -67,7 +63,6 @@
 <script>
 import JudgementGroup from "@/components/questions/judgement_group";
 import TextEdit from "@/components/questions/text_edit";
-import RadioGroup from "@/components/questions/radio_group";
 import CheckboxGroup from "@/components/questions/checkbox_group";
 import getBackend from "@/utils/getBackend";
 import postBackend from "@/utils/postBackend";
@@ -76,7 +71,6 @@ import API from "@/utils/API";
 export default {
   components: {
     JudgementGroup: JudgementGroup,
-    RadioGroup: RadioGroup,
     CheckboxGroup: CheckboxGroup,
     TextEdit: TextEdit
   },  // end of components
@@ -101,16 +95,24 @@ export default {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        return question.answer;
+        if (question.type === 'choice') {
+          return question.answer.join('|');
+        } else {
+          return question.answer;
+        }
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION, {
-        user_id: this.id.toString(),
+        // user_id: this.id.toString(),
         mission_id: this.missionId.toString(),
         ans: answers
       }, jsonObj => {
-        console.log(jsonObj);
-        this.modal.visible = true;
+        if (jsonObj.code === 201) {
+          console.log(jsonObj);
+          this.modal.visible = true;
+        } else {
+          this.$message.error("Try later!");
+        }
       });
     },
     // 下一题
@@ -123,14 +125,22 @@ export default {
           num: nextIndex,
           step: 0
         }, jsonObj => {
-          let dataObj = getDataObj(jsonObj);
-          this.questions.push({
-            index: dataObj.ret,
-            type: 'judgement',  // TODO: add more type
-            description: dataObj.word,
-            answer: ""
-          });
-          this.nowQuestionIndex = this.questions.length - 1;
+          if (jsonObj.code === 201) {
+            let dataObj = getDataObj(jsonObj);
+            let newQuestion = {
+              index: dataObj.ret,
+              type: dataObj.type,
+              description: dataObj.word,
+              answer: ""
+            }
+            // 对于选择题
+            if (newQuestion.type === 'choice')
+              newQuestion.options = dataObj.options.split('|');
+            this.questions.push(newQuestion);
+            this.nowQuestionIndex = this.questions.length - 1;
+          } else {
+            this.$message.error("Try later!");
+          }
         });
       } else {
         // 下一题已经加载过了
@@ -160,15 +170,23 @@ export default {
       num: 0,
       step: 0
     }, jsonObj => {
-      let dataObj = getDataObj(jsonObj);
-      this.totalNum = dataObj.total;
-      this.questions.push({
-        index: dataObj.ret,
-        type: 'judgement',  // TODO: add more type
-        description: dataObj.word,
-        answer: ""
-      });
-      this.nowQuestionIndex = this.questions.length - 1;
+      if (jsonObj.code === 201) {
+        let dataObj = getDataObj(jsonObj);
+        this.totalNum = dataObj.total;
+        let newQuestion = {
+          index: dataObj.ret,
+          type: dataObj.type,
+          description: dataObj.word,
+          answer: ""
+        };
+        // 对于选择题
+        if (newQuestion.type === 'choice')
+          newQuestion.options = dataObj.options.split('|');
+        this.questions.push(newQuestion);
+        this.nowQuestionIndex = this.questions.length - 1;
+      } else {
+        this.$message.error("Try later!");
+      }
     });
   },  // end of created
   watch: {

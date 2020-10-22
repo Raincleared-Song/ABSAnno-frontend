@@ -1,17 +1,18 @@
 <template >
     <a-layout id="components-layout-demo-fixed" >
-<!--        <a-config-provider :autoInsertSpaceInButton="false">-->
-            <navigation @logout='logout' :power="power" :username="userName"/>
-<!--        </a-config-provider>-->
+
+        <navigation @logout='logout' :power="power" :username="userName"/>
 
         <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }" >
             <div :style="{ background: '#fff', padding: '24px', minHeight: '610px' }" >
             <router-view :username="userName" :power="power" @login="login"></router-view>
             </div>
         </a-layout-content>
+
         <a-layout-footer :style="{ textAlign: 'center' }">
             ABSTRACT出品
         </a-layout-footer>
+
     </a-layout>
 </template>
 
@@ -28,7 +29,6 @@
 
 <script>
     import navigation from "@/components/navigation";
-    // import '@/assets/css/global.scss';
     export default {
         name: 'Home',
         components: {
@@ -42,15 +42,29 @@
         },
         methods: {
             logout(data) {
-                this.userName="游客，请登录/注册";
-                this.power=-1;
+                this.userName = "游客，请登录/注册";
+                this.power = -1;
                 console.log("logout!");
+                sessionStorage.setItem("userName", this.userName);
+                sessionStorage.setItem("power", this.power);
             },
-            login(data){
-                this.userName=data.name;
-                this.power=data.power;
+            login(data) {
+                this.userName = data.name;
+                this.power = data.power;
                 console.log(this.userName);
+                sessionStorage.setItem("userName", this.userName);
+                sessionStorage.setItem("power", this.power);
+            },
+        },
+        mounted(){
+            try{
+                this.userName = sessionStorage.getItem("userName");
+                this.power = sessionStorage.getItem("power");
+            }catch(e){
+                this.userName = "游客，请登录/注册";
+                this.power = -1;
             }
-        }
+            console.log(this.userName);
+        },
     }
 </script>

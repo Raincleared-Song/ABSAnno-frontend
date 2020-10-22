@@ -7,26 +7,15 @@
           :editable="false"
           :question="nowQuestion" />
       <CheckboxGroup
-          v-else-if="nowQuestion.type === 'select_multiple'"
+          v-else-if="nowQuestion.type === 'choice'"
           :editable="false"
           :question="nowQuestion" />
       <TextEdit
-          v-else-if="nowQuestion.type === 'text_edit'"
+          v-else-if="nowQuestion.type === 'text'"
           :editable="false"
           :question="nowQuestion" />
     </div>
     <a-empty v-else :description="false" />
-
-    <!-- 提交成功的消息框 -->
-    <a-modal
-        title="Success!"
-        :visible="modal.visible"
-        @ok="returnSquare"
-        @cancel="onCancelModal"
-        closable="false">
-      <div style="margin: 20px">答案提交成功！</div>
-      <div style="margin: 20px">是否返回广场？</div>
-    </a-modal>
 
     <!-- 答题进度条 -->
     <a-steps :current="nowQuestionIndex" style="margin: 40px">
@@ -42,7 +31,7 @@
           <a-icon type="arrow-left" />上一题
         </a-button>
         <a-button
-            :disabled="this.questions.length < totalNum || modal.submitted"
+            :disabled="this.questions.length < totalNum"
             @click="submit" type="primary">
           提交任务<a-icon type="check" />
         </a-button>
@@ -80,11 +69,7 @@ export default {
       totalNum: 0,    // 总题目数量
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
-      nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
-      modal: {
-        visible: false,
-        submitted: false
-      }
+      nowQuestion: null     // 不要显式地去改，监听nowQuestionIndex来更改
     };
   },  // end of data
   props:[
@@ -95,7 +80,11 @@ export default {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        return question.answer;
+        if (question.type === 'choice') {
+          return question.answer.join('|');
+        } else {
+          return question.answer;
+        }
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION, {
@@ -103,8 +92,12 @@ export default {
         mission_id: this.missionId.toString(),
         ans: answers
       }, jsonObj => {
-        console.log(jsonObj);
-        this.modal.visible = true;
+        if (jsonObj.code === 201) {
+          this.$message.success("提交成功，返回广场！");
+          this.$router.push("/ground");
+        } else {
+          this.$message.error("Try later!");
+        }
       });
     },
     // 下一题
@@ -117,14 +110,25 @@ export default {
           num: nextIndex,
           step: 0
         }, jsonObj => {
-          let dataObj = getDataObj(jsonObj);
-          this.questions.push({
-            index: dataObj.ret,
-            type: 'judgement',  // TODO: add more type
-            description: dataObj.word,
-            answer: ""
-          });
-          this.nowQuestionIndex = this.questions.length - 1;
+          if (jsonObj.code === 201) {
+            console.log(jsonObj);
+            let dataObj = getDataObj(jsonObj);
+            let newQuestion = {
+              index: dataObj.ret,
+              type: dataObj.type !== undefined? dataObj.type: 'judgement',
+              description: dataObj.word,
+              answer: ""
+            }
+            // 对于选择题
+            if (newQuestion.type === 'choice') {
+              newQuestion.options = dataObj.options.split('|');
+              newQuestion.answer = [];
+            }
+            this.questions.push(newQuestion);
+            this.nowQuestionIndex = this.questions.length - 1;
+          } else {
+            this.$message.error("Try later!");
+          }
         });
       } else {
         // 下一题已经加载过了
@@ -138,11 +142,6 @@ export default {
     // 返回广场
     returnSquare() {
       this.$router.push("/ground");
-    },
-    // 消息框点击取消之后
-    onCancelModal() {
-      this.modal.visible = false;
-      this.modal.submitted = true;
     }
   },  // end of methods
   created() {
@@ -154,15 +153,26 @@ export default {
       num: 0,
       step: 0
     }, jsonObj => {
-      let dataObj = getDataObj(jsonObj);
-      this.totalNum = dataObj.total;
-      this.questions.push({
-        index: dataObj.ret,
-        type: 'judgement',  // TODO: add more type
-        description: dataObj.word,
-        answer: ""
-      });
-      this.nowQuestionIndex = this.questions.length - 1;
+      if (jsonObj.code === 201) {
+        let dataObj = getDataObj(jsonObj);
+        this.totalNum = dataObj.total;
+        let newQuestion = {
+          index: dataObj.ret,
+          type: dataObj.type !== undefined? dataObj.type: 'judgement',
+          description: dataObj.word,
+          answer: ""
+        };
+        // 对于选择题
+        if (newQuestion.type === 'choice') {
+          newQuestion.options = dataObj.options.split('|');
+          newQuestion.answer = [];
+        }
+        console.log(newQuestion);
+        this.questions.push(newQuestion);
+        this.nowQuestionIndex = this.questions.length - 1;
+      } else {
+        this.$message.error("Try later!");
+      }
     });
   },  // end of created
   watch: {

@@ -62,7 +62,7 @@
                         <!--                        图片尺寸：500*350            -->
 
                         <img v-if="msg.questionForm === 'judgement'" src="@/assets/ground/judgement2.jpg" alt="" width="230" >
-                        <img v-if="msg.questionForm === 'choice'" src="@/assets/ground/choice2.jpg" alt="" width="230" >
+                        <img v-if="msg.questionForm === 'chosen'" src="@/assets/ground/choice2.jpg" alt="" width="230" >
                         <div  class="portfolio-info">
                             <h4>{{msg.name}}</h4>
                             <p>题目数量：{{msg.questionNum}}</p>
@@ -70,8 +70,8 @@
                                 <div class="icons-list">
                                     <router-link v-if="power!==-1" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
 
-                                    <a-popover :title="msg.title+' 题组'" trigger="hover">
-                                        <template slot="content">
+                                    <a-popover :title="msg.title+' 题组'" trigger="hover" >
+                                        <template slot="content" v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
                                             题目数量：{{msg.questionNum}}<br />
 <!--                                            <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />-->
                                             悬赏金额：{{msg.cash}}<br/>
@@ -87,6 +87,17 @@
 <!--                                                {{tag}}-->
 <!--                                            </div>-->
                                             <!--                                            点击按钮，查看规则说明-->
+                                        </template>
+                                        <template slot="content" v-else>
+                                            题目数量：{{msg.questionNum}}<br />
+                                            <!--                                            <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />-->
+                                            悬赏金额：{{msg.cash}}<br/>
+                                            <!--                                            <a-icon type="user" />-->
+                                            发布者：{{msg.user}}<br />
+                                            <!--                                            <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />-->
+                                            截止时间：{{msg.deadline}}<br/>
+                                            <!--                                            <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />-->
+                                            完成情况：{{msg.ans_num}}/{{msg.total_ans}}<br/>
                                         </template>
                                         <router-link to="/rules">
                                             <a-icon type="info-circle" />
@@ -138,7 +149,7 @@
 
                         </a>
                         <a slot="description">
-                            <div style="color: #5e5e5e">
+                            <div style="color: #5e5e5e"  v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
                                 <a-tag color="green">
                                     {{msg.questionForm}}
                                 </a-tag>
@@ -155,6 +166,21 @@
                                 <a-tag v-bind:key="tag" v-for="tag in msg.tags">
                                     {{tag}}
                                 </a-tag>
+                            </div>
+
+                            <div style="color: #5e5e5e"  v-else >
+                                <a-tag color="green">
+                                    {{msg.questionForm}}
+                                </a-tag>
+                                题目数量：{{msg.questionNum}}
+                                <a-divider type="vertical" />
+                                <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />{{msg.cash}}
+                                <a-divider type="vertical" />
+                                <a-icon type="user" />{{msg.user}}
+                                <a-divider type="vertical" />
+                                <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />{{msg.deadline}}
+                                <a-divider type="vertical" />
+                                <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.ans_num}}/{{msg.total_ans}}
                             </div>
                         </a>
                     </a-list-item-meta>
@@ -176,6 +202,8 @@
 
 <script>
     import dealAdmin from "@/utils/admin"
+    import getBackend from "@/utils/getBackend";
+    import API from "@/utils/API";
     export default {
         name: "ground",
         data(){
@@ -192,8 +220,8 @@
                 // typeTotal:["全部","文字","图片","选择","判断"],
                 type:["total"],
                 theme:["total"],
-                themeTotal:["total","food", "sports","pet","face detection"],
-                typeTotal:["total","text","picture","judge","choice"],
+                themeTotal:["total","science", "art","sports","literature","food","music","game","daily","others"],
+                typeTotal:["total","judgement","chosen"],
                 groundType: 1,
                 isRouterAlive: true,
                 keyword:"",
@@ -215,27 +243,33 @@
                 const xhr = new XMLHttpRequest()
                 let context = this
                 xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4 && xhr.status === 201){
-                        let res = JSON.parse(xhr.responseText);
-                        let data = JSON.parse(res.data.replace(/'/g,'"'));
-                        context.totalMsgNum = data.total;
-                        // context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
-                        context.msgList = data.question_list;
-                        while(context.msgList.length < 12){
-                            context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
-                                'questionNum': 0, 'questionForm': "none", 'is_banned':0,
-                                'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
-                                'tags':[]});
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 201) {
+                            let res = JSON.parse(xhr.responseText);
+                            // console.log(res);
+                            let data = JSON.parse(res.data.replace(/'/g, '"'));
+                            context.totalMsgNum = data.total;
+                            // context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
+                            context.msgList = data.question_list;
+                            while (context.msgList.length < 12) {
+                                context.msgList.push({
+                                    'id': -1, 'name': "none", 'user': "none",
+                                    'questionNum': 0, 'questionForm': "none", 'is_banned': 0,
+                                    'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
+                                    'tags': [""]
+                                });
+                            }
+                        } else {
+                            console.log(xhr.responseText);
                         }
                     }
                 };
-                this.getMsgNum = (pageNumber-1)*12;
+                this.getMsgNum = (pageNumber - 1) * 12;
                 // 请求带上所有的标签和关键词，一个请求就可以发送
-                console.log("backend/square?num="+this.getMsgNum.toString()
-                    +"&type="+this.type.toString()+"&theme="+this.theme.toString()+
-                    "&kw="+this.keyword.toString());
-                xhr.open("get","backend/square?num="+this.getMsgNum.toString()
-                    +"&type="+this.type.toString()+"&theme="+this.theme.toString());
+
+                console.log(this.getMsgNum);
+                console.log(`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}&kw=${this.keyword}`);
+                xhr.open("get",`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}&kw=${this.keyword}`);
                 xhr.send();
 
                 // for test only

@@ -23,7 +23,7 @@
         <div
             v-for="(option, index) in question.options"
             :key="index" style="margin: 5px">
-          <a-checkbox :value="option">{{ option }}</a-checkbox>
+          <a-checkbox :value="optionCode[index]">{{ option }}</a-checkbox>
           <a-button ghost
               v-if="editable" size="small"
               @click="$emit('removeOption', question.id, index)">
@@ -47,6 +47,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      optionCode: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+    };
+  },
   props: {
     index: {
       type: Number,

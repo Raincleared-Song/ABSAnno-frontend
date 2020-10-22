@@ -57,12 +57,14 @@
             },
         },
         mounted(){
-            try{
+            if(sessionStorage.getItem("userName") !== null){
                 this.userName = sessionStorage.getItem("userName");
-                this.power = sessionStorage.getItem("power");
-            }catch(e){
+                this.power = parseInt(sessionStorage.getItem("power"));
+            }else{
                 this.userName = "游客，请登录/注册";
                 this.power = -1;
+                sessionStorage.setItem("userName", this.userName);
+                sessionStorage.setItem("power", this.power);
             }
             console.log(this.userName);
         },

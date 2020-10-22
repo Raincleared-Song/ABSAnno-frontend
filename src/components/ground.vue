@@ -70,8 +70,8 @@
                                 <div class="icons-list">
                                     <router-link v-if="power!==-1" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
 
-                                    <a-popover :title="msg.title+' 题组'" trigger="hover">
-                                        <template slot="content">
+                                    <a-popover :title="msg.title+' 题组'" trigger="hover" >
+                                        <template slot="content" v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
                                             题目数量：{{msg.questionNum}}<br />
 <!--                                            <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />-->
                                             悬赏金额：{{msg.cash}}<br/>
@@ -87,6 +87,17 @@
 <!--                                                {{tag}}-->
 <!--                                            </div>-->
                                             <!--                                            点击按钮，查看规则说明-->
+                                        </template>
+                                        <template slot="content" v-else>
+                                            题目数量：{{msg.questionNum}}<br />
+                                            <!--                                            <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />-->
+                                            悬赏金额：{{msg.cash}}<br/>
+                                            <!--                                            <a-icon type="user" />-->
+                                            发布者：{{msg.user}}<br />
+                                            <!--                                            <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />-->
+                                            截止时间：{{msg.deadline}}<br/>
+                                            <!--                                            <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />-->
+                                            完成情况：{{msg.ans_num}}/{{msg.total_ans}}<br/>
                                         </template>
                                         <router-link to="/rules">
                                             <a-icon type="info-circle" />
@@ -138,7 +149,7 @@
 
                         </a>
                         <a slot="description">
-                            <div style="color: #5e5e5e">
+                            <div style="color: #5e5e5e"  v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
                                 <a-tag color="green">
                                     {{msg.questionForm}}
                                 </a-tag>
@@ -155,6 +166,21 @@
                                 <a-tag v-bind:key="tag" v-for="tag in msg.tags">
                                     {{tag}}
                                 </a-tag>
+                            </div>
+
+                            <div style="color: #5e5e5e"  v-else >
+                                <a-tag color="green">
+                                    {{msg.questionForm}}
+                                </a-tag>
+                                题目数量：{{msg.questionNum}}
+                                <a-divider type="vertical" />
+                                <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />{{msg.cash}}
+                                <a-divider type="vertical" />
+                                <a-icon type="user" />{{msg.user}}
+                                <a-divider type="vertical" />
+                                <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />{{msg.deadline}}
+                                <a-divider type="vertical" />
+                                <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.ans_num}}/{{msg.total_ans}}
                             </div>
                         </a>
                     </a-list-item-meta>
@@ -230,7 +256,7 @@
                                     'id': -1, 'name': "none", 'user': "none",
                                     'questionNum': 0, 'questionForm': "none", 'is_banned': 0,
                                     'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
-                                    'tags': []
+                                    'tags': [""]
                                 });
                             }
                         } else {

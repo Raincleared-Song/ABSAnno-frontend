@@ -17,16 +17,16 @@
     </div>
     <a-empty v-else :description="false" />
 
-    <!-- 提交成功的消息框 -->
-    <a-modal
-        title="Success!"
-        :visible="modal.visible"
-        @ok="returnSquare"
-        @cancel="onCancelModal"
-        closable="false">
-      <div style="margin: 20px">答案提交成功！</div>
-      <div style="margin: 20px">是否返回广场？</div>
-    </a-modal>
+<!--    &lt;!&ndash; 提交成功的消息框 &ndash;&gt;-->
+<!--    <a-modal-->
+<!--        title="Success!"-->
+<!--        :visible="modal.visible"-->
+<!--        @ok="returnSquare"-->
+<!--        @cancel="onCancelModal"-->
+<!--        closable="false">-->
+<!--      <div style="margin: 20px">答案提交成功！</div>-->
+<!--      <div style="margin: 20px">是否返回广场？</div>-->
+<!--    </a-modal>-->
 
     <!-- 答题进度条 -->
     <a-steps :current="nowQuestionIndex" style="margin: 40px">
@@ -81,10 +81,10 @@ export default {
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
       nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
-      modal: {
-        visible: false,
-        submitted: false
-      }
+      // modal: {
+      //   visible: false,
+      //   submitted: false
+      // }
     };
   },  // end of data
   props:[
@@ -108,8 +108,7 @@ export default {
         ans: answers
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          console.log(jsonObj);
-          this.modal.visible = true;
+          this.$message.success("提交成功，即将返回广场！");
         } else {
           this.$message.error("Try later!");
         }
@@ -134,8 +133,10 @@ export default {
               answer: ""
             }
             // 对于选择题
-            if (newQuestion.type === 'choice')
+            if (newQuestion.type === 'choice') {
               newQuestion.options = dataObj.options.split('|');
+              newQuestion.answer = [];
+            }
             this.questions.push(newQuestion);
             this.nowQuestionIndex = this.questions.length - 1;
           } else {
@@ -155,11 +156,11 @@ export default {
     returnSquare() {
       this.$router.push("/ground");
     },
-    // 消息框点击取消之后
-    onCancelModal() {
-      this.modal.visible = false;
-      this.modal.submitted = true;
-    }
+    // // 消息框点击取消之后
+    // onCancelModal() {
+    //   this.modal.visible = false;
+    //   this.modal.submitted = true;
+    // }
   },  // end of methods
   created() {
     let name = this.$route.path;
@@ -180,8 +181,10 @@ export default {
           answer: ""
         };
         // 对于选择题
-        if (newQuestion.type === 'choice')
+        if (newQuestion.type === 'choice') {
           newQuestion.options = dataObj.options.split('|');
+          newQuestion.answer = [];
+        }
         this.questions.push(newQuestion);
         this.nowQuestionIndex = this.questions.length - 1;
       } else {

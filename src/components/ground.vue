@@ -62,7 +62,7 @@
                         <!--                        图片尺寸：500*350            -->
 
                         <img v-if="msg.questionForm === 'judgement'" src="@/assets/ground/judgement2.jpg" alt="" width="230" >
-                        <img v-if="msg.questionForm === 'choice'" src="@/assets/ground/choice2.jpg" alt="" width="230" >
+                        <img v-if="msg.questionForm === 'chosen'" src="@/assets/ground/choice2.jpg" alt="" width="230" >
                         <div  class="portfolio-info">
                             <h4>{{msg.name}}</h4>
                             <p>题目数量：{{msg.questionNum}}</p>
@@ -194,8 +194,8 @@
                 // typeTotal:["全部","文字","图片","选择","判断"],
                 type:["total"],
                 theme:["total"],
-                themeTotal:["total","food", "sports","pet","face detection"],
-                typeTotal:["total","text","picture","judge","choice"],
+                themeTotal:["total","science", "art","sports","literature","food","music","game","daily","others"],
+                typeTotal:["total","judgement","chosen"],
                 groundType: 1,
                 isRouterAlive: true,
                 keyword:"",
@@ -220,7 +220,7 @@
                     if (xhr.readyState === 4) {
                         if (xhr.status === 201) {
                             let res = JSON.parse(xhr.responseText);
-                            console.log(res);
+                            // console.log(res);
                             let data = JSON.parse(res.data.replace(/'/g, '"'));
                             context.totalMsgNum = data.total;
                             // context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
@@ -242,8 +242,8 @@
                 // 请求带上所有的标签和关键词，一个请求就可以发送
 
                 console.log(this.getMsgNum);
-                console.log(`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}`);
-                xhr.open("get",`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}`);
+                console.log(`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}&kw=${this.keyword}`);
+                xhr.open("get",`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}&kw=${this.keyword}`);
                 xhr.send();
 
                 // for test only

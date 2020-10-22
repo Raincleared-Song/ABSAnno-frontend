@@ -17,17 +17,6 @@
     </div>
     <a-empty v-else :description="false" />
 
-    <!-- 提交成功的消息框 -->
-    <a-modal
-        title="Success!"
-        :visible="modal.visible"
-        @ok="returnSquare"
-        @cancel="onCancelModal"
-        closable="false">
-      <div style="margin: 20px">答案提交成功！</div>
-      <div style="margin: 20px">是否返回广场？</div>
-    </a-modal>
-
     <!-- 答题进度条 -->
     <a-steps :current="nowQuestionIndex" style="margin: 40px">
       <a-step v-for="n in totalNum" :key="n" :title="nowQuestion.type" />
@@ -42,7 +31,7 @@
           <a-icon type="arrow-left" />上一题
         </a-button>
         <a-button
-            :disabled="this.questions.length < totalNum || modal.submitted"
+            :disabled="this.questions.length < totalNum"
             @click="submit" type="primary">
           提交任务<a-icon type="check" />
         </a-button>
@@ -80,11 +69,7 @@ export default {
       totalNum: 0,    // 总题目数量
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
-      nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
-      modal: {
-        visible: false,
-        submitted: false
-      }
+      nowQuestion: null     // 不要显式地去改，监听nowQuestionIndex来更改
     };
   },  // end of data
   props:[
@@ -108,8 +93,8 @@ export default {
         ans: answers
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          console.log(jsonObj);
-          this.modal.visible = true;
+          this.$message.success("提交成功，返回广场！");
+          this.$router.push("/ground");
         } else {
           this.$message.error("Try later!");
         }
@@ -126,16 +111,19 @@ export default {
           step: 0
         }, jsonObj => {
           if (jsonObj.code === 201) {
+            console.log(jsonObj);
             let dataObj = getDataObj(jsonObj);
             let newQuestion = {
               index: dataObj.ret,
-              type: dataObj.type,
+              type: dataObj.type !== undefined? dataObj.type: 'judgement',
               description: dataObj.word,
               answer: ""
             }
             // 对于选择题
-            if (newQuestion.type === 'choice')
+            if (newQuestion.type === 'choice') {
               newQuestion.options = dataObj.options.split('|');
+              newQuestion.answer = [];
+            }
             this.questions.push(newQuestion);
             this.nowQuestionIndex = this.questions.length - 1;
           } else {
@@ -154,11 +142,6 @@ export default {
     // 返回广场
     returnSquare() {
       this.$router.push("/ground");
-    },
-    // 消息框点击取消之后
-    onCancelModal() {
-      this.modal.visible = false;
-      this.modal.submitted = true;
     }
   },  // end of methods
   created() {
@@ -175,13 +158,16 @@ export default {
         this.totalNum = dataObj.total;
         let newQuestion = {
           index: dataObj.ret,
-          type: dataObj.type,
+          type: dataObj.type !== undefined? dataObj.type: 'judgement',
           description: dataObj.word,
           answer: ""
         };
         // 对于选择题
-        if (newQuestion.type === 'choice')
+        if (newQuestion.type === 'choice') {
           newQuestion.options = dataObj.options.split('|');
+          newQuestion.answer = [];
+        }
+        console.log(newQuestion);
         this.questions.push(newQuestion);
         this.nowQuestionIndex = this.questions.length - 1;
       } else {

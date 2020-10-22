@@ -65,20 +65,20 @@
               <template>
                 <div>
                   <a-list item-layout="vertical" size="medium" :pagination="pagination" :data-source="answerListData">
-                    <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
+                    <a-list-item slot="renderItem" key="item.title" slot-scope="item">
                       <template v-for="{ type, text } in actions" slot="actions">
                       <span :key="type">
                         <a-icon :type="type" style="margin-right: 8px" />
                         {{ text + item[type] }}
                       </span>
                       </template>
-                      <img
-                          slot="extra"
-                          width="272"
-                          alt="logo"
-                      />
-                      <a-list-item-meta :description="item.qName">
-                        <a slot="title" >{{ item.qName + index}}</a>
+<!--                      <img-->
+<!--                          slot="extra"-->
+<!--                          width="272"-->
+<!--                          alt="logo"-->
+<!--                      />-->
+                      <a-list-item-meta :description="item.qClass">
+                        <a slot="title" >{{ item.qName }}</a>
                         <!--                      <a-avatar slot="avatar" :src="item.avatar" />-->
                       </a-list-item-meta>
 
@@ -221,8 +221,23 @@ export default {
       this.getUserInfo(this.pageList[index])
     },
     parseHistory: function (info) {
-      let data = JSON.parse(info.data.replace(/'/g,'"'))
+      console.log(info)
+      info = info.data.replace(/'/g, '"')
+      let data = JSON.parse(info)
       console.log(data)
+      this.answerListData = []
+      for (let i = 0; i < data.total_num; ++i) {
+        console.log(data.mission_list[i])
+        let d = new Date()
+        d.setTime(data.mission_list[i].ret_time)
+        this.answerListData.push({
+          qName: data.mission_list[i].name,
+          qUser: data.mission_list[i].user,
+          qClass: data.mission_list[i].question_form,
+          qTime: d.toLocaleString(),
+        })
+      }
+
     },
     parseUserInfo: function (info) {
       let data = JSON.parse(info.data.replace(/'/g,'"'))

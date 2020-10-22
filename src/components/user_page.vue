@@ -65,7 +65,7 @@
               <template>
                 <div>
                   <a-list item-layout="vertical" size="medium" :pagination="pagination" :data-source="answerListData">
-                    <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
+                    <a-list-item slot="renderItem" key="item.title" slot-scope="item">
                       <template v-for="{ type, text } in actions" slot="actions">
                       <span :key="type">
                         <a-icon :type="type" style="margin-right: 8px" />
@@ -77,8 +77,8 @@
 <!--                          width="272"-->
 <!--                          alt="logo"-->
 <!--                      />-->
-                      <a-list-item-meta :description="item.qName">
-                        <a slot="title" >{{ item.qName + index}}</a>
+                      <a-list-item-meta :description="item.qClass">
+                        <a slot="title" >{{ item.qName }}</a>
                         <!--                      <a-avatar slot="avatar" :src="item.avatar" />-->
                       </a-list-item-meta>
 

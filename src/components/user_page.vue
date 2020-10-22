@@ -4,10 +4,11 @@
       <a-layout-sider theme="light" v-model="collapsed">
         <a-avatar :size="64" icon="user">USER</a-avatar>
         <!--          这里要从数据库拿名字和身份，显示在下方-->
-        <h3>{{this.user_name}}</h3>
-        <h4>用户权限：用户，发布者，管理员</h4>
-        <a-menu theme="light" :default-selected-keys="['1']" mode="inline">
-          <a-menu-item key="1" @click="change(0)">
+        <h3>{{this.username}}</h3>
+        <h4>用户权限:{{this.user_power[this.power+1]}}</h4>
+<!--        :default-selected-keys="['4']"-->
+        <a-menu theme="light"  :defaultOpenKeys="['4']" mode="inline">
+          <a-menu-item key="1" @click="change(0)" @select="simplefunc()">
             <a-icon type="pie-chart" />
             <span>基本信息</span>
           </a-menu-item>
@@ -15,7 +16,7 @@
             <a-icon type="desktop"/>
             <span>答题历史</span>
           </a-menu-item>
-          <a-menu-item key="3" @click="change(2)">
+          <a-menu-item key="3" @click="change(2)" :selectable="this.power===1">
             <!-- 当且仅当当前用户为发布者时，可以看到这一条 -->
             <a-icon type="edit" />
             <span>我的发布</span>
@@ -35,11 +36,13 @@
           <!--          </a-breadcrumb>-->
           <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
             <!--          填写下方的四个div中的内容，预计有表格、列表、输入框等等。-->
+
+
             <div v-show="0===page_number">
               <div>
                 <a-descriptions title="用户信息">
                   <a-descriptions-item label="用户名">
-                    {{this.user_name}}
+                    {{this.username}}
                   </a-descriptions-item>
                   <a-descriptions-item label="用户积分">
                     {{this.user_score}}
@@ -56,87 +59,120 @@
                 </a-descriptions>
               </div>
             </div>
+
+
             <div v-show="1===page_number">
-              <div>
-                <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
-                  <div slot="footer"><b>ant design vue</b> footer part</div>
-                  <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
-                    <template v-for="{ type, text } in actions" slot="actions">
+              <template>
+                <div>
+                  <a-list item-layout="vertical" size="medium" :pagination="pagination" :data-source="answerListData">
+                    <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
+                      <template v-for="{ type, text } in actions" slot="actions">
                       <span :key="type">
                         <a-icon :type="type" style="margin-right: 8px" />
-                        {{ text }}
+                        {{ text + item[type] }}
                       </span>
-                    </template>
-                    <img
-                        slot="extra"
-                        width="272"
-                        alt="logo"
-                        src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                    />
-                    <a-list-item-meta :description="item.description">
-                      <a slot="title" :href="item.href">{{ item.title + index}}</a>
-                      <a-avatar slot="avatar" :src="item.avatar" />
-                    </a-list-item-meta>
-                    {{ item.content }}
-                  </a-list-item>
-                </a-list>
-              </div>
+                      </template>
+                      <img
+                          slot="extra"
+                          width="272"
+                          alt="logo"
+                      />
+                      <a-list-item-meta :description="item.qName">
+                        <a slot="title" >{{ item.qName + index}}</a>
+                        <!--                      <a-avatar slot="avatar" :src="item.avatar" />-->
+                      </a-list-item-meta>
+
+                    </a-list-item>
+                  </a-list>
+                </div>
+              </template>
+
             </div>
+
+
             <div v-show="2===page_number">
               <p>这是我的发布界面</p>
             </div>
+
+
             <div v-show="3===page_number">
               <div class="components-input-demo-presuffix">
-                <a-input ref="userNameInput" placeholder="User name">
-                  <a-icon slot="prefix" type="user" />
-                  <a-tooltip slot="suffix" title="You can change your username here">
-                    <a-icon type="info-circle" style="color: rgba(0,0,0,.45)" />
-                  </a-tooltip>
-                </a-input>
-                <br />
+                <h3>你可以在此改变你的用户名（留空来保持不变）</h3>
+                <a-input-group compact>
+                  <a-input ref="userNameInput" placeholder="User name" v-model="user_name">
+                    <a-icon slot="prefix" type="user" />
+                    <a-tooltip slot="suffix" title="You can change your username here">
+                      <a-icon type="info-circle" style="color: rgba(0,0,0,.45)" />
+                    </a-tooltip>
+                  </a-input>
+                </a-input-group>
+                <br/>
               </div>
-              <h3>选择你喜欢的题目类型</h3>
               <div>
-                <div :style="{ borderBottom: '1px solid #E9E9E9' }">
-                  <a-checkbox :indeterminate="indeterminate" :checked="classCheckAll" @change="onAllClassCheckedChange">
-                    全选
-                  </a-checkbox>
+                <h3>选择你喜欢的题目类型</h3>
+                <div>
+                  <div :style="{ borderBottom: '1px solid #E9E9E9' }">
+                    <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="onCheckAllChange">
+                      Check all
+                    </a-checkbox>
+                  </div>
+                  <br />
+                  <a-checkbox-group v-model="checkedList" :options="plainOptions" @change="onCheckListChange" />
                 </div>
-                <br />
-                <a-checkbox-group v-model="classCheckedList" :options="classOptions" @change="onSelectClassChange" />
               </div>
-
+              <div>
+                <h3>选择你偏好的题目数量</h3>
+                <a-select default-value="num1" style="width: 120px" @change="handleNumberChange">
+                  <a-select-option value="num1">
+                    题目数量1
+                  </a-select-option>
+                  <a-select-option value="num2">
+                    题目数量2
+                  </a-select-option>
+                  <a-select-option value="num3">
+                    题目数量3
+                  </a-select-option>
+                  <a-select-option value="num4">
+                    题目数量4
+                  </a-select-option>
+                </a-select>
+              </div>
+              <div>
+                <h3>是否提交？</h3>
+                <a-button-group>
+                  <a-button @click="change(0)">Cancel</a-button>
+                  <a-button type="primary" @click="submitChange">
+                    OK
+                  </a-button>
+                </a-button-group>
+              </div>
             </div>
-
           </div>
         </a-layout-content>
       </a-layout>
     </a-layout>
-
   </div>
 
 </template>
 
 <script>
-const listData = [];
-export const classOptions = ['题目类型1', '题目类型2', '题目类型3'];
-export const defaultClassOptionsList = ['题目类型1', '题目类型2', '题目类型3'];
-for (let i = 0; i < 23; i++) {
-  listData.push({
-    href: 'https://www.antdv.com/',
-    title: `ant design vue part ${i}`,
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-    description:
-        'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-    content:
-        'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+const answerListData = [];
+const plainOptions = ['Apple', 'Pear', 'Orange'];
+const defaultCheckedList = ['Apple', 'Orange'];
+for (let i = 0; i < 10; i++) {
+  answerListData.push({
+    qName: "Do you like apples",
+    qUser: "Mat",
+    qClass: "Single Choice",
+    qTime: new Date().setFullYear(2020, 10, 20),
+    // add more info
   });
 }
 export default {
   name: "user_page",
   data () {
     return {
-      listData,
+      answerListData,
       pagination: {
         onChange: page => {
           console.log(page);
@@ -144,40 +180,45 @@ export default {
         pageSize: 3,
       },
       actions: [
-        { type: 'star-o', text: '156' },
-        { type: 'like-o', text: '156' },
-        { type: 'message', text: '2' },
+        { type: 'qUser', text: 'Published by: ' },
+        { type: 'qTime', text: 'Published on: ' },
       ],
-      indeterminate: true,
-      classCheckAll: false,
-      classCheckedList: defaultClassOptionsList,
-      classOptions,
 
       collapsed: false,
-      page_number: 0,
+      page_number: 3,
       userid: -1,
       info: [],
       answerList: [],
       myPublish: [],
-      pageList: ['user', 'history', 'mission', 'user'],
+      pageList: ['user', 'history', 'mission', 'editUser'],
       pageListChinese: ['用户信息', '答题历史', '我的发布', '修改个人信息'],
+      user_power: ['未登录', '用户', '发布者', '管理员'],
 
 
-      user_name: 'default username',
+      user_name: this.username,
       user_score: 0,
       user_weight: 0,
       user_ans_num: 0,
+
+      totalNum: 10, // 总共回答了多少道题
+
+      desireNum: "",
+
+      checkedList: defaultCheckedList,
+      indeterminate: true,
+      checkAll: false,
+      plainOptions,
     }
   },
   props: [
     "power",
+    "username"
   ],
   methods: {
     change: function (index) {
       this.page_number = index;
       console.log(this.pageList)
-      this.get_user_info(this.pageList[index])
-
+      this.getUserInfo(this.pageList[index])
     },
     parseHistory: function (info) {
       let data = JSON.parse(info.data.replace(/'/g,'"'))
@@ -196,7 +237,7 @@ export default {
       let data = JSON.parse(info.data.replace(/'/g,'"'))
       console.log(data)
     },
-    get_user_info: function (content) {
+    getUserInfo: function (content) {
       const xhr = new XMLHttpRequest()
       let context = this
       xhr.onreadystatechange = function () {
@@ -210,27 +251,45 @@ export default {
             context.parseUserInfo(info)
           else if (content === "mission")
             context.parseMission(info)
+          // else if (content === "editUser)
 
         }
       }
       xhr.open("get", "backend/user?method="+content.toString())
       xhr.send()
     },
-    onAllClassCheckedChange: function(checkedList) {
-      this.indeterminate = !!checkedList.length && checkedList.length < classOptions.length;
-      this.classCheckAll = checkedList.length === classOptions.length;
+    submitChange() {
+      const xhr = new XMLHttpRequest()
+      // let context = this
+      // xhr.onreadystatechange = function () {
+      //   if (xhr.readyState === 4 && xhr.status === 201) {
+      //
+      //   }
+      //   xhr.open("post", "backend/user?method="+"modify")
+      //   xhr.send()
+      // }
     },
-    onSelectClassChange: function(e) {
+    onCheckListChange(checkedList) {
+      this.indeterminate = !!checkedList.length && checkedList.length < plainOptions.length;
+      this.checkAll = checkedList.length === plainOptions.length;
+      console.log(checkedList)
+    },
+    onCheckAllChange(e) {
       Object.assign(this, {
-        classCheckedList: e.target.checked ? classOptions : [],
+        checkedList: e.target.checked ? plainOptions : [],
         indeterminate: false,
-        classCheckAll: e.target.checked,
+        checkAll: e.target.checked,
       });
     },
-    mounted: function () {
+    handleNumberChange(value) {
+      console.log(`selected ${value}`);
+      this.desireNum = value
+    },
+    created: function () {
       this.change(0);
-      console.log("in mounted function")
-    }
+      console.log("in created function")
+    },
+
   }
 }
 

@@ -13,10 +13,8 @@
           </div>
           <a-button
               type="dashed" block
-              @click="addQuestion"
-              style="{ position: absolute; bottom: 0; height: 50px; }">
-            <a-icon type="plus" style="margin: 5px 0" />
-            <p>添加新题目</p>
+              @click="addQuestion">
+            添加新题目
           </a-button>
         </a-layout-sider>
 
@@ -28,7 +26,7 @@
                 :editable="true"
                 :question="nowQuestion" />
             <CheckboxGroup
-                v-else-if="mission_info.type === 'checkbox'"
+                v-else-if="mission_info.type === 'choice'"
                 @addOption="addOption"
                 @removeOption="removeOption"
                 :editable="true"
@@ -105,7 +103,7 @@
       addQuestion() {
         if (this.mission_info.type === 'judgement') {
           this.addJudgementQuestion();
-        } else if (this.mission_info.type === 'checkbox') {
+        } else if (this.mission_info.type === 'choice') {
           this.addMultipleChoiceQuestion();
         } else if (this.mission_info.type === 'text') {
           this.addTextEditQuestion();
@@ -122,7 +120,7 @@
       addMultipleChoiceQuestion() {
         this.questions.push({
           id: nowId++,
-          type: 'checkbox',
+          type: 'choice',
           description: "",
           options: [],
           new_option: ""
@@ -141,7 +139,7 @@
       missionType() {
         if (this.mission_info.type === 'judgement')
           return '判断题';
-        else if (this.mission_info.type === 'checkbox')
+        else if (this.mission_info.type === 'choice')
           return '选择题';
         else if (this.mission_info.type === 'text')
           return '文字描述题';
@@ -159,6 +157,7 @@
         let targetIdx = this.questions.findIndex(question => {
           return question.id === questionId;
         });
+        console.log(targetIdx, optionIdx);
         this.questions[targetIdx].options.splice(optionIdx, 1);
       }
     },  // end of methods

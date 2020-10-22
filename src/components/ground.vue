@@ -176,6 +176,8 @@
 
 <script>
     import dealAdmin from "@/utils/admin"
+    import getBackend from "@/utils/getBackend";
+    import API from "@/utils/API";
     export default {
         name: "ground",
         data(){
@@ -215,27 +217,33 @@
                 const xhr = new XMLHttpRequest()
                 let context = this
                 xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4 && xhr.status === 201){
-                        let res = JSON.parse(xhr.responseText);
-                        let data = JSON.parse(res.data.replace(/'/g,'"'));
-                        context.totalMsgNum = data.total;
-                        // context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
-                        context.msgList = data.question_list;
-                        while(context.msgList.length < 12){
-                            context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
-                                'questionNum': 0, 'questionForm': "none", 'is_banned':0,
-                                'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
-                                'tags':[]});
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 201) {
+                            let res = JSON.parse(xhr.responseText);
+                            console.log(res);
+                            let data = JSON.parse(res.data.replace(/'/g, '"'));
+                            context.totalMsgNum = data.total;
+                            // context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
+                            context.msgList = data.question_list;
+                            while (context.msgList.length < 12) {
+                                context.msgList.push({
+                                    'id': -1, 'name': "none", 'user': "none",
+                                    'questionNum': 0, 'questionForm': "none", 'is_banned': 0,
+                                    'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
+                                    'tags': []
+                                });
+                            }
+                        } else {
+                            console.log(xhr.responseText);
                         }
                     }
                 };
-                this.getMsgNum = (pageNumber-1)*12;
+                this.getMsgNum = (pageNumber - 1) * 12;
                 // 请求带上所有的标签和关键词，一个请求就可以发送
-                console.log("backend/square?num="+this.getMsgNum.toString()
-                    +"&type="+this.type.toString()+"&theme="+this.theme.toString()+
-                    "&kw="+this.keyword.toString());
-                xhr.open("get","backend/square?num="+this.getMsgNum.toString()
-                    +"&type="+this.type.toString()+"&theme="+this.theme.toString());
+
+                console.log(this.getMsgNum);
+                console.log(`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}`);
+                xhr.open("get",`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}`);
                 xhr.send();
 
                 // for test only

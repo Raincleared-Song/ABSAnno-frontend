@@ -29,7 +29,7 @@
               @blur="$refs.type.onFieldBlur()"
               @change="$refs.type.onFieldChange()">
             <a-select-option value="judgement">判断题任务</a-select-option>
-            <a-select-option value="checkbox">选择题任务</a-select-option>
+            <a-select-option value="choice">选择题任务</a-select-option>
             <a-select-option value="text">文字描述题任务</a-select-option>
           </a-select>
         </a-form-model-item>

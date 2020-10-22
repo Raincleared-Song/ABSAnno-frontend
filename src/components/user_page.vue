@@ -72,11 +72,11 @@
                         {{ text + item[type] }}
                       </span>
                       </template>
-                      <img
-                          slot="extra"
-                          width="272"
-                          alt="logo"
-                      />
+<!--                      <img-->
+<!--                          slot="extra"-->
+<!--                          width="272"-->
+<!--                          alt="logo"-->
+<!--                      />-->
                       <a-list-item-meta :description="item.qName">
                         <a slot="title" >{{ item.qName + index}}</a>
                         <!--                      <a-avatar slot="avatar" :src="item.avatar" />-->
@@ -221,8 +221,23 @@ export default {
       this.getUserInfo(this.pageList[index])
     },
     parseHistory: function (info) {
-      let data = JSON.parse(info.data.replace(/'/g,'"'))
+      console.log(info)
+      info = info.data.replace(/'/g, '"')
+      let data = JSON.parse(info)
       console.log(data)
+      this.answerListData = []
+      for (let i = 0; i < data.total_num; ++i) {
+        console.log(data.mission_list[i])
+        let d = new Date()
+        d.setTime(data.mission_list[i].ret_time)
+        this.answerListData.push({
+          qName: data.mission_list[i].name,
+          qUser: data.mission_list[i].user,
+          qClass: data.mission_list[i].question_form,
+          qTime: d.toLocaleString(),
+        })
+      }
+
     },
     parseUserInfo: function (info) {
       let data = JSON.parse(info.data.replace(/'/g,'"'))

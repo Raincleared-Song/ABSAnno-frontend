@@ -1,4 +1,8 @@
 const API = {
+    GET_SQUARE: {
+        path: "/backend/square",
+        method: "GET"
+    },
     GET_SINGLE_QUESTION: {
         // 向后端获取新的题目
         path: "/backend/mission",

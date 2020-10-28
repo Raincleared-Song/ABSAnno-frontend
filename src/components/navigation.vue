@@ -13,13 +13,15 @@
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>
             </a-menu-item>
-            <a-menu-item v-if="power > 0" key="/edit">
-                <router-link to="/edit">发布题目</router-link>
+            <a-menu-item v-if="power!==-1" key="/mission">
+                <router-link to="/mission/create">发布题目</router-link>
             </a-menu-item>
             <a-menu-item v-if="power!==-1" key="/user">
                 <router-link to="/user">个人中心</router-link>
             </a-menu-item>
-
+            <a-menu-item v-if="power===2" key="/users">
+                <router-link to="/users">管理用户</router-link>
+            </a-menu-item>
             <a-menu-item v-if="power===-1" key="/login" style="float: right;">
                     <a-button ghost>
                         <router-link to="/login">登录</router-link>
@@ -36,14 +38,14 @@
                 </a-button>
             </a-menu-item>
             <a-menu-item v-if="power!==-1" key="0" style="float: right;">
-                <div >
+                <div>
                     <span>
                         <a-popover :title="'欢迎，'+username" placement="bottom" >
                             <template slot="content">
                                 用户名：{{this.username}}<br/>
                                 您的权限：{{this.power}}
                             </template>
-                            <a-badge dot><a-avatar shape="square" icon="user"/></a-badge>
+                            <a-avatar shape="square" icon="user"/>
                         </a-popover>
                     </span>
                 </div>
@@ -68,7 +70,33 @@
         },
         methods: {
             onClick() {
-                this.$emit('logout',true);
+                let context = this;
+                let xmlRequestGet = new XMLHttpRequest();
+                xmlRequestGet.open("get", "backend/csrf", true);
+                let xmlRequestPost = new XMLHttpRequest();
+
+                xmlRequestPost.onreadystatechange = function() {
+                    if (xmlRequestPost.readyState === 4 && xmlRequestPost.status === 201){
+                        console.log("successfully logged out")
+                        context.$emit('logout',true);
+                    }
+                    else if(xmlRequestPost.readyState === 4){
+                        console.log("can't logout")
+                    }
+                }
+
+                // xmlRequestPost.setRequestHeader('content-type', 'application/json');
+                xmlRequestGet.onreadystatechange = function () {
+                    if (xmlRequestGet.readyState === 4 && xmlRequestGet.status === 200) {  // 注意返回码是 200
+                        let csrfToken = this.responseText;  // 获取 CSRF token
+                        xmlRequestPost.open("post","backend/logout", true);
+                        xmlRequestPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
+                        xmlRequestPost.setRequestHeader('content-type', 'application/json');
+                        xmlRequestPost.send(JSON.stringify({}));
+                    }
+                }
+
+                xmlRequestGet.send();
             },
         },
         watch: {

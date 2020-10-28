@@ -5,61 +5,39 @@
 
         <!-- 左侧边栏 -->
         <a-layout-sider width="300" style="background: #fff">
-          <a-menu mode="inline" style="height: 100%">
-            <a-menu-item key="1" @click="addJudgementQuestion">添加判断题</a-menu-item>
-            <a-sub-menu>
-              <span slot="title">选择题</span>
-              <a-menu-item key="2" @click="addSingleChoiceQuestion">添加单选题</a-menu-item>
-              <a-menu-item key="3" @click="addMultipleChoiceQuestion">添加多选题</a-menu-item>
-            </a-sub-menu>
-            <a-menu-item key="4" @click="addTextEditQuestion">添加文字题</a-menu-item>
-          </a-menu>
+          <div style="margin: 20px">
+            任务名称：{{ mission_info.name }}
+          </div>
+          <div style="margin: 20px">
+            任务类型：{{ missionType() }}
+          </div>
+          <a-button
+              type="dashed" block
+              @click="addQuestion">
+            添加新题目
+          </a-button>
         </a-layout-sider>
 
         <!-- 题目预览区 -->
         <a-layout-content style="margin: 10px 40px">
-          <h2>编辑任务</h2>
-          <div style="margin: 20px">
-            任务名称：<a-input palceholder="your mission title" v-model.trim="mission_description" />
-          </div>
-          <div style="margin: 20px">
-            任务至少标注次数：<a-input-number v-model.trim.number="minimum_total_annotation" />
-          </div>
           <div v-if="nowQuestion != null">
             <JudgementGroup
-                v-if="nowQuestion.type === 'judgement_group'"
-                :editable="true"
-                :question="nowQuestion" />
-            <RadioGroup
-                v-else-if="nowQuestion.type === 'select_single'"
-                @addOption="addOption"
-                @removeOption="removeOption"
+                v-if="mission_info.type === 'judgement'"
                 :editable="true"
                 :question="nowQuestion" />
             <CheckboxGroup
-                v-else-if="nowQuestion.type === 'select_multiple'"
+                v-else-if="mission_info.type === 'choice'"
                 @addOption="addOption"
                 @removeOption="removeOption"
                 :editable="true"
                 :question="nowQuestion" />
             <TextEdit
-                v-else-if="nowQuestion.type === 'text_edit'"
+                v-else-if="mission_info.type === 'text'"
                 :editable="true"
                 :question="nowQuestion" />
-            <p v-else>{{ nowQuestion.type }}</p>
+            <p v-else>{{ mission_info.type }}</p>
           </div>
           <a-empty v-else :description="false" />
-
-          <!-- 提交成功的消息框 -->
-          <a-modal
-              title="Success!"
-              :visible="modal.visible"
-              @ok="$router.push('/ground')"
-              @cancel="onCancelModal"
-              closable="false">
-            <div style="margin: 20px">任务提交成功！</div>
-            <div style="margin: 20px">是否返回广场？</div>
-          </a-modal>
 
           <!-- 底部分页栏和提交按钮 -->
           <div style="margin: 20px auto">
@@ -69,11 +47,10 @@
                 :page-size="1" />
           </div>
           <a-button
+              @click="$emit('on-submit-questions')"
               v-show="questions.length > 0 || nowQuestion != null"
-              :disabled="modal.submitted"
-              type="primary" @click="submit">
-            submit
-          </a-button>
+              type="primary"
+          >submit</a-button>
         </a-layout-content>
 
       </a-layout>
@@ -84,60 +61,66 @@
 <script>
   import JudgementGroup from "@/components/questions/judgement_group";
   import TextEdit from "@/components/questions/text_edit";
-  import RadioGroup from "@/components/questions/radio_group";
   import CheckboxGroup from "@/components/questions/checkbox_group";
-  import API from "@/utils/API"
-  import postBackend from "@/utils/postBackend";
 
   let nowId = 0;
 
   export default {
+    name: "edit_question",
     components: {
       JudgementGroup: JudgementGroup,
       TextEdit: TextEdit,
-      RadioGroup: RadioGroup,
       CheckboxGroup: CheckboxGroup
     },  // end of components
     data() {
       return {
-        mission_description: "",
-        minimum_total_annotation: 10,
-        questions: [],
         nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
-        nowQuestion: null,
-        modal: {
-          visible: false,
-          submitted: false
-        }
-      };
+        nowQuestion: null
+      }
     },  // end of data
-    props:[
-      "username",
-      "id",
-    ],
+    props: {
+      mission_info: {
+        type: Object,
+        default() {
+          return {
+            name: '',
+            type: '',
+            min: 10,
+            ddl: null,
+            tags: []
+          };
+        }
+      },
+      questions: {
+        type: Array,
+        default() {
+          return [];
+        }
+      }
+    },
     methods: {
+      // 增加题目
+      addQuestion() {
+        if (this.mission_info.type === 'judgement') {
+          this.addJudgementQuestion();
+        } else if (this.mission_info.type === 'choice') {
+          this.addMultipleChoiceQuestion();
+        } else if (this.mission_info.type === 'text') {
+          this.addTextEditQuestion();
+        }
+      },
       addJudgementQuestion() {
         this.questions.push({
           id: nowId++,
-          type: 'judgement_group',
+          type: 'judgement',
           description: ""
-        });
-        this.nowQuestionIndex = this.questions.length;
-      },
-      addSingleChoiceQuestion() {
-        this.questions.push({
-          id: nowId++,
-          type: 'select_single',
-          description: "",
-          options: [],
-          new_option: ""
         });
         this.nowQuestionIndex = this.questions.length;
       },
       addMultipleChoiceQuestion() {
         this.questions.push({
           id: nowId++,
-          type: 'select_multiple',
+          type: 'choice',
           description: "",
           options: [],
           new_option: ""
@@ -147,29 +130,19 @@
       addTextEditQuestion() {
         this.questions.push({
           id: nowId++,
-          type: 'text_edit',
+          type: 'text',
           description: ""
         });
         this.nowQuestionIndex = this.questions.length;
       },
-      // 向后端发送数据
-      submit() {
-        let submitObj = {
-          name: this.mission_description,
-          question_form: "judgement", // TODO: add more question_form
-          question_num: this.questions.length.toString(),
-          user_id: this.id.toString(),
-          total: this.minimum_total_annotation.toString()
-        };
-        console.log(this.id)
-        submitObj.question_list = this.questions.map(element => {
-          return { contains: element.description };
-        });
-        console.log(submitObj);
-        postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {
-          console.log(jsonObj);
-          this.modal.visible = true;
-        });
+      // 返回题型的中文名称
+      missionType() {
+        if (this.mission_info.type === 'judgement')
+          return '判断题';
+        else if (this.mission_info.type === 'choice')
+          return '选择题';
+        else if (this.mission_info.type === 'text')
+          return '文字描述题';
       },
       // 这两个方法处理子组件触发的事件
       addOption(questionId, newOption) {
@@ -184,12 +157,8 @@
         let targetIdx = this.questions.findIndex(question => {
           return question.id === questionId;
         });
+        console.log(targetIdx, optionIdx);
         this.questions[targetIdx].options.splice(optionIdx, 1);
-      },
-      // 消息框点击取消之后
-      onCancelModal() {
-        this.modal.visible = false;
-        this.modal.submitted = true;
       }
     },  // end of methods
     watch: {
@@ -201,21 +170,4 @@
 </script>
 
 <style>
-  #components-layout-top-side .logo {
-    background: rgba(255, 255, 255, 0.2);
-    margin: 16px 28px 16px 0;
-    float: left;
-  }
-  .bottom-page {
-    white-space: nowrap;
-    float: bottom;
-  }
-  .bottom-page li {
-    margin: 20px;
-    display: inline-block;
-    list-style: none;
-  }
-  .colored {
-    color: #3a8ee6;
-  }
 </style>

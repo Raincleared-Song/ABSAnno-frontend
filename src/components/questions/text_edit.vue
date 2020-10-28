@@ -3,13 +3,19 @@
   <div>
     <h2>文字编辑题</h2>
     <div v-if="editable">
-      <p>编辑题目：</p>
+      <div
+          style="margin: 15px 10px 10px 10px">
+        编辑题目：
+      </div>
       <a-textarea v-model="question.description" placeholder="your question" />
     </div>
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
-    <p>答题区：</p>
+    <div
+        style="margin: 15px 10px 10px 10px">
+      答题区：
+    </div>
     <div>
       <a-textarea :read-only="editable" v-model="question.answer" />
     </div>
@@ -28,7 +34,7 @@
         default() {
           return {
             id: 0,
-            type: 'text_edit',
+            type: 'text',
             // 出题者可编辑
             description: "",
             // 做题者可编辑

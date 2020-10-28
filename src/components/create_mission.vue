@@ -10,6 +10,7 @@
           :rules="rules"
           :label-col="{ span: 4 }"
           :wrapper-col="{ span: 15, offset: 1 }">
+
         <a-form-model-item
             ref="name"
             label="任务名称"
@@ -20,6 +21,7 @@
               @change="$refs.name.onFieldChange()"
               allow-clear />
         </a-form-model-item>
+
         <a-form-model-item
             ref="type"
             label="任务类型"
@@ -33,17 +35,26 @@
             <a-select-option value="text">文字描述题任务</a-select-option>
           </a-select>
         </a-form-model-item>
+
         <a-form-model-item
-            label="标注次数下限" prop="min">
-            <a-input-number
-                v-model.trim.number="mission_info.min" />
+            ref="min"
+            label="标注次数下限"
+            prop="min">
+          <a-input-number
+              v-model.trim.number="mission_info.min" />
         </a-form-model-item>
+
         <a-form-model-item
-            label="任务截止期限" prop="ddl">
+            ref="ddl"
+            label="任务截止期限"
+            prop="ddl">
           <a-date-picker v-model="mission_info.ddl" />
         </a-form-model-item>
+
         <a-form-model-item
-            label="分发对象" prop="tags">
+            ref="tags"
+            label="分发对象"
+            prop="tags">
           <a-select
               v-model="mission_info.tags"
               mode="tags">
@@ -55,6 +66,37 @@
             </a-select-option>
             <a-select-option :key="'me'">
               程序员
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
+
+        <a-form-model-item
+            ref="reward"
+            label="悬赏金额"
+            prop="reward">
+          <a-input-number
+              v-model.trim.number="mission_info.reward"/>
+        </a-form-model-item>
+
+        <a-form-model-item
+            ref="retrieve"
+            label="回收时限"
+            prop="retrieve">
+          <a-input-number
+              v-model.trim.number="mission_info.retrieve"/>
+        </a-form-model-item>
+
+        <a-form-model-item
+            ref="check_way"
+            label="验收方式"
+            prop="check_way">
+          <a-select
+              v-model="mission_info.check_way">
+<!--            <a-select-option :key="self">-->
+<!--              手动回收-->
+<!--            </a-select-option>-->
+            <a-select-option :key="'auto'">
+              自动回收
             </a-select-option>
           </a-select>
         </a-form-model-item>
@@ -79,7 +121,12 @@ export default {
     return {
       rules: {
         name: [{ required: true, message: 'Mission name cannot be null.', trigger: 'blur' }],
-        type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }]
+        type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }],
+        min: [{ required: true, message: 'Mission minimum annotation cannot be null.', trigger: 'blur' }],
+        ddl: [{ required: true, message: 'Mission deadline cannot be null.', trigger: 'blur' }],
+        reward: [{ required: true, message: 'Mission reward cannot be null.', trigger: 'blur' }],
+        retrieve: [{ required: true, message: 'Mission retrieve time cannot be null.', trigger: 'blur' }],
+        check_way: [{ required: true, message: 'Mission check way cannot be null.', trigger: 'blur' }]
       }
     };
   },
@@ -92,7 +139,10 @@ export default {
           type: '',
           min: 10,
           ddl: null,
-          tags: []
+          tags: [],
+          reward: '',
+          retrieve: '',
+          check_way: ''
         };
       }
     }
@@ -101,7 +151,7 @@ export default {
     onEditClick() {
       this.$refs.mission_form.validate(valid => {
         if (valid) {
-          this.$emit('on-submit-info', this.mission_info);
+          this.$emit('submit-info');
         } else {
           this.$message.warning("error submit");
         }

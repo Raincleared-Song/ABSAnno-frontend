@@ -5,8 +5,8 @@
         <router-view
             :mission_info="mission"
             :questions="questions"
-            @on-submit-info="onSubmitInfo"
-            @on-submit-questions="submit" />
+            @submit-info="onSubmitInfo"
+            @submit-questions="submit" />
         <a-steps
             v-model="current"
             type="navigation"
@@ -44,48 +44,65 @@ export default {
         type: '',
         min: 10,
         ddl: undefined,
-        tags: []
+        tags: [],
+        reward: 0,
+        retrieve: '',
+        check_way: ''
       },
       questions: [],
       current: 0
     };
   },
   methods: {
-    onSubmitInfo(missionInfo) {
+    onSubmitInfo() {
       this.$router.push('/mission/edit');
     },
     // 向后端发送数据
     submit() {
+      // 题目的基本信息
       let submitObj = {
         name: this.mission.name,
         question_form: this.mission.type,
         question_num: this.questions.length.toString(),
         mission_tags: this.mission.tags,
-        // user_id: this.id.toString(),
-        total: this.mission.min.toString()
+        total: this.mission.min.toString(),
+        reward: this.mission.reward.toString(),
+        deadline: this.mission.ddl.toString(),
+        retrieve_time: this.mission.retrieve.toString(),
+        check_way: this.mission.check_way
       };
-      submitObj.question_list = this.questions.map(element => {
+      submitObj.question_list = this.questions.map(question => {
         if (this.mission.type === 'judgement') {
-          return { contains: element.description };
+          return { contains: question.description };
         } else if (this.mission.type === 'choice') {
           return {
-            contains: element.description,
-            options: element.options.join('|')
+            contains: question.description,
+            options: question.options.join(',')
           };
         } else if (this.mission.type === 'text') {
-          return { contains: element.description };
+          return { contains: question.description };
         }
       });
       console.log(submitObj);
-      postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {
-        if (jsonObj.code === 201) {
-          console.log(jsonObj);
-          this.$message.success("Upload Success!");
-          this.$router.push("/ground");
-        } else {
-          this.$message.error("Upload Error! Try later!");
-        }
+
+      // 题目的图片信息
+      let images = this.questions.map(question => {
+        return question.image;
       });
+
+      // 向后端发送
+      let formData = new FormData();
+      formData.append('info', JSON.stringify(submitObj));
+      formData.append('image', images);
+      // postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {
+      //   if (jsonObj.code === 201) {
+      //     console.log(jsonObj);
+      //     this.$message.success("Upload Success!");
+      //     this.$router.push("/ground");
+      //   } else {
+      //     this.$message.error("Upload Error! Try later!");
+      //   }
+      // });
     },
   },
   watch: {

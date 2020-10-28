@@ -1,5 +1,4 @@
 // 通信函数，向后端发送GET请求
-import triggerEvent from "ant-design-vue/lib/_util/triggerEvent";
 
 /* 这是一个高阶函数，负责向后端发送请求，包装在communication.js里也许方便一些？？？
 *  param api: 定义在API.js里的东西
@@ -36,3 +35,4 @@ export default function getBackend(api, requestParams, onRespond) {
         alert("Your browser does not support XmlHTTP...");
     }
 }
+

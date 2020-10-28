@@ -20,7 +20,7 @@
         :on-success="onSuccess"
         :on-error="onError"
         style="margin: 0 auto">
-      <i class="el-icon-upload"></i>
+      <i class="el-icon-upload" />
       <div style="margin: 20px 0">
         Click or drag file to this area to upload
       </div>

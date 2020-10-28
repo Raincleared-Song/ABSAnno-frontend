@@ -2,6 +2,8 @@
 <template>
   <div>
     <h2>判断题</h2>
+
+    <!-- 题目描述区 -->
     <div v-if="editable" style="margin: 10px">
       <p>编辑题目：</p>
       <a-textarea v-model="question.description" placeholder="your question" />
@@ -9,6 +11,28 @@
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
+
+    <!-- 图片区 -->
+    <div v-if="editable">
+      <el-upload
+          ref="upload_img"
+          action="#"
+          :on-change="onChangeImage"
+          :auto-upload="false"
+          style="margin: 0 auto">
+        <div slot="file" slot-scope="{file}">
+          <el-image
+              class="el-upload-list__item-thumbnail"
+              :src="file.src" />
+        </div>
+      </el-upload>
+    </div>
+    <div v-else>
+      <el-image
+          :src="question.image" />
+    </div>
+
+    <!-- 选项区 -->
     <a-radio-group
         :disabled="editable"
         v-model="question.answer"
@@ -39,7 +63,12 @@ export default {
       type: Boolean,
       default: false
     }
-  }   // end of props
+  },  // end of props
+  methods: {
+    onChangeImage(file, fileList) {
+      this.$emit('updateImage', this.id, fileList);
+    }
+  }
 }
 </script>
 

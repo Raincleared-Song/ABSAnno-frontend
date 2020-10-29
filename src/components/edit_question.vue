@@ -25,6 +25,7 @@
                 v-if="mission_info.type === 'judgement'"
                 @updateImage="onUpdateImage"
                 :editable="true"
+                :has_image="mission_info.has_image"
                 :question="nowQuestion" />
             <CheckboxGroup
                 v-else-if="mission_info.type === 'choice'"
@@ -32,11 +33,13 @@
                 @removeOption="removeOption"
                 @updateImage="onUpdateImage"
                 :editable="true"
+                :has_image="mission_info.has_image"
                 :question="nowQuestion" />
             <TextEdit
                 v-else-if="mission_info.type === 'text'"
                 @updateImage="onUpdateImage"
                 :editable="true"
+                :has_image="mission_info.has_image"
                 :question="nowQuestion" />
             <p v-else>{{ mission_info.type }}</p>
           </div>
@@ -81,26 +84,10 @@
         nowQuestion: null
       }
     },  // end of data
-    props: {
-      mission_info: {
-        type: Object,
-        default() {
-          return {
-            name: '',
-            type: '',
-            min: 10,
-            ddl: null,
-            tags: []
-          };
-        }
-      },
-      questions: {
-        type: Array,
-        default() {
-          return [];
-        }
-      }
-    },
+    props: [
+        'mission_info',
+        'questions'
+    ],  // end of props
     methods: {
       // 增加题目
       addQuestion() {
@@ -114,7 +101,7 @@
       },
       addJudgementQuestion() {
         this.questions.push({
-          id: nowId++,
+          index: nowId++,
           type: 'judgement',
           description: ""
         });
@@ -122,7 +109,7 @@
       },
       addMultipleChoiceQuestion() {
         this.questions.push({
-          id: nowId++,
+          index: nowId++,
           type: 'choice',
           description: "",
           options: [],
@@ -132,7 +119,7 @@
       },
       addTextEditQuestion() {
         this.questions.push({
-          id: nowId++,
+          index: nowId++,
           type: 'text',
           description: ""
         });

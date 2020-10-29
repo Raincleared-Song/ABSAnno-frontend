@@ -102,8 +102,8 @@ export default {
     }
   },  // end of props
   methods: {
-    onChangeImage(file, fileList) {
-      this.$emit('update_image', fileList);
+    onChangeImage(file) {
+      this.$emit('updateImage', file);
     }
   }
 }

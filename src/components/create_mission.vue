@@ -18,7 +18,6 @@
           <a-input
               v-model.trim="mission_info.name"
               @blur="$refs.name.onFieldBlur()"
-              @change="$refs.name.onFieldChange()"
               allow-clear />
         </a-form-model-item>
 
@@ -28,17 +27,32 @@
             prop="type">
           <a-select
               v-model="mission_info.type"
-              @blur="$refs.type.onFieldBlur()"
-              @change="$refs.type.onFieldChange()">
+              @blur="$refs.type.onFieldBlur()">
             <a-select-option value="judgement">判断题任务</a-select-option>
             <a-select-option value="choice">选择题任务</a-select-option>
             <a-select-option value="text">文字描述题任务</a-select-option>
           </a-select>
         </a-form-model-item>
 
-        <a-form-model-item>
+        <a-form-model-item
+            ref="has_image"
+            label="是否图片任务"
+            prop="has_image">
+          <a-switch
+              v-model="mission_info.has_image"
+              @blur="$refs.has_image.onFieldBlur()"
+              checked-children="是"
+              un-checked-children="否" />
+        </a-form-model-item>
+
+        <a-form-model-item
+            ref="info"
+            label="任务简介"
+            prop="info">
           <a-textarea
-              v-model="mission_info.info" />
+              v-model="mission_info.info"
+              @blur="$refs.info.onFieldBlur()"
+              allow-clear />
         </a-form-model-item>
 
         <a-form-model-item
@@ -46,7 +60,8 @@
             label="标注次数下限"
             prop="min">
           <a-input-number
-              v-model.trim.number="mission_info.min" />
+              v-model.trim.number="mission_info.min"
+              @blur="$refs.min.onFieldBlur()" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -54,7 +69,8 @@
             label="任务截止期限"
             prop="ddl">
           <a-date-picker
-              v-model="mission_info.ddl" />
+              v-model="mission_info.ddl"
+              @blur="$refs.ddl.onFieldBlur()" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -63,6 +79,7 @@
             prop="tags">
           <a-select
               v-model="mission_info.tags"
+              @blur="$refs.tags.onFieldBlur()"
               mode="tags">
             <a-select-option :key="'student'">
               学生
@@ -81,7 +98,8 @@
             label="悬赏金额"
             prop="reward">
           <a-input-number
-              v-model.trim.number="mission_info.reward"/>
+              v-model.trim.number="mission_info.reward"
+              @blur="$refs.reward.onFieldBlur()" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -89,7 +107,8 @@
             label="回收时限"
             prop="retrieve">
           <a-input-number
-              v-model.trim.number="mission_info.retrieve"/>
+              v-model.trim.number="mission_info.retrieve"
+              @blur="$refs.retrieve.onFieldBlur()" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -97,7 +116,8 @@
             label="验收方式"
             prop="check_way">
           <a-select
-              v-model="mission_info.check_way">
+              v-model="mission_info.check_way"
+              @blur="$refs.check_way.onFieldBlur()">
             <a-select-option :key="'auto'">
               自动回收
             </a-select-option>
@@ -125,6 +145,7 @@ export default {
       rules: {
         name: [{ required: true, message: 'Mission name cannot be null.', trigger: 'blur' }],
         type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }],
+        has_image: [{ required: true, message: 'Has-Image cannot be null.', trigger: 'blur' }],
         min: [{ required: true, message: 'Mission minimum annotation cannot be null.', trigger: 'blur' }],
         ddl: [{ required: true, message: 'Mission deadline cannot be null.', trigger: 'blur' }],
         reward: [{ required: true, message: 'Mission reward cannot be null.', trigger: 'blur' }],
@@ -132,25 +153,10 @@ export default {
         check_way: [{ required: true, message: 'Mission check way cannot be null.', trigger: 'blur' }]
       }
     };
-  },
-  props: {
-    mission_info: {
-      type: Object,
-      default() {
-        return {
-          name: '',
-          type: '',
-          info: '',
-          min: 10,
-          ddl: null,
-          tags: [],
-          reward: '',
-          retrieve: '',
-          check_way: ''
-        };
-      }
-    }
-  },
+  },  // end of data
+  props: [
+    'mission_info'
+  ],  // end of props
   methods: {
     onEditClick() {
       this.$refs.mission_form.validate(valid => {

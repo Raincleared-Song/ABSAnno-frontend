@@ -1,6 +1,7 @@
 <template>
   <div class="card-container">
     <a-tabs default-active-key="1">
+
       <a-tab-pane key="1" tab="手动添加任务">
         <router-view
             :mission_info="mission"
@@ -25,7 +26,6 @@
 
 <script>
 import API from "@/utils/API";
-import postBackend from "@/utils/postBackend";
 import upload_mission from "@/components/upload_mission";
 import postFile from "@/utils/postFile";
 
@@ -49,7 +49,8 @@ export default {
         tags: [],
         reward: 0,
         retrieve: '',
-        check_way: ''
+        check_way: '',
+        has_image: false
       },
       questions: [],
       current: 0
@@ -64,7 +65,7 @@ export default {
       // 题目的基本信息
       let submitObj = {
         name: this.mission.name,
-        question_form: this.mission.type,
+        question_form: this.mission.has_image? this.mission.type + '-image': this.mission.type,
         question_num: this.questions.length.toString(),
         mission_tags: this.mission.tags,
         info: this.mission.info,

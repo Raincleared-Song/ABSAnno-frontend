@@ -4,7 +4,7 @@
       <a-layout style="padding: 24px 0; background: #fff">
 
         <!-- 左侧边栏 -->
-        <a-layout-sider width="300" style="background: #fff">
+        <a-layout-sider width="250" style="background: #fff">
           <div style="margin: 20px">
             任务名称：{{ mission_info.name }}
           </div>
@@ -141,21 +141,22 @@
       addOption(questionId, newOption) {
         console.log(questionId);
         let targetIdx = this.questions.findIndex(question => {
-          return question.id === questionId;
+          return question.index === questionId;
         });
         this.questions[targetIdx].options.push(newOption);
         this.questions[targetIdx].new_option = "";
       },
       removeOption(questionId, optionIdx) {
         let targetIdx = this.questions.findIndex(question => {
-          return question.id === questionId;
+          return question.index === questionId;
         });
         console.log(targetIdx, optionIdx);
         this.questions[targetIdx].options.splice(optionIdx, 1);
       },
       onUpdateImage(questionId, file) {
+        console.log(file);
         let targetIdx = this.questions.findIndex(question => {
-          return question.id === questionId;
+          return question.index === questionId;
         });
         this.questions[targetIdx].image = file;
       }

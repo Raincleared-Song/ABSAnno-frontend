@@ -70,7 +70,8 @@
             prop="ddl">
           <a-date-picker
               v-model="mission_info.ddl"
-              @blur="$refs.ddl.onFieldBlur()" />
+              @blur="$refs.ddl.onFieldBlur()"
+              @change="$refs.ddl.onFieldChange()" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -100,6 +101,7 @@
           <a-input-number
               v-model.trim.number="mission_info.reward"
               @blur="$refs.reward.onFieldBlur()" />
+          <span class="ant-form-text">单位：金币</span>
         </a-form-model-item>
 
         <a-form-model-item
@@ -109,6 +111,7 @@
           <a-input-number
               v-model.trim.number="mission_info.retrieve"
               @blur="$refs.retrieve.onFieldBlur()" />
+          <span class="ant-form-text">单位：天</span>
         </a-form-model-item>
 
         <a-form-model-item
@@ -119,7 +122,10 @@
               v-model="mission_info.check_way"
               @blur="$refs.check_way.onFieldBlur()">
             <a-select-option :key="'auto'">
-              自动回收
+              自动验收
+            </a-select-option>
+            <a-select-option :key="'human'">
+              手动验收（没写，不要选）
             </a-select-option>
           </a-select>
         </a-form-model-item>
@@ -129,7 +135,7 @@
           type="dashed"
           @click="onEditClick"
           block>
-        手动添加题目
+        继续编辑题目
       </a-button>
 
     </a-layout-content>
@@ -147,7 +153,7 @@ export default {
         type: [{ required: true, message: 'Mission type cannot be null.', trigger: 'blur' }],
         has_image: [{ required: true, message: 'Has-Image cannot be null.', trigger: 'blur' }],
         min: [{ required: true, message: 'Mission minimum annotation cannot be null.', trigger: 'blur' }],
-        ddl: [{ required: true, message: 'Mission deadline cannot be null.', trigger: 'blur' }],
+        ddl: [{ required: true, message: 'Mission deadline cannot be null.', trigger: ['blur', 'change'] }],
         reward: [{ required: true, message: 'Mission reward cannot be null.', trigger: 'blur' }],
         retrieve: [{ required: true, message: 'Mission retrieve time cannot be null.', trigger: 'blur' }],
         check_way: [{ required: true, message: 'Mission check way cannot be null.', trigger: 'blur' }]
@@ -155,7 +161,7 @@ export default {
     };
   },  // end of data
   props: [
-    'mission_info'
+      'mission_info'
   ],  // end of props
   methods: {
     onEditClick() {
@@ -171,6 +177,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

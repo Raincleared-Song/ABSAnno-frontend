@@ -32,8 +32,8 @@ import postFile from "@/utils/postFile";
 export default {
   name: "mission_field",
   props: [
-    "username",
-    "id"
+      'username',
+      'id'
   ],
   components: {
     upload_mission: upload_mission
@@ -47,8 +47,8 @@ export default {
         min: 10,
         ddl: '',
         tags: [],
-        reward: 0,
-        retrieve: '',
+        reward: 5,
+        retrieve: 7,
         check_way: '',
         has_image: false
       },
@@ -58,6 +58,7 @@ export default {
   },
   methods: {
     onSubmitInfo() {
+      console.log(this.mission);
       this.$router.push('/mission/edit');
     },
     // 向后端发送数据
@@ -65,7 +66,7 @@ export default {
       // 题目的基本信息
       let submitObj = {
         name: this.mission.name,
-        question_form: this.mission.has_image? this.mission.type + '-image': this.mission.type,
+        question_form: this.mission.type + (this.mission.has_image? '-image': ''),
         question_num: this.questions.length.toString(),
         mission_tags: this.mission.tags,
         info: this.mission.info,
@@ -75,6 +76,7 @@ export default {
         retrieve_time: this.mission.retrieve.toString(),
         check_way: this.mission.check_way
       };
+      // 问题列表
       submitObj.question_list = this.questions.map(question => {
         if (this.mission.type === 'judgement') {
           return { contains: question.description };
@@ -89,16 +91,16 @@ export default {
       });
       console.log(submitObj);
 
-      // 题目的图片信息
-      let imageList = this.questions.map(question => {
-        return question.image !== undefined? question.image: null;
-      });
-      console.log(imageList);
-
-      // 向后端发送
       let formData = new FormData();
       formData.append('info', JSON.stringify(submitObj));
-      formData.append('image', imageList);
+
+      // 题目的图片信息
+      if (this.mission.has_image) {
+        this.questions.forEach(question => {
+          formData.append('img_list', question.image.raw);
+        });
+      }
+
       postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
         if (jsonObj.code === 201) {
           console.log(jsonObj);

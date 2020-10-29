@@ -87,8 +87,7 @@ export default {
         }
       });
       console.log(answers);
-      postBackend(API.POST_SINGLE_QUESTION, {
-        // user_id: this.id.toString(),
+      postBackend(API.POST_SINGLE_QUESTION.path, {
         mission_id: this.missionId.toString(),
         ans: answers
       }, jsonObj => {
@@ -105,7 +104,7 @@ export default {
       let nextIndex = this.nowQuestionIndex + 1;
       if (nextIndex === this.questions.length) {
         // 下一题未加载，从后端获取
-        getBackend(API.GET_SINGLE_QUESTION, {
+        getBackend(API.GET_SINGLE_QUESTION.path, {
           id: this.missionId,
           num: nextIndex,
           step: 0
@@ -148,7 +147,7 @@ export default {
     let name = this.$route.path;
     this.missionId = Number(name.slice(10,));
     // 从后台申请数据加载
-    getBackend(API.GET_SINGLE_QUESTION, {
+    getBackend(API.GET_SINGLE_QUESTION.path, {
       id: this.missionId,
       num: 0,
       step: 0
@@ -164,7 +163,7 @@ export default {
         };
         // 对于选择题
         if (newQuestion.type === 'choice') {
-          newQuestion.options = dataObj.options.split('|');
+          newQuestion.options = dataObj.options.split(',');
           newQuestion.answer = [];
         }
         console.log(newQuestion);

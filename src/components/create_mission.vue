@@ -36,6 +36,11 @@
           </a-select>
         </a-form-model-item>
 
+        <a-form-model-item>
+          <a-textarea
+              v-model="mission_info.info" />
+        </a-form-model-item>
+
         <a-form-model-item
             ref="min"
             label="标注次数下限"
@@ -48,7 +53,8 @@
             ref="ddl"
             label="任务截止期限"
             prop="ddl">
-          <a-date-picker v-model="mission_info.ddl" />
+          <a-date-picker
+              v-model="mission_info.ddl" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -92,9 +98,6 @@
             prop="check_way">
           <a-select
               v-model="mission_info.check_way">
-<!--            <a-select-option :key="self">-->
-<!--              手动回收-->
-<!--            </a-select-option>-->
             <a-select-option :key="'auto'">
               自动回收
             </a-select-option>
@@ -137,6 +140,7 @@ export default {
         return {
           name: '',
           type: '',
+          info: '',
           min: 10,
           ddl: null,
           tags: [],

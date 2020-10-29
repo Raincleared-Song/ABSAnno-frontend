@@ -17,8 +17,9 @@
       <el-upload
           ref="upload_img"
           action="#"
-          :on-change="onChangeImage"
+          :limit="1"
           :auto-upload="false"
+          :on-change="onChangeImage"
           style="margin: 0 auto">
         <div slot="file" slot-scope="{file}">
           <el-image
@@ -65,8 +66,8 @@ export default {
     }
   },  // end of props
   methods: {
-    onChangeImage(file, fileList) {
-      this.$emit('updateImage', this.id, fileList);
+    onChangeImage(file) {
+      this.$emit('updateImage', this.id, file);
     }
   }
 }

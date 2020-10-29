@@ -166,11 +166,11 @@
         console.log(targetIdx, optionIdx);
         this.questions[targetIdx].options.splice(optionIdx, 1);
       },
-      onUpdateImage(questionId, fileList) {
+      onUpdateImage(questionId, file) {
         let targetIdx = this.questions.findIndex(question => {
           return question.id === questionId;
         });
-        this.questions[targetIdx].image = fileList;
+        this.questions[targetIdx].image = file;
       }
     },  // end of methods
     watch: {

@@ -27,6 +27,7 @@
 import API from "@/utils/API";
 import postBackend from "@/utils/postBackend";
 import upload_mission from "@/components/upload_mission";
+import postFile from "@/utils/postFile";
 
 export default {
   name: "mission_field",
@@ -42,8 +43,9 @@ export default {
       mission: {
         name: '',
         type: '',
+        info: '',
         min: 10,
-        ddl: undefined,
+        ddl: '',
         tags: [],
         reward: 0,
         retrieve: '',
@@ -65,6 +67,7 @@ export default {
         question_form: this.mission.type,
         question_num: this.questions.length.toString(),
         mission_tags: this.mission.tags,
+        info: this.mission.info,
         total: this.mission.min.toString(),
         reward: this.mission.reward.toString(),
         deadline: this.mission.ddl.toString(),
@@ -86,23 +89,24 @@ export default {
       console.log(submitObj);
 
       // 题目的图片信息
-      let images = this.questions.map(question => {
-        return question.image;
+      let imageList = this.questions.map(question => {
+        return question.image !== undefined? question.image: null;
       });
+      console.log(imageList);
 
       // 向后端发送
       let formData = new FormData();
       formData.append('info', JSON.stringify(submitObj));
-      formData.append('image', images);
-      // postBackend(API.POST_NEW_MISSION, submitObj, jsonObj => {
-      //   if (jsonObj.code === 201) {
-      //     console.log(jsonObj);
-      //     this.$message.success("Upload Success!");
-      //     this.$router.push("/ground");
-      //   } else {
-      //     this.$message.error("Upload Error! Try later!");
-      //   }
-      // });
+      formData.append('image', imageList);
+      postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
+        if (jsonObj.code === 201) {
+          console.log(jsonObj);
+          this.$message.success("Upload Success!");
+          this.$router.push("/ground");
+        } else {
+          this.$message.error("Upload Error! Try later!");
+        }
+      });
     },
   },
   watch: {

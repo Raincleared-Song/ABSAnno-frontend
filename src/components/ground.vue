@@ -132,7 +132,7 @@
             <a-list item-layout="horizontal" :data-source="msgList" v-if="isRouterAlive">
                 <a-list-item slot="renderItem" slot-scope="msg" v-if="msg.questionNum !== 0">
                     <a slot="actions" v-if="power!==-1">
-                        <router-link  :to="{path:'/question/'+ msg.id}">做题</router-link>
+                        <router-link  :to="{path:'/question/'+ msg.id}">接单</router-link>
                     </a>
                     <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)" style="color: #ff5c4d">删除</a>
                     <a-list-item-meta>

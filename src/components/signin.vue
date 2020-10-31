@@ -34,6 +34,9 @@
 </template>
 
 <script>
+    import postBackend from "../utils/postBackend"
+    import getBackend from "../utils/getBackend"
+    
     export default {
         name: "signin",
         props: {
@@ -57,52 +60,34 @@
         },
         methods: {
             sendMsg(){
-                let context = this;
-                let xmlRequestGet = new XMLHttpRequest();
-                xmlRequestGet.open("get", "backend/csrf", true);
-                let xmlRequestPost = new XMLHttpRequest();
-
-                xmlRequestPost.onreadystatechange = function() {
-                    if (xmlRequestPost.readyState === 4 && xmlRequestPost.status === 201){
-                        let res = JSON.parse(xmlRequestPost.responseText);
+                let onRespond = jsonObj => {
+                    if (jsonObj.code === 201) {
+                        let res = JSON.parse(jsonObj.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
                         console.log(data.name, data.power);
-                        context.$emit('login', {"name":data.name, "power": data.power});
-                        context.$router.push('/user');
+                        this.$emit('login', {"name":data.name, "power": data.power});
+                        this.$router.push('/user');
                     }
-                    else if(xmlRequestPost.readyState === 4){
-                        let res = JSON.parse(xmlRequestPost.response);
+                    else{
+                        let res = JSON.parse(jsonObj.response);
                         let error = res.data;
                         console.log(error)
                         if(error === "User Name Error"){
-                            context.nameIllegal = true;
+                            this.nameIllegal = true;
                         }
                         else if(error === "User Name Has Existed"){
-                            context.userExist = true;
+                            this.userExist = true;
                         }
                         else if(error === "Password Length Error"){
-                            context.pslen = false;
+                            this.pslen = false;
                         }
                         else {
-                            context.OK = false;
+                            this.OK = false;
                         }
                     }
-                }
-
-                // xmlRequestPost.setRequestHeader('content-type', 'application/json');
-                xmlRequestGet.onreadystatechange = function () {
-                    if (xmlRequestGet.readyState === 4 && xmlRequestGet.status === 200) {  // 注意返回码是 200
-                        let csrfToken = this.responseText;  // 获取 CSRF token
-                        xmlRequestPost.open("post","backend/signin");
-                        xmlRequestPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
-                        xmlRequestPost.setRequestHeader('content-type', 'application/json');
-                        xmlRequestPost.send(JSON.stringify({"name":context.name,"password":context.secret,
-                            "method":"SignIn","email":""}));
-                    }
-                }
-
-                xmlRequestGet.send();
-
+                };
+                getBackend("backend/signin", {"name":this.name,"password":this.secret,
+                    "method":"SignIn","email":""}, onRespond);
             },
         },
 

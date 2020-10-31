@@ -18,8 +18,19 @@
 </template>
 
 <script>
+    const answerListData = [];
+    for (let i = 0; i < 10; i++) {
+        answerListData.push({
+            qName: "Do you like apples",
+            qUser: "Mat",
+            qClass: "Single Choice",
+            qTime: new Date().setFullYear(2020, 10, 20),
+            // add more info
+        });
+    }
     export default {
         name: "history",
+
         data () {
             return {
                 pagination: {

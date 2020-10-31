@@ -54,8 +54,76 @@
 </template>
 
 <script>
+    const answerListData = [];
+    const plainOptions = ['Apple', 'Pear', 'Orange'];
+    const defaultCheckedList = ['Apple', 'Orange'];
     export default {
-        name: "edit_info"
+        name: "edit_info",
+        data () {
+            return {
+                // answerListData,
+                pagination: {
+                    onChange: page => {
+                        console.log(page);
+                    },
+                    pageSize: 3,
+                },
+                actions: [
+                    { type: 'qUser', text: 'Published by: ' },
+                    { type: 'qTime', text: 'Published on: ' },
+                ],
+
+                collapsed: false,
+                page_number: 3,
+                userid: -1,
+                info: [],
+                answerList: [],
+                myPublish: [],
+                pageList: ['user', 'history', 'mission', 'editUser'],
+                pageListChinese: ['用户信息', '答题历史', '我的发布', '修改个人信息'],
+                user_power: ['未登录', '用户', '发布者', '管理员'],
+
+
+                user_name: this.username,
+                user_score: 0,
+                user_weight: 0,
+                user_ans_num: 0,
+
+                totalNum: 10, // 总共回答了多少道题
+
+                desireNum: "",
+
+                checkedList: defaultCheckedList,
+                indeterminate: true,
+                checkAll: false,
+                plainOptions,
+            }
+        },
+        methods: {
+            submitChange() {
+            },
+            onCheckListChange(checkedList) {
+                this.indeterminate = !!checkedList.length && checkedList.length < plainOptions.length;
+                this.checkAll = checkedList.length === plainOptions.length;
+                console.log(checkedList)
+            },
+            onCheckAllChange(e) {
+                Object.assign(this, {
+                    checkedList: e.target.checked ? plainOptions : [],
+                    indeterminate: false,
+                    checkAll: e.target.checked,
+                });
+            },
+            handleNumberChange(value) {
+                console.log(`selected ${value}`);
+                this.desireNum = value
+            },
+        },
+
+        created: function () {
+            // this.change(0);
+            console.log("in created function")
+        },
     }
 </script>
 

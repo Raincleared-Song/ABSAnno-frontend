@@ -14,7 +14,7 @@ import signin from "@/components/signin"
 import user_page from "@/components/user_page";
 import answer_question from "@/components/answer_question";
 import banuser from "@/components/banuser"
-
+import orders from "@/components/orders"
 //定义routes路由的集合，数组类型
 
 const routes=[
@@ -26,6 +26,7 @@ const routes=[
     { path:'/user', component: user_page },
     { path:'/question/:id', component: answer_question },
     { path:'/users', component: banuser },
+    { path:'/orders', component: orders },
     {
         path: '/mission',
         component: mission_field,

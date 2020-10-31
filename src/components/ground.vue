@@ -68,7 +68,7 @@
                             <p>题目数量：{{msg.questionNum}}</p>
                             <div class="portfolio-links">
                                 <div class="icons-list">
-                                    <router-link v-if="power!==-1" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
+                                    <a-icon v-if="power!==-1" type="star" />
 
                                     <a-popover :title="msg.title+' 题组'" trigger="hover" >
                                         <template slot="content" v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
@@ -99,13 +99,9 @@
                                             <!--                                            <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />-->
                                             完成情况：{{msg.ans_num}}/{{msg.total_ans}}<br/>
                                         </template>
-                                        <router-link to="/rules">
                                             <a-icon type="info-circle" />
-                                        </router-link>
                                     </a-popover>
-                                    <router-link v-if="power===2" to="/ground">
-                                        <a-icon type="delete" @click="deleteMsg(msg.id)"/>
-                                    </router-link>
+                                        <a-icon v-if="power===2" type="delete" @click="deleteMsg(msg.id)"/>
                                 </div>
                             </div>
                         </div>
@@ -238,6 +234,10 @@
                 return a;
             },
 
+            parseTag(s){
+                return s.split("||");
+            },
+
             onChange(pageNumber) {
                 this.getMsgNum = (pageNumber - 1) * 12;
                 let onRespond = jsonObj => {
@@ -250,9 +250,12 @@
                                 'id': -1, 'name': "none", 'user': "none",
                                 'questionNum': 0, 'questionForm': "none", 'is_banned': 0, 'full': 0,
                                 'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
-                                'tags': [""]
+                                'tags': ""
                             });
                         }
+                        this.msgList.forEach(function(item, index, arr) {
+                            arr[index].tags = this.parseTag(item.tags)
+                        });
                     } else {
                         console.log(jsonObj.data);
                     }
@@ -281,7 +284,7 @@
                     if(item.id === msgId) {
                         arr[index] = { 'id': -1, 'name': "none", 'user': "none",
                             'questionNum': 0, 'questionForm': "none", 'is_banned':0,
-                            'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none", 'tags':[]};
+                            'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none", 'tags':""};
                     }
                     if(item.questionNum === 0){
                         count = count + 1;
@@ -297,6 +300,9 @@
                 // reload
                 this.isRouterAlive = false
                 this.$nextTick(() => (this.isRouterAlive = true))
+            },
+            accept(){
+
             },
             onSearch(value) {
                 this.keyword = value;
@@ -449,7 +455,7 @@
         z-index: 0;
     }
 
-    .portfolio .portfolio-wrap .portfolio-links a {
+    .portfolio .portfolio-wrap .portfolio-links i {
         color: #fff;
         margin: 0 2px;
         font-size: 28px;
@@ -457,7 +463,7 @@
         transition: 0.3s;
     }
 
-    .portfolio .portfolio-wrap .portfolio-links a:hover {
+    .portfolio .portfolio-wrap .portfolio-links i:hover {
         color: #e96b56;
     }
 

@@ -2,6 +2,7 @@
 <template>
   <div>
     <h2>多选题</h2>
+    <!-- 题目介绍区 -->
     <div v-if="editable">
       <div style="margin: 15px 10px 5px 10px">
         编辑题目：
@@ -11,6 +12,28 @@
     <div v-else>
       <p>{{ this.question.description }}</p>
     </div>
+
+    <!-- 图片区 -->
+    <div v-if="editable">
+      <el-upload
+          ref="upload_img"
+          action="#"
+          :on-change="onChangeImage"
+          :auto-upload="false"
+          style="margin: 0 auto">
+        <div slot="file" slot-scope="{file}">
+          <el-image
+              class="el-upload-list__item-thumbnail"
+              :src="file.src" />
+        </div>
+      </el-upload>
+    </div>
+    <div v-else>
+      <el-image
+          :src="question.image" />
+    </div>
+
+    <!-- 选项区 -->
     <div
         v-if="editable"
         style="margin: 15px 10px">
@@ -52,31 +75,16 @@ export default {
       optionCode: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
     };
   },
-  props: {
-    index: {
-      type: Number,
-      default: -1
-    },
-    question: {
-      type: Object,
-      default() {
-        return {
-          id: 0,
-          type: 'choice',
-          // 出题者可编辑
-          description: "",
-          options: [],
-          new_option: "",
-          // 做题者可编辑
-          answer: []
-        }
-      }
-    },
-    editable: {
-      type: Boolean,
-      default: false
+  props: [
+      'question',
+      'editable',
+      'has_image'
+  ],  // end of props
+  methods: {
+    onChangeImage(file) {
+      this.$emit('updateImage', file);
     }
-  }   // end of props
+  }
 }
 </script>
 

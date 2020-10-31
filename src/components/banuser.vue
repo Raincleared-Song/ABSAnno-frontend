@@ -7,7 +7,7 @@
                         解禁
                     </a-button>
                     <a-button type="link" disabled>
-                        禁言
+                        封禁
                     </a-button>
                 </div>
                 <div v-if="user.is_banned === 0">
@@ -15,7 +15,7 @@
                         解禁
                     </a-button>
                     <a-button type="link" @click="dealUser(user.id, 'user_ban')">
-                        禁言
+                        封禁
                     </a-button>
                 </div>
             </a>
@@ -28,7 +28,7 @@
                         VIP用户
                     </a-tag>
                     <a-tag v-if="user.is_banned === 1" color="#f50">
-                        banned
+                        封禁
                     </a-tag>
                 </a>
                 <a slot="description">

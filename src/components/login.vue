@@ -50,7 +50,10 @@
         },
         methods: {
             sendMsg(){
-                let onRespond = jsonObj => {
+                postBackend("backend/login",
+                    {"name":this.name,"password":this.secret,
+                    "method":"LogIn", "email":""},
+                    jsonObj => {
                     if (jsonObj.code === 201) {
                         let res = JSON.parse(jsonObj.responseText);
                         let data = JSON.parse(res.data.replace(/'/g,'"'));
@@ -58,8 +61,7 @@
                         console.log(data.name, data.power);
                         this.$emit('login', {"name":data.name, "power":data.power});
                         this.$router.push('/ground');
-                    }
-                    else{
+                    } else {
                         let res = JSON.parse(jsonObj.response);
                         let error = res.data;
                         console.log(error)
@@ -73,9 +75,7 @@
                             this.OK = false;
                         }
                     }
-                };
-                getBackend("backend/login", {"name":this.name,"password":this.secret,
-                    "method":"LogIn", "email":""}, onRespond);
+                });
             },
         },
     }

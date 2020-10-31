@@ -202,7 +202,8 @@
 
 <script>
     import dealAdmin from "@/utils/admin"
-    import getBackend from "@/utils/getBackend";
+    import postBackend from "../utils/postBackend"
+    import getBackend from "../utils/getBackend"
     import API from "@/utils/API";
     export default {
         name: "ground",
@@ -238,43 +239,37 @@
             },
 
             onChange(pageNumber) {
-                this.current = pageNumber;
-                console.log('Page: ', pageNumber);
-                const xhr = new XMLHttpRequest()
-                let context = this
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 201) {
-                            let res = JSON.parse(xhr.responseText);
-                            // console.log(res);
-                            let data = JSON.parse(res.data.replace(/'/g, '"'));
-                            context.totalMsgNum = data.total;
-                            // context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
-                            context.msgList = data.question_list;
-                            while (context.msgList.length < 12) {
-                                context.msgList.push({
-                                    'id': -1, 'name': "none", 'user': "none",
-                                    'questionNum': 0, 'questionForm': "none", 'is_banned': 0,
-                                    'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
-                                    'tags': [""]
-                                });
-                            }
-                        } else {
-                            console.log(xhr.responseText);
+
+                let onRespond = jsonObj => {
+                    if (jsonObj.code === 201) {
+                        let res = JSON.parse(jsonObj.responseText);
+                        // console.log(res);
+                        let data = JSON.parse(res.data.replace(/'/g, '"'));
+                        this.totalMsgNum = data.total;
+                        // this.thisPageSize = this.totalMsgNum - (pageNumber-1)*12;
+                        this.msgList = data.question_list;
+                        while (this.msgList.length < 12) {
+                            this.msgList.push({
+                                'id': -1, 'name': "none", 'user': "none",
+                                'questionNum': 0, 'questionForm': "none", 'is_banned': 0,
+                                'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
+                                'tags': [""]
+                            });
                         }
+                    } else {
+                        console.log(jsonObj.responseText);
                     }
                 };
-                this.getMsgNum = (pageNumber - 1) * 12;
-                // 请求带上所有的标签和关键词，一个请求就可以发送
-
-                console.log(this.getMsgNum);
-                console.log(`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}&kw=${this.keyword}`);
-                xhr.open("get",`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}&kw=${this.keyword}`);
-                xhr.send();
+                getBackend("backend/square", {
+                    "num":this.getMsgNum,
+                    "type":this.type,
+                    "theme":this.theme,
+                    "kw":this.keyword,
+                }, onRespond);
 
                 // for test only
-                // while(context.msgList.length < 12){
-                //     context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
+                // while(this.msgList.length < 12){
+                //     this.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
                 //         'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
                 //         'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
                 //         'tags':['food', 'sports']});

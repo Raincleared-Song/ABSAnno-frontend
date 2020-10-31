@@ -60,34 +60,33 @@
         },
         methods: {
             sendMsg(){
-                let onRespond = jsonObj => {
-                    if (jsonObj.code === 201) {
-                        let res = JSON.parse(jsonObj.responseText);
-                        let data = JSON.parse(res.data.replace(/'/g,'"'));
-                        console.log(data.name, data.power);
-                        this.$emit('login', {"name":data.name, "power": data.power});
-                        this.$router.push('/user');
-                    }
-                    else{
-                        let res = JSON.parse(jsonObj.response);
-                        let error = res.data;
-                        console.log(error)
-                        if(error === "User Name Error"){
-                            this.nameIllegal = true;
+                postBackend("backend/signin",
+                    {"name":this.name,"password":this.secret, "method":"SignIn","email":""},
+                    jsonObj => {
+                        if (jsonObj.code === 201) {
+                            let res = JSON.parse(jsonObj.responseText);
+                            let data = JSON.parse(res.data.replace(/'/g,'"'));
+                            console.log(data.name, data.power);
+                            this.$emit('login', {"name":data.name, "power": data.power});
+                            this.$router.push('/user');
+                        } else {
+                            let res = JSON.parse(jsonObj.response);
+                            let error = res.data;
+                            console.log(error)
+                            if(error === "User Name Error"){
+                                this.nameIllegal = true;
+                            }
+                            else if(error === "User Name Has Existed"){
+                                this.userExist = true;
+                            }
+                            else if(error === "Password Length Error"){
+                                this.pslen = false;
+                            }
+                            else {
+                                this.OK = false;
+                            }
                         }
-                        else if(error === "User Name Has Existed"){
-                            this.userExist = true;
-                        }
-                        else if(error === "Password Length Error"){
-                            this.pslen = false;
-                        }
-                        else {
-                            this.OK = false;
-                        }
-                    }
-                };
-                getBackend("backend/signin", {"name":this.name,"password":this.secret,
-                    "method":"SignIn","email":""}, onRespond);
+                    });
             },
         },
 

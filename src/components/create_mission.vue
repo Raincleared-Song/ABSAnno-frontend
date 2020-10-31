@@ -88,7 +88,7 @@
             <a-select-option :key="'teacher'">
               教师
             </a-select-option>
-            <a-select-option :key="'me'">
+            <a-select-option :key="'code-farmer'">
               程序员
             </a-select-option>
           </a-select>

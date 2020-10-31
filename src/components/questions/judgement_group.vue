@@ -8,7 +8,7 @@
       <div style="margin: 10px">编辑题目：</div>
       <a-textarea
           v-model="question.description"
-          placeholder="你的问题描述" />
+          placeholder="Your question..." />
     </div>
     <div v-else>
       <p style="margin: 10px 5px">{{ this.question.description }}</p>
@@ -23,20 +23,9 @@
             action="#"
             :limit="1"
             :auto-upload="false"
-            :on-change="onChangeImage">
-          <i slot="default" class="el-icon-plus" />
-          <div slot="file" slot-scope="{file}">
-            <img
-                class="el-upload-list__item-thumbnail"
-                :src="file.url" alt="">
-            <span class="el-upload-list__item-actions">
-              <span
-                  class="el-upload-list__item-delete"
-                  @click="onDeleteImage">
-                <i class="el-icon-delete"></i>
-              </span>
-            </span>
-          </div>
+            :on-change="onChangeImage"
+            :on-remove="onRemoveImage">
+          <i class="el-icon-plus" />
         </el-upload>
       </div>
       <div v-else>
@@ -58,6 +47,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      image_url: ''
+    };
+  },
   props: [
       'question',
       'editable',
@@ -66,11 +60,12 @@ export default {
   methods: {
     onChangeImage(file) {
       console.log(this.question.index);
+      this.image_url = file.url;
       this.$emit('updateImage', this.question.index, file);
     },
-    onDeleteImage() {
-      this.$refs.upload_img.clearFiles();
-      // this.$emit('deleteImage', this.question.index);
+    onRemoveImage(file) {
+      console.log('remove');
+      this.image_url = '';
     }
   }
 }

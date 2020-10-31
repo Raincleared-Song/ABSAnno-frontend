@@ -239,25 +239,22 @@
             },
 
             onChange(pageNumber) {
-
+                this.getMsgNum = (pageNumber - 1) * 12;
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
-                        let res = JSON.parse(jsonObj.responseText);
-                        // console.log(res);
-                        let data = JSON.parse(res.data.replace(/'/g, '"'));
+                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                         this.totalMsgNum = data.total;
-                        // this.thisPageSize = this.totalMsgNum - (pageNumber-1)*12;
                         this.msgList = data.question_list;
                         while (this.msgList.length < 12) {
                             this.msgList.push({
                                 'id': -1, 'name': "none", 'user': "none",
-                                'questionNum': 0, 'questionForm': "none", 'is_banned': 0,
+                                'questionNum': 0, 'questionForm': "none", 'is_banned': 0, 'full': 0,
                                 'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
                                 'tags': [""]
                             });
                         }
                     } else {
-                        console.log(jsonObj.responseText);
+                        console.log(jsonObj.data);
                     }
                 };
                 getBackend("backend/square", {

@@ -64,14 +64,12 @@
                     {"name":this.name,"password":this.secret, "method":"SignIn","email":""},
                     jsonObj => {
                         if (jsonObj.code === 201) {
-                            let res = JSON.parse(jsonObj.responseText);
-                            let data = JSON.parse(res.data.replace(/'/g,'"'));
+                            let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                             console.log(data.name, data.power);
                             this.$emit('login', {"name":data.name, "power": data.power});
                             this.$router.push('/user');
                         } else {
-                            let res = JSON.parse(jsonObj.response);
-                            let error = res.data;
+                            let error = jsonObj.data;
                             console.log(error)
                             if(error === "User Name Error"){
                                 this.nameIllegal = true;

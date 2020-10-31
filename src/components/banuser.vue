@@ -86,8 +86,7 @@
             onChange(pageNumber) {
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
-                        let res = JSON.parse(jsonObj.responseText);
-                        let data = JSON.parse(res.data.replace(/'/g,'"'));
+                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                         console.log(data)
                         this.totalUserNum = data.total;
                         this.userList = data.user_list;

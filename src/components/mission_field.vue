@@ -1,5 +1,6 @@
 <template>
   <div class="card-container">
+
     <a-tabs default-active-key="1">
 
       <a-tab-pane key="1" tab="手动添加任务">
@@ -13,7 +14,7 @@
             type="navigation"
             :style="{ marginBottom: '60px', boxShadow: '0px -1px 0 0 #e8e8e8 inset' }">
           <a-step title="编辑任务信息" disabled />
-          <a-step title="编辑/上传题目" disabled />
+          <a-step title="编辑题目" disabled />
         </a-steps>
       </a-tab-pane>
 

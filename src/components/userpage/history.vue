@@ -49,15 +49,9 @@ export default {
           console.log(page);
         },
         pageSize: 3,
-      },
-      indeterminate: true,
-      checkAll: false,
+      }
     }
   },  // end of data
-  props: [
-    'username',
-    'power'
-  ],  // end of props
   methods: {
     type2src(mission) {
       if (mission.question_form === 'judgement') {

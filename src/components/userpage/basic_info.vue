@@ -28,9 +28,9 @@ export default {
   name: "basic_info",
   data() {
     return {
-      userScore: '未登录',
-      userWeight: '未登录',
-      userAnsNum: '未登录'
+      userScore: '',
+      userWeight: '',
+      userAnsNum: ''
     };
   },  // end of data
   props: [
@@ -41,11 +41,14 @@ export default {
 
   },  // end of methods
   created() {
-    getBackend(API.GET_USER, { method: 'user' },
-        jsonObj => {
+    console.log('basic_info get');
+    getBackend(API.GET_USER.path, {
+      method: 'user'
+    }, jsonObj => {
+      console.log(jsonObj);
       if (jsonObj.code === 201) {
-        let dataObj = getDataObj(jsonObj);
-        this.userScore = dataObj.coin;
+        const dataObj = getDataObj(jsonObj);
+        this.userScore = dataObj.score;
         this.userWeight = dataObj.weight;
         this.userAnsNum = dataObj.num;
       }

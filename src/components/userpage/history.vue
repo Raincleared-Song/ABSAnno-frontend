@@ -21,16 +21,16 @@
             width="270" alt=""/>
         <template
             slot="actions"
-            v-for="{ type, text } in mission.action">
+            v-for="{ type, text } in mission.actions">
           <span :key="type">
-          <a-icon :type="type" style="margin-right: 8px" />
-          {{ text }}
-        </span>
+            <a-icon :type="type" theme="twoTone" style="margin-right: 8px" />
+            {{ text }}
+          </span>
         </template>
       </a-list-item>
 
     </a-list>
-    <a-empty v-else/>
+    <a-empty v-else :description="'您还没有答题'" />
   </div>
 </template>
 
@@ -69,7 +69,7 @@ export default {
     }
   },  // end of methods
   created() {
-    getBackend(API.GET_USER, {
+    getBackend(API.GET_USER.path, {
       method: 'history'
     }, jsonObj => {
       if (jsonObj.code === 201) {
@@ -83,7 +83,7 @@ export default {
             info: mission.info,
             actions: [
               { type: 'user', text: mission.user },
-              { type: 'database', text: mission.question_num },
+              { type: 'profile', text: mission.question_num },
               { type: 'clock-circle', text: mission.ret_time },
               { type: 'dollar', text: mission.reward }
             ]

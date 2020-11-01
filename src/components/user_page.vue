@@ -5,9 +5,8 @@
       <!-- 侧栏 -->
       <a-layout-sider theme="light" v-model="collapsed">
         <!-- 用户信息 -->
-        <div style="margin: 10px">
+        <div style="margin: 15px">
           <a-avatar :size="64" icon="user">USER</a-avatar>
-          <!-- 这里要从数据库拿名字和身份，显示在下方 -->
           <h3 style="margin: 15px auto">
             {{ this.username }}
           </h3>
@@ -20,7 +19,6 @@
         <a-menu
             v-model="selectedKeys"
             theme="light"
-            :defaultOpenKeys="[0]"
             mode="inline">
           <a-menu-item
               key="0">
@@ -42,7 +40,7 @@
           <a-menu-item
               key="3">
             <a-icon type="sliders"/>
-            <span>修改用户信息</span>
+            <span>修改个人信息</span>
           </a-menu-item>
         </a-menu>
       </a-layout-sider>
@@ -61,6 +59,14 @@
 </template>
 
 <script>
+
+const routerList = [
+  '/user/info',
+  '/user/history',
+  '/user/pub',
+  '/user/edit',
+];
+
 export default {
   name: "user_page",
   data() {
@@ -77,22 +83,22 @@ export default {
     'username'
   ],  // end of props
   watch: {
-    pageNumber: {
-      handler(newVal) {
-        const routerList = [
-          '/user/info',
-          '/user/history',
-          '/user/pub',
-          '/user/edit',
-        ];
-        this.$router.push(routerList[newVal]);
-      }
-    },
+    // selectedKeys和$route.path相互绑定
     selectedKeys: {
       handler(newVal) {
-        this.pageNumber = parseInt(newVal[0]);
+        const pageNumber = parseInt(newVal[0]);
+        if (this.$route.path !== routerList[pageNumber])
+          this.$router.push(routerList[pageNumber]);
       },
-      deep: true,
+      deep: true
+    },
+    '$route.path': {
+      handler(newVal) {
+        routerList.forEach((router, index) => {
+          if (router === newVal)
+            this.selectedKeys = [index.toString()];
+        });
+      },
       immediate: true
     }
   }   // end of watch

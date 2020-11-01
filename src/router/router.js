@@ -44,6 +44,7 @@ const routes=[
     {
         path:'/user',
         component: user_page,
+        redirect: '/user/info',
         children: [
             { path: 'info', component: basic_info },
             { path: 'edit', component: edit_info },

@@ -18,7 +18,7 @@ const API = {
         path: "/backend/upload",
         method: "POST"
     },
-    GET_USER_INFO: {
+    GET_USER: {
         path: "/backend/user",
         method: "GET"
     }

@@ -63,7 +63,7 @@
 const routerList = [
   '/user/info',
   '/user/history',
-  '/user/pub',
+  // '/user/pub',
   '/user/edit',
 ];
 

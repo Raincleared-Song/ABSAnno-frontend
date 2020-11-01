@@ -1,29 +1,29 @@
 <template>
-    <a-collapse default-active-key="1" :bordered="false" accordion>
+    <a-collapse v-model="activeKey" :bordered="false" accordion>
         <a-collapse-panel v-for="pub in pubList" v-bind:key="pub"
-                          style="background: #ffffff;">
+                          style="background: #ffffff;" :disabled="pub.is_banned === true || pub.is_banned === 1">
             <template slot="header">
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
                         <a slot="actions" @click="checkMsg(msg.id)" style="font-size: 15pt; color: #d95656"><a-icon type="pause" /></a>
                         <a slot="actions" @click="downloadMsg(msg.id)" style="font-size: 15pt"><a-icon type="download" /></a>
-<!--                        <a slot="actions" @click="deleteMsg(msg.id)" style="color: #ff5c4d">删除题目</a>-->
                         <a-list-item-meta>
                             <a slot="title" style="font-size: 15pt" >{{ msg.name }}</a>
                             <a slot="description">
                                 <div style="color: #5e5e5e" >
                                     <a-tag color="green">
-                                        {{msg.questionForm}}
+                                        {{msg.question_form}}
                                     </a-tag>
-                                    题目数量：{{msg.questionNum}}
+                                    题目数量：{{msg.question_num}}
                                     <a-divider type="vertical" />
                                     <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />{{msg.deadline}}
                                     <a-divider type="vertical" />
-                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.ans_num}}/{{msg.total_ans}}
+                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.now}}/{{msg.total}}
                                     <a-divider type="vertical" />
-                                    <a-tag v-bind:key="tag" v-for="tag in msg.tags">
-                                        {{tag}}
-                                    </a-tag>
+                                    {{msg.info}}
+<!--                                    <a-tag v-bind:key="tag" v-for="tag in msg.tags">-->
+<!--                                        {{tag}}-->
+<!--                                    </a-tag>-->
                                 </div>
                             </a>
                         </a-list-item-meta>
@@ -61,43 +61,64 @@
 </template>
 
 <script>
+    import postBackend from "../utils/postBackend"
+    import getBackend from "../utils/getBackend"
+
     export default {
         name: "publicate",
+        props: [
+            'username',
+            'power'
+        ],
         data() {
             return {
-                activeKey: ['1'],
-                customStyle:
-                    'margin-bottom: 10px; margin-top: 5px; ',
-                pubList:[{
-                    'id': -1, 'name': "none", 'user': "none",
-                    'questionNum': 0, 'questionForm': "none", 'is_banned': 0, 'full': 0,
-                    'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
-                    'tags': ""
-                },
-                    {
-                        'id': 1, 'name': "none", 'user': "none",
-                        'questionNum': 0, 'questionForm': "none", 'is_banned': 0, 'full': 0,
-                        'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
-                        'tags': ""
-                    }],
-                detailedInfo:[{
-                    'id': -1, 'name': "none", 'user': "none",
-                    'questionNum': 0, 'questionForm': "none", 'is_banned': 0, 'full': 0,
-                    'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
-                    'tags': ""
-                }],
+                activeKey: [],
+                pubList:[],
+                detailedInfo:[],
             };
         },
         methods: {
-            handleChange(val) {
-                console.log(val);
-            },
             downloadMsg(id){
-                console.log(id)
+                console.log(id) // TODO
             },
             checkMsg(id){
-                console.log(id)
+                let onRespond = jsonObj => {
+                    if (jsonObj.code === 201) {
+                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                        this.detailedInfo = data.question_list;
+                    }
+                };
+                getBackend("backend/check", {
+                    "mission_id":id.toString()
+                }, onRespond);
             },
+        },
+
+        watch: {
+            activeKey(key) { // 点击题组，展示题组详情
+                // console.log(key.id);
+                let onRespond = jsonObj => {
+                    if (jsonObj.code === 201) {
+                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                        this.detailedInfo = data.question_list;
+                    }
+                };
+                getBackend("backend/mymission", {
+                    "mission_id":key.id.toString()
+                }, onRespond);
+            },
+        },
+
+        mounted() {
+            let onRespond = jsonObj => {
+                if (jsonObj.code === 201) {
+                    let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                    this.pubList = data.mission_list;
+                }
+            };
+            getBackend("backend/user", {
+                "method":"mission"
+            }, onRespond);
         }
     }
 </script>

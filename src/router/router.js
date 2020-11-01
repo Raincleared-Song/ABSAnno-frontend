@@ -18,7 +18,7 @@ import orders from "@/components/orders";
 import basic_info from "@/components/userpage/basic_info";
 import edit_info from "@/components/userpage/edit_info";
 import history from "@/components/userpage/history";
-import publicate from "@/components/userpage/publicate";
+import publicate from "@/components/publicate";
 
 //定义routes路由的集合，数组类型
 
@@ -31,6 +31,7 @@ const routes=[
     { path:'/question/:id', component: answer_question },
     { path:'/users', component: banuser },
     { path:'/orders', component: orders },
+    { path:"/pub", component: publicate},
     {
         path: '/mission',
         component: mission_field,
@@ -49,7 +50,7 @@ const routes=[
             { path: 'info', component: basic_info },
             { path: 'edit', component: edit_info },
             { path: 'history', component: history },
-            { path: 'pub', component: publicate }
+            // { path: 'pub', component: publicate }
         ]
     }
 ]

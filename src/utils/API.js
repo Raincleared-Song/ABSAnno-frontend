@@ -17,6 +17,10 @@ const API = {
         // 向后端发送用户编写的题型
         path: "/backend/upload",
         method: "POST"
+    },
+    GET_USER_INFO: {
+        path: "/backend/user",
+        method: "GET"
     }
 };
 

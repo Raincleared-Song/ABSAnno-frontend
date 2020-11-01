@@ -8,18 +8,18 @@
             :mission_info="mission"
             :questions="questions"
             @submit-info="onSubmitInfo"
-            @submit-questions="submit" />
+            @submit-questions="submit"/>
         <a-steps
             v-model="current"
             type="navigation"
             :style="{ marginBottom: '60px', boxShadow: '0px -1px 0 0 #e8e8e8 inset' }">
-          <a-step title="编辑任务信息" disabled />
-          <a-step title="编辑题目" disabled />
+          <a-step title="编辑任务信息" disabled/>
+          <a-step title="编辑题目" disabled/>
         </a-steps>
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="上传压缩包">
-        <upload_mission />
+        <upload_mission/>
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -33,8 +33,8 @@ import postFile from "@/utils/postFile";
 export default {
   name: "mission_field",
   props: [
-      'username',
-      'id'
+    'username',
+    'id'
   ],
   components: {
     upload_mission: upload_mission
@@ -67,7 +67,7 @@ export default {
       // 题目的基本信息
       let submitObj = {
         name: this.mission.name,
-        question_form: this.mission.type + (this.mission.has_image? '-image': ''),
+        question_form: this.mission.type + (this.mission.has_image ? '-image' : ''),
         question_num: this.questions.length.toString(),
         mission_tags: this.mission.tags,
         info: this.mission.info,
@@ -80,14 +80,14 @@ export default {
       // 问题列表
       submitObj.question_list = this.questions.map(question => {
         if (this.mission.type === 'judgement') {
-          return { contains: question.description };
+          return {contains: question.description};
         } else if (this.mission.type === 'choice') {
           return {
             contains: question.description,
             options: question.options.join(',')
           };
         } else if (this.mission.type === 'text') {
-          return { contains: question.description };
+          return {contains: question.description};
         }
       });
       console.log(submitObj);
@@ -130,6 +130,7 @@ export default {
   overflow: hidden;
   padding: 24px;
 }
+
 .card-container > .ant-tabs-card > .ant-tabs-content {
   height: 120px;
   margin-top: -16px;

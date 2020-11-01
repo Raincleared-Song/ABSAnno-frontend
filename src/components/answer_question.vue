@@ -61,6 +61,7 @@ import postBackend from "@/utils/postBackend";
 import API from "@/utils/API";
 
 export default {
+  name: "answer_question",
   components: {
     JudgementGroup: JudgementGroup,
     CheckboxGroup: CheckboxGroup,

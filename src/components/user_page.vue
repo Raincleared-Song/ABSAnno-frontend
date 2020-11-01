@@ -51,7 +51,7 @@
       <a-layout>
         <a-layout-content style="background: #fff; padding: 80px">
           <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
-            <router-view/>
+            <router-view :username="username" :power="power"/>
           </div>
         </a-layout-content>
       </a-layout>

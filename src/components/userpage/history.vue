@@ -1,77 +1,103 @@
 <template>
   <div>
-    <a-list item-layout="vertical" size="medium" :pagination="pagination" :data-source="answerListData">
-      <a-list-item slot="renderItem" key="item.title" slot-scope="item">
-        <template v-for="{ type, text } in actions" slot="actions">
-          <span :key="type">
-            <a-icon :type="type" style="margin-right: 8px"/>
-            {{ text + item[type] }}
-          </span>
-        </template>
-        <a-list-item-meta :description="item.qClass">
-          <a slot="title">{{ item.qName }}</a>
-        </a-list-item-meta>
+    <a-list
+        v-if="totalNum > 0"
+        item-layout="vertical"
+        size="medium"
+        :pagination="pagination"
+        :data-source="missionList">
 
+      <a-list-item
+          slot="renderItem"
+          slot-scope="mission"
+          key="mission.id">
+        <a-list-item-meta
+            :description="mission.info">
+          <a slot="title">{{ mission.name }}</a>
+        </a-list-item-meta>
+        <img
+            slot="extra"
+            :src="type2src(mission)"
+            width="270" alt=""/>
+        <template
+            slot="actions"
+            v-for="{ type, text } in mission.action">
+          <span :key="type">
+          <a-icon :type="type" style="margin-right: 8px" />
+          {{ text }}
+        </span>
+        </template>
       </a-list-item>
+
     </a-list>
+    <a-empty v-else/>
   </div>
 </template>
 
 <script>
-const answerListData = [];
-for (let i = 0; i < 10; i++) {
-  answerListData.push({
-    qName: "Do you like apples",
-    qUser: "Mat",
-    qClass: "Single Choice",
-    qTime: new Date().setFullYear(2020, 10, 20),
-    // add more info
-  });
-}
+import getBackend from "@/utils/getBackend";
+import API from "@/utils/API";
+
 export default {
   name: "history",
-
   data() {
     return {
+      totalNum: 0, // 总共回答了多少道题
+      missionList: [],
       pagination: {
         onChange: page => {
           console.log(page);
         },
         pageSize: 3,
       },
-      actions: [
-        {type: 'qUser', text: 'Published by: '},
-        {type: 'qTime', text: 'Published on: '},
-      ],
-
-      collapsed: false,
-      page_number: 3,
-      userid: -1,
-      info: [],
-      answerList: [],
-      myPublish: [],
-      pageList: ['user', 'history', 'mission', 'editUser'],
-      pageListChinese: ['用户信息', '答题历史', '我的发布', '修改个人信息'],
-      user_power: ['未登录', '用户', '发布者', '管理员'],
-
-
-      user_name: this.username,
-      user_score: 0,
-      user_weight: 0,
-      user_ans_num: 0,
-
-      totalNum: 10, // 总共回答了多少道题
-
-      desireNum: "",
-
       indeterminate: true,
       checkAll: false,
     }
-  },
+  },  // end of data
   props: [
-    "power",
-    "username"
-  ],
+    'username',
+    'power'
+  ],  // end of props
+  methods: {
+    type2src(mission) {
+      if (mission.question_form === 'judgement') {
+        return "@/assets/ground/judgement2.jpg";
+      } else if (mission.question_form === 'chosen') {
+        return "@/assets/ground/choice2.jpg";
+      }
+      return "";
+    }
+  },  // end of methods
+  created() {
+    getBackend(API.GET_USER, {
+      method: 'history'
+    }, jsonObj => {
+      if (jsonObj.code === 201) {
+        const dataObj = getDataObj(jsonObj);
+        this.totalNum = dataObj.total_num;
+        this.missionList = dataObj.mission_list.map(mission => {
+          return {
+            id: mission.id,
+            name: mission.name,
+            question_form: mission.question_form,
+            info: mission.info,
+            actions: [
+              { type: 'user', text: mission.user },
+              { type: 'database', text: mission.question_num },
+              { type: 'clock-circle', text: mission.ret_time },
+              { type: 'dollar', text: mission.reward }
+            ]
+          };
+        });
+      }
+    });
+  }   // end of created
+}
+
+function getDataObj(jsonObj) {
+  let dataStr = jsonObj.data;
+  dataStr = dataStr.replace(/'/g, '"');
+  return JSON.parse(dataStr);
 }
 </script>
 

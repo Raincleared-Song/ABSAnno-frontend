@@ -28,21 +28,23 @@ export default {
   name: "basic_info",
   data() {
     return {
-      username: '未登录',
       userScore: '未登录',
       userWeight: '未登录',
       userAnsNum: '未登录'
     };
-  },
+  },  // end of data
+  props: [
+    'username',
+    'power'
+  ],  // end of props
   method: {
 
   },  // end of methods
   created() {
-    getBackend(API.GET_USER_INFO, { method: 'user' },
+    getBackend(API.GET_USER, { method: 'user' },
         jsonObj => {
       if (jsonObj.code === 201) {
         let dataObj = getDataObj(jsonObj);
-        this.username = dataObj.name;
         this.userScore = dataObj.coin;
         this.userWeight = dataObj.weight;
         this.userAnsNum = dataObj.num;

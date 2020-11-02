@@ -1,129 +1,129 @@
 <template>
-  <div>
-    <div class="components-input-demo-presuffix">
-      <h3>你可以在此改变你的用户名（留空来保持不变）</h3>
-      <a-input-group compact>
-        <a-input ref="userNameInput" placeholder="User name" v-model="user_name">
-          <a-icon slot="prefix" type="user"/>
-          <a-tooltip slot="suffix" title="You can change your username here">
-            <a-icon type="info-circle" style="color: rgba(0,0,0,.45)"/>
-          </a-tooltip>
-        </a-input>
-      </a-input-group>
-      <br/>
-    </div>
-    <div>
-      <h3>选择你喜欢的题目类型</h3>
-      <div>
-        <div :style="{ borderBottom: '1px solid #E9E9E9' }">
-          <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="onCheckAllChange">
-            Check all
-          </a-checkbox>
-        </div>
-        <br/>
-        <a-checkbox-group v-model="checkedList" :options="plainOptions" @change="onCheckListChange"/>
-      </div>
-    </div>
-    <div>
-      <h3>选择你偏好的题目数量</h3>
-      <a-select default-value="num1" style="width: 120px" @change="handleNumberChange">
-        <a-select-option value="num1">
-          题目数量1
-        </a-select-option>
-        <a-select-option value="num2">
-          题目数量2
-        </a-select-option>
-        <a-select-option value="num3">
-          题目数量3
-        </a-select-option>
-        <a-select-option value="num4">
-          题目数量4
-        </a-select-option>
-      </a-select>
-    </div>
-    <div>
-      <h3>是否提交？</h3>
-      <a-button-group>
-        <a-button @click="change(0)">Cancel</a-button>
-        <a-button type="primary" @click="submitChange">
-          OK
-        </a-button>
+  <div style="padding: 24px 0;">
+    <h3>编辑个人信息</h3>
+
+    <!-- 编辑信息表单区 -->
+    <a-form-model
+        ref="user_info"
+        :model="user_info"
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 16, offset: 0 }">
+
+      <a-form-model-item
+          label="用户名"
+          prop="username">
+      <a-input v-model="user_info.username">
+        <a-icon slot="prefix" type="user"/>
+        <a-tooltip slot="suffix" title="You can change your username here">
+          <a-icon type="info-circle" style="color: rgba(0,0,0,.45)"/>
+        </a-tooltip>
+      </a-input>
+      </a-form-model-item>
+
+      <a-form-model-item
+          label="题目类型"
+          prop="question_form">
+          <a-select
+              mode="multiple"
+              v-model="user_info.question_form"
+              placeholder="你偏好的题目类型">
+            <a-select-option
+                v-for="form in questionForms"
+                :key="form.value">
+              {{ form.label }}
+            </a-select-option>
+          </a-select>
+      </a-form-model-item>
+
+      <a-form-model-item
+          label="题目数量"
+          prop="question_num">
+        <a-row>
+          <a-input-group compact>
+            <a-input-number
+                v-model="user_info.question_num[0]"
+                :min="1" :max="user_info.question_num[1]"
+                placeholder="min"
+                text-align="center"
+                size="small"
+                style="width: 60px" />
+            <a-input
+                placeholder="~"
+                disabled
+                size="small"
+                style=" width: 25px; border-left: 0; pointer-events: none"/>
+            <a-input-number
+                v-model="user_info.question_num[1]"
+                :min="user_info.question_num[0]" :max="100"
+                placeholder="max"
+                text-align="center"
+                size="small"
+                style="width: 60px" />
+          </a-input-group>
+        </a-row>
+        <a-row>
+          <a-slider
+              range
+              v-model="user_info.question_num"
+              :default-value="[5, 50]"
+              :min="1" :max="100"
+              :tip-formatter="formatter"
+              :marks="{ 1: '1', 20: '20', 50: '50', 100: '100' }"  />
+        </a-row>
+      </a-form-model-item>
+    </a-form-model>
+
+    <!-- 按钮区域 -->
+    <div class="buttons" style="margin: 10px auto">
+      <a-button-group block>
+        <a-button
+            @click="cancel"
+        >Cancel</a-button>
+        <a-button
+            @click="submit"
+            type="primary"
+        >Submit</a-button>
       </a-button-group>
     </div>
   </div>
 </template>
 
 <script>
-const answerListData = [];
-const plainOptions = ['Apple', 'Pear', 'Orange'];
-const defaultCheckedList = ['Apple', 'Orange'];
+
 export default {
   name: "edit_info",
+  props: [
+    'username'
+  ],  // end of props
   data() {
     return {
-      // answerListData,
-      pagination: {
-        onChange: page => {
-          console.log(page);
-        },
-        pageSize: 3,
+      user_info: {
+        username: this.username,
+        question_form: [],
+        question_num: [5, 50]
       },
-      actions: [
-        {type: 'qUser', text: 'Published by: '},
-        {type: 'qTime', text: 'Published on: '},
-      ],
-
-      collapsed: false,
-      page_number: 3,
-      userid: -1,
-      info: [],
-      answerList: [],
-      myPublish: [],
-      pageList: ['user', 'history', 'mission', 'editUser'],
-      pageListChinese: ['用户信息', '答题历史', '我的发布', '修改个人信息'],
-      user_power: ['未登录', '用户', '发布者', '管理员'],
-
-
-      user_name: this.username,
-      user_score: 0,
-      user_weight: 0,
-      user_ans_num: 0,
-
-      totalNum: 10, // 总共回答了多少道题
-
-      desireNum: "",
-
-      checkedList: defaultCheckedList,
-      indeterminate: true,
-      checkAll: false,
-      plainOptions,
+      questionForms: [
+        { label: '判断题', value: 'judgement' },
+        { label: '选择题', value: 'chosen' },
+        { label: '文字题', value: 'text' }
+      ]
     }
-  },
+  },  // end of data
   methods: {
-    submitChange() {
+    submit() {
+      // TODO: 向后端post个人信息
+      this.$emit('submit-edit');
     },
-    onCheckListChange(checkedList) {
-      this.indeterminate = !!checkedList.length && checkedList.length < plainOptions.length;
-      this.checkAll = checkedList.length === plainOptions.length;
-      console.log(checkedList)
+    cancel() {
+      this.$emit('cancel-edit');
     },
-    onCheckAllChange(e) {
-      Object.assign(this, {
-        checkedList: e.target.checked ? plainOptions : [],
-        indeterminate: false,
-        checkAll: e.target.checked,
-      });
+    formatter(value) {
+      return `${value}`;
     },
-    handleNumberChange(value) {
-      console.log(`selected ${value}`);
-      this.desireNum = value
-    },
-  },
-
-  created: function () {
-    // this.change(0);
-    console.log("in created function")
-  },
+  },  // end of methods
+  mounted: function () {
+    // TODO: 从后端get个人信息
+  }   // end of mounted
 }
 </script>
 

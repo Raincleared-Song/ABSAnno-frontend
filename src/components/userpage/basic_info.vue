@@ -2,11 +2,7 @@
   <div>
     <a-descriptions
         title="用户信息"
-        :column="2"
-        bordered>
-      <a-descriptions-item label="用户名">
-        {{ this.username }}
-      </a-descriptions-item>
+        :column="1">
       <a-descriptions-item label="用户积分">
         {{ this.userScore }}
       </a-descriptions-item>
@@ -33,14 +29,7 @@ export default {
       userAnsNum: ''
     };
   },  // end of data
-  props: [
-    'username',
-    'power'
-  ],  // end of props
-  method: {
-
-  },  // end of methods
-  created() {
+  mounted: function() {
     console.log('basic_info get');
     getBackend(API.GET_USER.path, {
       method: 'user'
@@ -53,7 +42,7 @@ export default {
         this.userAnsNum = dataObj.num;
       }
     });
-  }
+  }   // mounted
 }
 
 function getDataObj(jsonObj) {

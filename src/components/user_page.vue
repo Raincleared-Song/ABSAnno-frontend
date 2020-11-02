@@ -24,8 +24,11 @@
             </a-button>
             <basic_info style="margin: 10px"/>
           </div>
+
+          <!-- 用户信息编辑 -->
           <div v-else-if="power > 0">
-            <edit_info />
+            <edit_info
+                @cancel="editing = false" />
           </div>
         </div>
       </a-layout-sider>

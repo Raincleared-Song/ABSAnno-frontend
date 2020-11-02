@@ -1,35 +1,37 @@
 <template>
   <div>
-    <a-list
-        v-if="totalNum > 0"
-        item-layout="vertical"
-        size="medium"
-        :pagination="pagination"
-        :data-source="missionList">
+    <div v-if="totalNum > 0">
+      <a-list
+          item-layout="vertical"
+          size="medium"
+          :pagination="pagination"
+          :data-source="missionList">
 
-      <a-list-item
-          slot="renderItem"
-          slot-scope="mission"
-          key="mission.id">
-        <a-list-item-meta
-            :description="mission.info">
-          <a slot="title">{{ mission.name }}</a>
-        </a-list-item-meta>
-        <img
-            slot="extra"
-            :src="type2src(mission)"
-            width="270" alt=""/>
-        <template
-            slot="actions"
-            v-for="{ type, text } in mission.actions">
-          <span :key="type">
-            <a-icon :type="type" theme="twoTone" style="margin-right: 8px" />
-            {{ text }}
-          </span>
-        </template>
-      </a-list-item>
+        <a-list-item
+            slot="renderItem"
+            slot-scope="mission"
+            key="mission.id">
+          <a-list-item-meta
+              :description="mission.info">
+            <a slot="title">{{ mission.name }}</a>
+          </a-list-item-meta>
+          <img
+              slot="extra"
+              :src="type2src(mission)"
+              width="270" alt=""/>
+          <template
+              slot="actions"
+              v-for="{ type, text } in mission.actions">
+            <span :key="type">
+              <a-icon :type="type" theme="twoTone" style="margin-right: 8px" />
+              {{ text }}
+            </span>
+          </template>
+        </a-list-item>
+      </a-list>
+      <a-back-top />
+    </div>
 
-    </a-list>
     <a-empty v-else :description="'您还没有答题'" />
   </div>
 </template>

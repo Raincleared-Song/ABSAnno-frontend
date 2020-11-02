@@ -6,8 +6,8 @@
     <a-form-model
         ref="user_info"
         :model="user_info"
-        :label-col="{ span: 5 }"
-        :wrapper-col="{ span: 16, offset: 1 }">
+        :label-col="{ span: 6 }"
+        :wrapper-col="{ span: 16, offset: 0 }">
 
       <a-form-model-item
           label="用户名"
@@ -21,25 +21,23 @@
       </a-form-model-item>
 
       <a-form-model-item
+          label="题目类型"
           prop="question_form">
-        <div>偏好题目类型</div>
-        <a-checkbox-group
-            v-model="user_info.question_form"
-            :options="questionForms" />
+          <a-select
+              mode="multiple"
+              v-model="user_info.question_form"
+              placeholder="你偏好的题目类型">
+            <a-select-option
+                v-for="form in questionForms"
+                :key="form.value">
+              {{ form.label }}
+            </a-select-option>
+          </a-select>
       </a-form-model-item>
 
       <a-form-model-item
+          label="题目数量"
           prop="question_num">
-        <div>偏好题目数量</div>
-        <a-row>
-          <a-slider
-              range
-              v-model="user_info.question_num"
-              :default-value="[5, 50]"
-              :min="1" :max="100"
-              :tip-formatter="formatter"
-              :marks="{ 1: '1', 20: '20', 50: '50', 100: '100' }"  />
-        </a-row>
         <a-row>
           <a-input-group compact>
             <a-input-number
@@ -63,12 +61,21 @@
                 style="width: 60px" />
           </a-input-group>
         </a-row>
+        <a-row>
+          <a-slider
+              range
+              v-model="user_info.question_num"
+              :default-value="[5, 50]"
+              :min="1" :max="100"
+              :tip-formatter="formatter"
+              :marks="{ 1: '1', 20: '20', 50: '50', 100: '100' }"  />
+        </a-row>
       </a-form-model-item>
     </a-form-model>
 
     <!-- 按钮区域 -->
-    <div class="buttons">
-      <a-button-group>
+    <div class="buttons" style="margin: 10px auto">
+      <a-button-group block>
         <a-button
             @click="cancel"
         >Cancel</a-button>

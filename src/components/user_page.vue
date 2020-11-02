@@ -3,13 +3,13 @@
     <a-layout id="components-layout-demo-side" style="min-height: 100vh">
 
       <!-- 侧栏 -->
-      <a-layout-sider theme="light" width="300">
+      <a-layout-sider theme="light" width="320">
         <div style="margin: 15px">
-          <a-avatar :size="250" icon="user">USER</a-avatar>
+          <a-avatar :size="260" icon="user">USER</a-avatar>
 
           <!-- 用户信息展示 -->
           <div v-if="!editing">
-            <h3 style="margin: 15px auto">
+            <h3 style="margin: 20px auto">
               {{ this.username }}
             </h3>
             <h4 style="margin: 10px auto">

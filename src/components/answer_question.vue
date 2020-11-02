@@ -137,7 +137,7 @@ export default {
       this.$router.push("/ground");
     }
   },  // end of methods
-  created() {
+  created: function() {
     let name = this.$route.path;
     this.missionId = Number(name.slice(10,));
     // 从后台申请数据加载

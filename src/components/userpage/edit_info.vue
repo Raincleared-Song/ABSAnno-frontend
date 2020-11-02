@@ -111,6 +111,7 @@ export default {
   },  // end of data
   methods: {
     submit() {
+      // TODO: 向后端post个人信息
       this.$emit('submit-edit');
     },
     cancel() {
@@ -120,9 +121,9 @@ export default {
       return `${value}`;
     },
   },  // end of methods
-  created: function () {
-    // this.change(0);
-  }   // end of created
+  mounted: function () {
+    // TODO: 从后端get个人信息
+  }   // end of mounted
 }
 </script>
 

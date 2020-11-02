@@ -3,9 +3,9 @@
     <a-layout id="components-layout-demo-side" style="min-height: 100vh">
 
       <!-- 侧栏 -->
-      <a-layout-sider theme="light" width="280">
+      <a-layout-sider theme="light" width="300">
         <div style="margin: 15px">
-          <a-avatar :size="240" icon="user">USER</a-avatar>
+          <a-avatar :size="250" icon="user">USER</a-avatar>
 
           <!-- 用户信息展示 -->
           <div v-if="!editing">
@@ -22,16 +22,21 @@
                 style="margin: 10px 0">
               Edit profile
             </a-button>
-            <basic_info style="margin: 10px"/>
+            <basic_info
+                style="margin: 10px" />
           </div>
 
           <!-- 用户信息编辑 -->
-          <div v-else-if="power > 0">
+          <div v-else>
             <edit_info
-                @cancel="editing = false" />
+                :username="username"
+                @submit-edit="editing = false"
+                @cancel-edit="editing = false" />
           </div>
         </div>
       </a-layout-sider>
+
+      <i style="width: 1px; background: #f0f0f0" />
 
       <!-- 做题历史 -->
       <a-layout>

@@ -29,7 +29,7 @@ export default {
       userAnsNum: ''
     };
   },  // end of data
-  created() {
+  mounted: function() {
     console.log('basic_info get');
     getBackend(API.GET_USER.path, {
       method: 'user'
@@ -42,7 +42,7 @@ export default {
         this.userAnsNum = dataObj.num;
       }
     });
-  }
+  }   // mounted
 }
 
 function getDataObj(jsonObj) {

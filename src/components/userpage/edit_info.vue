@@ -6,7 +6,8 @@
     <a-form-model
         ref="user_info"
         :model="user_info"
-        :label-col="{ span: 3 }">
+        :label-col="{ span: 5 }"
+        :wrapper-col="{ span: 16, offset: 1 }">
 
       <a-form-model-item
           label="用户名"
@@ -20,25 +21,47 @@
       </a-form-model-item>
 
       <a-form-model-item
-          label="偏好题目类型"
           prop="question_form">
+        <div>偏好题目类型</div>
         <a-checkbox-group
             v-model="user_info.question_form"
             :options="questionForms" />
       </a-form-model-item>
 
       <a-form-model-item
-          label="偏好题目数量"
           prop="question_num">
+        <div>偏好题目数量</div>
         <a-row>
-          <a-col :span="12">
-            <a-slider range
-                :min="1" :max="100" />
-          </a-col>
-          <a-col :span="4">
+          <a-slider
+              range
+              v-model="user_info.question_num"
+              :default-value="[5, 50]"
+              :min="1" :max="100"
+              :tip-formatter="formatter"
+              :marks="{ 1: '1', 20: '20', 50: '50', 100: '100' }"  />
+        </a-row>
+        <a-row>
+          <a-input-group compact>
             <a-input-number
-                :min="1" :max="100" />
-          </a-col>
+                v-model="user_info.question_num[0]"
+                :min="1" :max="user_info.question_num[1]"
+                placeholder="min"
+                text-align="center"
+                size="small"
+                style="width: 60px" />
+            <a-input
+                placeholder="~"
+                disabled
+                size="small"
+                style=" width: 25px; border-left: 0; pointer-events: none"/>
+            <a-input-number
+                v-model="user_info.question_num[1]"
+                :min="user_info.question_num[0]" :max="100"
+                placeholder="max"
+                text-align="center"
+                size="small"
+                style="width: 60px" />
+          </a-input-group>
         </a-row>
       </a-form-model-item>
     </a-form-model>
@@ -48,13 +71,11 @@
       <a-button-group>
         <a-button
             @click="cancel"
-        >Cancel
-        </a-button>
+        >Cancel</a-button>
         <a-button
             @click="submit"
             type="primary"
-        >Submit
-        </a-button>
+        >Submit</a-button>
       </a-button-group>
     </div>
   </div>
@@ -70,9 +91,9 @@ export default {
   data() {
     return {
       user_info: {
-        username: '',
-        question_form: '',
-        question_num: 0
+        username: this.username,
+        question_form: [],
+        question_num: [5, 50]
       },
       questionForms: [
         { label: '判断题', value: 'judgement' },
@@ -83,10 +104,14 @@ export default {
   },  // end of data
   methods: {
     submit() {
+      this.$emit('submit-edit');
     },
     cancel() {
       this.$emit('cancel-edit');
-    }
+    },
+    formatter(value) {
+      return `${value}`;
+    },
   },  // end of methods
   created: function () {
     // this.change(0);

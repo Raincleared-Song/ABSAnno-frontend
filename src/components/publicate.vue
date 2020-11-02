@@ -21,9 +21,6 @@
                                     <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.now}}/{{msg.total}}
                                     <a-divider type="vertical" />
                                     {{msg.info}}
-<!--                                    <a-tag v-bind:key="tag" v-for="tag in msg.tags">-->
-<!--                                        {{tag}}-->
-<!--                                    </a-tag>-->
                                 </div>
                             </a>
                         </a-list-item-meta>

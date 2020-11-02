@@ -11,40 +11,35 @@
                 width="120">
         </el-table-column>
         <el-table-column
-                prop="name"
+                prop="mission_name"
                 label="任务名称"
                 width="180">
             <template slot-scope="scope">
-                {{scope.row.name}}
+                {{scope.row.mission_name}}
                 <a-tag color="green">
-                    {{scope.row.questionForm}}
+                    {{scope.row.question_form}}
                 </a-tag>
             </template>
         </el-table-column>
         <el-table-column
-                prop="questionNum"
+                prop="question_num"
                 label="题目数量"
                 width="80">
         </el-table-column>
         <el-table-column
-                prop="cash"
+                prop="mission_reward"
                 label="悬赏金额"
                 width="80">
         </el-table-column>
         <el-table-column
-                prop="user"
-                label="发布者"
-                width="120">
-        </el-table-column>
-        <el-table-column
-                prop="tags"
-                label="标签">
+            prop="mission_info"
+            label="任务简介">
         </el-table-column>
         <el-table-column align="right">
             <template slot-scope="scope">
-                <el-button
-                        size="mini"
-                        @click="handleEdit(scope.$index, scope.row)">做题</el-button>
+                <router-link v-if="power!==-1" :to="{path:'/question/'+ scope.row.id}">
+                    <el-button size="mini">做题</el-button>
+                </router-link>
                 <el-button
                         size="mini"
                         type="danger"
@@ -55,26 +50,14 @@
 </template>
 
 <script>
+    import postBackend from "../utils/postBackend"
+    import getBackend from "../utils/getBackend"
+
     export default {
         name: "orders",
         data(){
             return {
-                msgList:[{
-                    'id': -1, 'name': "none", 'user': "none",
-                    'questionNum': 0, 'questionForm': "none", 'is_banned': 0, 'full': 0,
-                    'total_ans': 0, 'ans_num': 0, 'deadline': "2020-12-10", 'cash': "none",
-                    'tags': "test||what else"
-                },{
-                    'id': -1, 'name': "none", 'user': "none",
-                    'questionNum': 0, 'questionForm': "none", 'is_banned': 0, 'full': 0,
-                    'total_ans': 0, 'ans_num': 0, 'deadline': "2020-12-20", 'cash': "none",
-                    'tags': "test||what else"
-                },{
-                    'id': -1, 'name': "none", 'user': "none",
-                    'questionNum': 0, 'questionForm': "none", 'is_banned': 0, 'full': 0,
-                    'total_ans': 0, 'ans_num': 0, 'deadline': "2020-11-01", 'cash': "none",
-                    'tags': "test||what else"
-                },],
+                msgList:[],
                 current: 1,
                 totalMsgNum: 1,
                 pagesize: 12,
@@ -84,23 +67,32 @@
                 keyword:"",
             }
         },
+
         props:[
             "username",
             "power",
         ],
+
         methods: {
-            handleEdit(index, row) {
-                // console.log(index, row);
-            },
             handleDelete(index, row) {
-                // console.log(index, row);
+                console.log(row)
+                postBackend("backend/receive", {mission_id: row.id.toString()},
+                    jsonObj => {
+                        if (jsonObj.code === 201) {
+                            console.log("book success")
+                        } else {
+                            console.log("can't book/unbook")
+                        }
+                    });
             },
+
             warnDDL({row, rowIndex}) {
                 if (row.deadline === this.getNowFormatDate()) {
                     return 'warning-row';
                 }
                 return '';
             },
+
             getNowFormatDate() {
                 var date = new Date();
                 var seperator1 = "-";
@@ -117,6 +109,16 @@
                 return currentdate;
             }
         },
+
+        mounted() {
+            let onRespond = jsonObj => {
+                if (jsonObj.code === 201) {
+                    let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                    this.msgList = data.rep_list;
+                }
+            };
+            getBackend("backend/repshow", {}, onRespond);
+        }
     }
 </script>
 

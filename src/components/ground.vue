@@ -68,8 +68,8 @@
                             <p>题目数量：{{msg.questionNum}}</p>
                             <div class="portfolio-links">
                                 <div class="icons-list">
-                                    <a-icon v-if="power!==-1" type="star" />
-
+                                    <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg)" />
+                                    <a-icon v-if="power!==-1 && msg.received==='T'" type="undo" @click="getOrder(msg)" />
                                     <a-popover :title="msg.title+' 题组'" trigger="hover" >
                                         <template slot="content" v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
                                             题目数量：{{msg.questionNum}}<br />
@@ -83,10 +83,6 @@
                                             完成情况：{{msg.ans_num}}/{{msg.total_ans}}<br/>
                                             <a-icon type="tags" />
                                             {{msg.tags.toString()}}
-<!--                                            <div v-bind:key="tag" v-for="tag in msg.tags">-->
-<!--                                                {{tag}}-->
-<!--                                            </div>-->
-                                            <!--                                            点击按钮，查看规则说明-->
                                         </template>
                                         <template slot="content" v-else>
                                             题目数量：{{msg.questionNum}}<br />
@@ -131,19 +127,12 @@
             </div>
             <a-list item-layout="horizontal" :data-source="msgList" v-if="isRouterAlive">
                 <a-list-item slot="renderItem" slot-scope="msg" v-if="msg.questionNum !== 0">
-                    <a slot="actions" v-if="power!==-1">
-                        <router-link  :to="{path:'/question/'+ msg.id}">接单</router-link>
-                    </a>
+                    <a slot="actions" v-if="power!==-1 && msg.received === 'F'" @click="getOrder(msg)">接单</a>
+                    <a slot="actions" v-if="power!==-1 && msg.received === 'T'" @click="getOrder(msg)">取消接单</a>
                     <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)" style="color: #ff5c4d">删除</a>
                     <a-list-item-meta>
-                        <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}
-<!--                            <a-tag color="cyan">-->
-<!--                                {{msg.questionForm}}-->
-<!--                            </a-tag>-->
-                        </a>
-                        <a v-if="power===-1" slot="title"  style="font-size: 15pt" >{{ msg.name }}
-
-                        </a>
+                        <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}</a>
+                        <a v-if="power===-1" slot="title"  style="font-size: 15pt" >{{ msg.name }}</a>
                         <a slot="description">
                             <div style="color: #5e5e5e"  v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
                                 <a-tag color="green">
@@ -210,11 +199,6 @@
                 totalMsgNum: 1,
                 pagesize: 12,
                 getMsgNum:0,
-                // thisPageSize:12,
-                // type:["全部"],
-                // theme:["全部"],
-                // themeTotal:["全部","食物", "风景","宠物","运动"],
-                // typeTotal:["全部","文字","图片","选择","判断"],
                 type:["total"],
                 theme:["total"],
                 themeTotal:["total","science", "art","sports","literature","food","music","game","daily","others"],
@@ -301,8 +285,21 @@
                 this.isRouterAlive = false
                 this.$nextTick(() => (this.isRouterAlive = true))
             },
-            accept(){
-
+            getOrder(msg){
+                let id = msg.id
+                if(msg.received === "T"){
+                    msg.received = "F";
+                }else{
+                    msg.received = "T";
+                }
+                postBackend("backend/receive", {mission_id: id.toString()},
+                    jsonObj => {
+                    if (jsonObj.code === 201) {
+                        console.log("book success")
+                    } else {
+                        console.log("can't book/unbook")
+                    }
+                });
             },
             onSearch(value) {
                 this.keyword = value;

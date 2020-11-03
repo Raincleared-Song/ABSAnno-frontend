@@ -68,8 +68,8 @@
                             <p>题目数量：{{msg.questionNum}}</p>
                             <div class="portfolio-links">
                                 <div class="icons-list">
-                                    <router-link v-if="power!==-1" :to="{path:'/question/'+ msg.id}"><a-icon type="form"/></router-link>
-
+                                    <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg)" />
+                                    <a-icon v-if="power!==-1 && msg.received==='T'" type="undo" @click="getOrder(msg)" />
                                     <a-popover :title="msg.title+' 题组'" trigger="hover" >
                                         <template slot="content" v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
                                             题目数量：{{msg.questionNum}}<br />
@@ -83,10 +83,6 @@
                                             完成情况：{{msg.ans_num}}/{{msg.total_ans}}<br/>
                                             <a-icon type="tags" />
                                             {{msg.tags.toString()}}
-<!--                                            <div v-bind:key="tag" v-for="tag in msg.tags">-->
-<!--                                                {{tag}}-->
-<!--                                            </div>-->
-                                            <!--                                            点击按钮，查看规则说明-->
                                         </template>
                                         <template slot="content" v-else>
                                             题目数量：{{msg.questionNum}}<br />
@@ -99,13 +95,9 @@
                                             <!--                                            <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />-->
                                             完成情况：{{msg.ans_num}}/{{msg.total_ans}}<br/>
                                         </template>
-                                        <router-link to="/rules">
                                             <a-icon type="info-circle" />
-                                        </router-link>
                                     </a-popover>
-                                    <router-link v-if="power===2" to="/ground">
-                                        <a-icon type="delete" @click="deleteMsg(msg.id)"/>
-                                    </router-link>
+                                        <a-icon v-if="power===2" type="delete" @click="deleteMsg(msg.id)"/>
                                 </div>
                             </div>
                         </div>
@@ -135,19 +127,12 @@
             </div>
             <a-list item-layout="horizontal" :data-source="msgList" v-if="isRouterAlive">
                 <a-list-item slot="renderItem" slot-scope="msg" v-if="msg.questionNum !== 0">
-                    <a slot="actions" v-if="power!==-1">
-                        <router-link  :to="{path:'/question/'+ msg.id}">做题</router-link>
-                    </a>
+                    <a slot="actions" v-if="power!==-1 && msg.received === 'F'" @click="getOrder(msg)">接单</a>
+                    <a slot="actions" v-if="power!==-1 && msg.received === 'T'" @click="getOrder(msg)">取消接单</a>
                     <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)" style="color: #ff5c4d">删除</a>
                     <a-list-item-meta>
-                        <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}
-<!--                            <a-tag color="cyan">-->
-<!--                                {{msg.questionForm}}-->
-<!--                            </a-tag>-->
-                        </a>
-                        <a v-if="power===-1" slot="title"  style="font-size: 15pt" >{{ msg.name }}
-
-                        </a>
+                        <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}</a>
+                        <a v-if="power===-1" slot="title"  style="font-size: 15pt" >{{ msg.name }}</a>
                         <a slot="description">
                             <div style="color: #5e5e5e"  v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
                                 <a-tag color="green">
@@ -202,7 +187,8 @@
 
 <script>
     import dealAdmin from "@/utils/admin"
-    import getBackend from "@/utils/getBackend";
+    import postBackend from "../utils/postBackend"
+    import getBackend from "../utils/getBackend"
     import API from "@/utils/API";
     export default {
         name: "ground",
@@ -213,11 +199,6 @@
                 totalMsgNum: 1,
                 pagesize: 12,
                 getMsgNum:0,
-                // thisPageSize:12,
-                // type:["全部"],
-                // theme:["全部"],
-                // themeTotal:["全部","食物", "风景","宠物","运动"],
-                // typeTotal:["全部","文字","图片","选择","判断"],
                 type:["total"],
                 theme:["total"],
                 themeTotal:["total","science", "art","sports","literature","food","music","game","daily","others"],
@@ -237,44 +218,42 @@
                 return a;
             },
 
+            parseTag(s){
+                return s.split("||");
+            },
+
             onChange(pageNumber) {
-                this.current = pageNumber;
-                console.log('Page: ', pageNumber);
-                const xhr = new XMLHttpRequest()
-                let context = this
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 201) {
-                            let res = JSON.parse(xhr.responseText);
-                            // console.log(res);
-                            let data = JSON.parse(res.data.replace(/'/g, '"'));
-                            context.totalMsgNum = data.total;
-                            // context.thisPageSize = context.totalMsgNum - (pageNumber-1)*12;
-                            context.msgList = data.question_list;
-                            while (context.msgList.length < 12) {
-                                context.msgList.push({
-                                    'id': -1, 'name': "none", 'user': "none",
-                                    'questionNum': 0, 'questionForm': "none", 'is_banned': 0,
-                                    'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
-                                    'tags': [""]
-                                });
-                            }
-                        } else {
-                            console.log(xhr.responseText);
+                this.getMsgNum = (pageNumber - 1) * 12;
+                let onRespond = jsonObj => {
+                    if (jsonObj.code === 201) {
+                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                        this.totalMsgNum = data.total;
+                        this.msgList = data.question_list;
+                        while (this.msgList.length < 12) {
+                            this.msgList.push({
+                                'id': -1, 'name': "none", 'user': "none",
+                                'questionNum': 0, 'questionForm': "none", 'is_banned': 0, 'full': 0,
+                                'total_ans': 0, 'ans_num': 0, 'deadline': "none", 'cash': "none",
+                                'tags': ""
+                            });
                         }
+                        this.msgList.forEach(function(item, index, arr) {
+                            arr[index].tags = this.parseTag(item.tags)
+                        });
+                    } else {
+                        console.log(jsonObj.data);
                     }
                 };
-                this.getMsgNum = (pageNumber - 1) * 12;
-                // 请求带上所有的标签和关键词，一个请求就可以发送
-
-                console.log(this.getMsgNum);
-                console.log(`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}&kw=${this.keyword}`);
-                xhr.open("get",`backend/square?num=${this.getMsgNum}&type=${this.type}&theme=${this.theme}&kw=${this.keyword}`);
-                xhr.send();
+                getBackend("backend/square", {
+                    "num":this.getMsgNum,
+                    "type":this.type,
+                    "theme":this.theme,
+                    "kw":this.keyword,
+                }, onRespond);
 
                 // for test only
-                // while(context.msgList.length < 12){
-                //     context.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
+                // while(this.msgList.length < 12){
+                //     this.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
                 //         'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
                 //         'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
                 //         'tags':['food', 'sports']});
@@ -289,7 +268,7 @@
                     if(item.id === msgId) {
                         arr[index] = { 'id': -1, 'name': "none", 'user': "none",
                             'questionNum': 0, 'questionForm': "none", 'is_banned':0,
-                            'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none", 'tags':[]};
+                            'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none", 'tags':""};
                     }
                     if(item.questionNum === 0){
                         count = count + 1;
@@ -305,6 +284,22 @@
                 // reload
                 this.isRouterAlive = false
                 this.$nextTick(() => (this.isRouterAlive = true))
+            },
+            getOrder(msg){
+                let id = msg.id
+                if(msg.received === "T"){
+                    msg.received = "F";
+                }else{
+                    msg.received = "T";
+                }
+                postBackend("backend/receive", {mission_id: id.toString()},
+                    jsonObj => {
+                    if (jsonObj.code === 201) {
+                        console.log("book success")
+                    } else {
+                        console.log("can't book/unbook")
+                    }
+                });
             },
             onSearch(value) {
                 this.keyword = value;
@@ -457,7 +452,7 @@
         z-index: 0;
     }
 
-    .portfolio .portfolio-wrap .portfolio-links a {
+    .portfolio .portfolio-wrap .portfolio-links i {
         color: #fff;
         margin: 0 2px;
         font-size: 28px;
@@ -465,7 +460,7 @@
         transition: 0.3s;
     }
 
-    .portfolio .portfolio-wrap .portfolio-links a:hover {
+    .portfolio .portfolio-wrap .portfolio-links i:hover {
         color: #e96b56;
     }
 

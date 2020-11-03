@@ -8,18 +8,18 @@
             :mission_info="mission"
             :questions="questions"
             @submit-info="onSubmitInfo"
-            @submit-questions="submit"/>
+            @submit-questions="submit" />
         <a-steps
             v-model="current"
             type="navigation"
             :style="{ marginBottom: '60px', boxShadow: '0px -1px 0 0 #e8e8e8 inset' }">
-          <a-step title="编辑任务信息" disabled/>
-          <a-step title="编辑题目" disabled/>
+          <a-step title="编辑任务信息" disabled />
+          <a-step title="编辑题目" disabled />
         </a-steps>
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="上传压缩包">
-        <upload_mission/>
+        <upload_mission />
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -33,8 +33,8 @@ import postFile from "@/utils/postFile";
 export default {
   name: "mission_field",
   props: [
-    'username',
-    'id'
+      'username',
+      'id'
   ],
   components: {
     upload_mission: upload_mission
@@ -59,7 +59,6 @@ export default {
   },
   methods: {
     onSubmitInfo() {
-      console.log(this.mission);
       this.$router.push('/mission/edit');
     },
     // 向后端发送数据

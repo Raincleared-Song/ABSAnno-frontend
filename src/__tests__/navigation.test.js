@@ -13,7 +13,7 @@ const router = new VueRouter();
 
 describe('navigation', function () {
 
-    it('check tabs for not-login users', () => {
+    it('check tabs for not-login users', function () {
         const wrapper = mount(navigation, {
             localVue,
             router,
@@ -23,7 +23,7 @@ describe('navigation', function () {
         expect(menuItems).toHaveLength(4);
     });
 
-    it('check tabs for ordinary users', () => {
+    it('check tabs for ordinary users', function () {
         const wrapper = mount(navigation, {
             localVue,
             router,
@@ -33,7 +33,7 @@ describe('navigation', function () {
         expect(menuItems).toHaveLength(6);
     });
 
-    it('check tabs for publishers', () => {
+    it('check tabs for publishers', function () {
         const wrapper = mount(navigation, {
             localVue,
             router,
@@ -43,7 +43,7 @@ describe('navigation', function () {
         expect(menuItems).toHaveLength(8);
     });
 
-    it('check tabs for attendants', () => {
+    it('check tabs for attendants', function () {
         const wrapper = mount(navigation, {
             localVue,
             router,
@@ -53,7 +53,7 @@ describe('navigation', function () {
         expect(menuItems).toHaveLength(9);
     });
 
-    it('check routers', () => {
+    it('check routers', function () {
         const wrapper = mount(navigation, {
             localVue,
             router,
@@ -68,5 +68,16 @@ describe('navigation', function () {
         expect(routerLinks.at(4).props('to')).toBe('/pub');
         expect(routerLinks.at(5).props('to')).toBe('/user');
         expect(routerLinks.at(6).props('to')).toBe('/users');
+    });
+
+    it('route -> current', function () {
+        const wrapper = mount(navigation, {
+            localVue,
+            router,
+            propsData: { username: 'test', power: 2 },
+            stubs: { RouterLink: RouterLinkStub }
+            // mocks: { $route }
+        });
+        expect(wrapper.vm.current[0]).toBe(wrapper.vm.$route.path);
     });
 });

@@ -1,8 +1,9 @@
-import { shallowMount, createLocalVue, RouterLinkStub } from "@vue/test-utils";
+import { mount, createLocalVue, RouterLinkStub } from "@vue/test-utils";
 import ElementUI from "element-ui";
 import Antd from "ant-design-vue";
 import VueRouter from "vue-router";
 import navigation from "@/components/navigation";
+import MenuItem from "ant-design-vue/lib/menu/MenuItem"
 
 let localVue = createLocalVue();
 localVue.use(ElementUI);
@@ -11,75 +12,53 @@ localVue.use(VueRouter);
 const router = new VueRouter();
 
 describe('navigation', function () {
-    const $route = { path: '' };
 
     it('check tabs for not-login users', () => {
-        const wrapper = shallowMount(navigation, {
+        const wrapper = mount(navigation, {
             localVue,
-            propsData: { username: 'test', power: -1 },
-            mocks: { $route }
+            router,
+            propsData: { username: 'test', power: -1 }
         });
-        const menuItems = wrapper.findAllComponents({ name: 'a-menu-item' });
-        expect(menuItems.at(0).text().contains('题目广场')).toBe(true);
-        expect(menuItems.at(1).text().contains('规则说明')).toBe(true);
-        expect(menuItems.at(2).text().contains('登陆')).toBe(true);
-        expect(menuItems.at(3).text().contains('注册')).toBe(true);
+        const menuItems = wrapper.findAllComponents(MenuItem);
+        expect(menuItems).toHaveLength(4);
     });
 
     it('check tabs for ordinary users', () => {
-        const wrapper = shallowMount(navigation, {
+        const wrapper = mount(navigation, {
             localVue,
-            propsData: { username: 'test', power: 0 },
-            mocks: { $route }
+            router,
+            propsData: { username: 'test', power: 0 }
         });
-        const menuItems = wrapper.findAllComponents({ name: 'a-menu-item' });
-        expect(menuItems).toHaveLength(5);
-        expect(menuItems.at(0).text().contains('题目广场')).toBe(true);
-        expect(menuItems.at(1).text().contains('规则说明')).toBe(true);
-        expect(menuItems.at(2).text().contains('我的接单')).toBe(true);
-        expect(menuItems.at(3).text().contains('个人中心')).toBe(true);
-        expect(menuItems.at(4).text().contains('登出')).toBe(true);
+        const menuItems = wrapper.findAllComponents(MenuItem);
+        expect(menuItems).toHaveLength(6);
     });
 
     it('check tabs for publishers', () => {
-        const wrapper = shallowMount(navigation, {
+        const wrapper = mount(navigation, {
             localVue,
-            propsData: { username: 'test', power: 1 },
-            mocks: { $route }
+            router,
+            propsData: { username: 'test', power: 1 }
         });
-        const menuItems = wrapper.findAllComponents({ name: 'a-menu-item' });
-        expect(menuItems.at(0).text().contains('题目广场')).toBe(true);
-        expect(menuItems.at(1).text().contains('规则说明')).toBe(true);
-        expect(menuItems.at(2).text().contains('发布题目')).toBe(true);
-        expect(menuItems.at(3).text().contains('我的接单')).toBe(true);
-        expect(menuItems.at(4).text().contains('我的发布')).toBe(true);
-        expect(menuItems.at(5).text().contains('个人中心')).toBe(true);
-        expect(menuItems.at(6).text().contains('登出')).toBe(true);
+        const menuItems = wrapper.findAllComponents(MenuItem);
+        expect(menuItems).toHaveLength(8);
     });
 
-    it('check tabs for attendents', () => {
-        const wrapper = shallowMount(navigation, {
+    it('check tabs for attendants', () => {
+        const wrapper = mount(navigation, {
             localVue,
-            propsData: { username: 'test', power: 2 },
-            mocks: { $route }
+            router,
+            propsData: { username: 'test', power: 2 }
         });
-        const menuItems = wrapper.findAllComponents({ name: 'a-menu-item' });
-        expect(menuItems.at(0).text().contains('题目广场')).toBe(true);
-        expect(menuItems.at(1).text().contains('规则说明')).toBe(true);
-        expect(menuItems.at(2).text().contains('发布题目')).toBe(true);
-        expect(menuItems.at(3).text().contains('我的接单')).toBe(true);
-        expect(menuItems.at(4).text().contains('我的发布')).toBe(true);
-        expect(menuItems.at(5).text().contains('个人中心')).toBe(true);
-        expect(menuItems.at(6).text().contains('管理用户')).toBe(true);
-        expect(menuItems.at(7).text().contains('登出')).toBe(true);
+        const menuItems = wrapper.findAllComponents(MenuItem);
+        expect(menuItems).toHaveLength(9);
     });
 
     it('check routers', () => {
-        const wrapper = shallowMount(navigation, {
+        const wrapper = mount(navigation, {
             localVue,
+            router,
             propsData: { username: 'test', power: 2 },
-            stubs: { RouterLink: RouterLinkStub },
-            mocks: { $route }
+            stubs: { RouterLink: RouterLinkStub }
         });
         const routerLinks = wrapper.findAllComponents(RouterLinkStub);
         expect(routerLinks.at(0).props('to')).toBe('/ground');

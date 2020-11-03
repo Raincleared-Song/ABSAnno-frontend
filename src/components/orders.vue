@@ -29,7 +29,9 @@
         <el-table-column
                 prop="mission_reward"
                 label="悬赏金额"
-                width="80">
+                width="80"
+                sortable
+        >
         </el-table-column>
         <el-table-column
             prop="mission_info"
@@ -54,6 +56,7 @@
 <script>
     import postBackend from "../utils/postBackend"
     import getBackend from "../utils/getBackend"
+    import convertTime from "../utils/timestamp";
 
     export default {
         name: "orders",
@@ -81,35 +84,20 @@
                 postBackend("backend/receive", {mission_id: row.id.toString()},
                     jsonObj => {
                         if (jsonObj.code === 201) {
-                            console.log("book success")
+                            console.log("book deleted")
                         } else {
-                            console.log("can't book/unbook")
+                            console.log("can't undo book")
                         }
                     });
             },
 
             warnDDL({row, rowIndex}) {
-                if (row.deadline === this.getNowFormatDate()) {
+                var date = new Date().getTime()
+                if (row.deadline === convertTime(date)) {
                     return 'warning-row';
                 }
                 return '';
             },
-
-            getNowFormatDate() {
-                var date = new Date();
-                var seperator1 = "-";
-                var year = date.getFullYear();
-                var month = date.getMonth() + 1;
-                var strDate = date.getDate();
-                if (month >= 1 && month <= 9) {
-                    month = "0" + month;
-                }
-                if (strDate >= 0 && strDate <= 9) {
-                    strDate = "0" + strDate;
-                }
-                var currentdate = year + seperator1 + month + seperator1 + strDate;
-                return currentdate;
-            }
         },
 
         mounted() {
@@ -117,6 +105,10 @@
                 if (jsonObj.code === 201) {
                     let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                     this.msgList = data.rep_list;
+                    var i;
+                    for(i = 0; i < data.total_num; i+=1){
+                        this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
+                    }
                 }
             };
             getBackend("backend/repshow", {}, onRespond);

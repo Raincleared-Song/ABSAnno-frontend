@@ -190,6 +190,7 @@
     import postBackend from "../utils/postBackend"
     import getBackend from "../utils/getBackend"
     import API from "@/utils/API";
+    import convertTime from "../utils/timestamp";
     export default {
         name: "ground",
         data(){
@@ -217,13 +218,6 @@
                 if(a>b) return b;
                 return a;
             },
-            timestampToTime(timestamp) {
-                var date =  new Date(timestamp);
-                var Y = date.getFullYear() +  '-' ;
-                var M = (date.getMonth()+1 < 10 ?  '0' +(date.getMonth()+1) : date.getMonth()+1) +  '-' ;
-                var D = date.getDate();
-                return  Y+M+D;
-            },
             onChange(pageNumber) {
                 this.getMsgNum = (pageNumber - 1) * 12;
                 let onRespond = jsonObj => {
@@ -241,7 +235,7 @@
                         }
                         var i;
                         for(i = 0; i < 12; i+=1){
-                            this.msgList[i].deadline = this.timestampToTime(this.msgList[i].deadline)
+                            this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
                         }
                     } else {
                         console.log(jsonObj.data);

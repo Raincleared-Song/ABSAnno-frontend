@@ -32,9 +32,9 @@ unit-test:
   extends: .test
   script:
     - ls
-#    - npm test
-#    - FRONTEND_RET=$?
-#    - exit $FRONTEND_RET
+    - npm test
+    - FRONTEND_RET=$?
+    - exit $FRONTEND_RET
 
   after_script:
     - SUFFIX=$RANDOM

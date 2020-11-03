@@ -7,6 +7,16 @@
         <div style="margin: 15px">
           <a-avatar :size="260" icon="user">USER</a-avatar>
 
+          <!-- 申请发题者 -->
+          <a-button
+              v-if="power === 1"
+              @click="onApplyUpgrade"
+              block
+              style="margin: 10px 0">
+            <a-icon type="rocket" />
+            发题者申请
+          </a-button>
+
           <!-- 用户信息展示 -->
           <div v-if="!editing">
             <h3 style="margin: 20px auto">
@@ -20,6 +30,7 @@
                 type="primary" block
                 :disabled="power === 0"
                 style="margin: 10px 0">
+              <a-icon type="form" />
               Edit profile
             </a-button>
             <basic_info
@@ -55,6 +66,8 @@
 import basic_info from "@/components/userpage/basic_info";
 import edit_info from "@/components/userpage/edit_info";
 import history from "@/components/userpage/history";
+import postBackend from "@/utils/postBackend";
+import API from "@/utils/API";
 
 export default {
   name: "user_page",
@@ -65,14 +78,27 @@ export default {
     }
   },  // end of data
   props: [
-    'power',
-    'username'
+      'power',
+      'username'
   ],  // end of props
   components: {
     basic_info: basic_info,
     edit_info: edit_info,
     history: history
-  }
+  },  // end of components
+  methods: {
+    onApplyUpgrade() {
+      postBackend(API.POST_APPLY, {
+        type: "upgrade"
+      }, jsonObj => {
+        if (jsonObj.code === 201) {
+          this.$message.success("申请已发送！");
+        } else {
+          this.$message.error("发送失败！请稍后再试！");
+        }
+      });
+    }
+  }   // end of methods
 }
 </script>
 

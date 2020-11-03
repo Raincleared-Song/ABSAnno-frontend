@@ -25,6 +25,10 @@ const API = {
     GET_RESULT: {
         path: "/backend/result",
         method: "GET"
+    },
+    POST_APPLY: {
+        path: "/backend/sendapply",
+        method: "POST"
     }
 };
 

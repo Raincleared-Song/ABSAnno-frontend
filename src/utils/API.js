@@ -21,6 +21,10 @@ const API = {
     GET_USER: {
         path: "/backend/user",
         method: "GET"
+    },
+    GET_RESULT: {
+        path: "/backend/result",
+        method: "GET"
     }
 };
 

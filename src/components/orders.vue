@@ -37,13 +37,15 @@
         </el-table-column>
         <el-table-column align="right">
             <template slot-scope="scope">
-                <router-link v-if="power!==-1" :to="{path:'/question/'+ scope.row.id}">
-                    <el-button size="mini">做题</el-button>
-                </router-link>
-                <el-button
-                        size="mini"
-                        type="danger"
-                        @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                <a-space>
+                    <router-link v-if="power!==-1" :to="{path:'/question/'+ scope.row.id}">
+                        <el-button size="mini">做题</el-button>
+                    </router-link>
+                    <el-button
+                            size="mini"
+                            type="danger"
+                            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                </a-space>
             </template>
         </el-table-column>
     </el-table>

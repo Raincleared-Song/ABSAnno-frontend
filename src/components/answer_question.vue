@@ -8,7 +8,7 @@
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
       <CheckboxGroup
-          v-else-if="nowQuestion.type === 'choice'"
+          v-else-if="nowQuestion.type === 'chosen'"
           :editable="false"
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
@@ -77,14 +77,14 @@ export default {
     };
   },  // end of data
   props:[
-    "username",
-    "id",
+      'username',
+      'power'
   ],
   methods: {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        if (question.type === 'choice') {
+        if (question.type === 'chosen') {
           return question.answer.join('|');
         } else {
           return question.answer;
@@ -138,8 +138,8 @@ export default {
     }
   },  // end of methods
   created: function() {
-    let name = this.$route.path;
-    this.missionId = Number(name.slice(10,));
+    console.log(this.$route.params.id);
+    this.missionId = Number(this.$route.params.id);
     // 从后台申请数据加载
     getBackend(API.GET_SINGLE_QUESTION.path, {
       id: this.missionId,
@@ -186,7 +186,7 @@ function getNewQuestion(dataObj) {
     newQuestion.has_image = true;
   }
   // 对于选择题
-  if (newQuestion.type === 'choice') {
+  if (newQuestion.type === 'chosen') {
     newQuestion.options = dataObj.options.split('||');
     newQuestion.answer = [];
   }

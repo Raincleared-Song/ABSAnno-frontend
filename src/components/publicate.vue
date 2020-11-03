@@ -5,8 +5,15 @@
             <template slot="header">
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
-                        <a slot="actions" @click="checkMsg(msg.id)" style="font-size: 15pt; color: #d95656"><a-icon type="pause" /></a>
-                        <a slot="actions" @click="downloadMsg(msg.id)" style="font-size: 15pt"><a-icon type="download" /></a>
+                        <a slot="actions" @click="checkMsg(msg.id)" style="font-size: 15pt; color: #d95656">
+                              <a-icon type="pause" />
+                        </a>
+                        <a slot="actions"
+                                :disabled="msg.now === 0"
+                                :href="`/backend/result?mission_id=${msg.id}`"
+                                style="font-size: 15pt">
+                            <a-icon type="download" />
+                        </a>
                         <a-list-item-meta>
                             <a slot="title" style="font-size: 15pt" >{{ msg.name }}</a>
                             <a slot="description">
@@ -58,8 +65,8 @@
 </template>
 
 <script>
-    import postBackend from "../utils/postBackend"
     import getBackend from "../utils/getBackend"
+    import API from "../utils/API"
 
     export default {
         name: "publicate",
@@ -76,7 +83,15 @@
         },
         methods: {
             downloadMsg(id){
-                console.log(id) // TODO
+                getBackend(API.GET_RESULT, {
+                    mission_id: id
+                }, jsonObj => {
+                    if (jsonObj.code === 201) {
+                        // TODO: download
+                    } else {
+                        this.$message.error('An error occurred! Try later!');
+                    }
+                });
             },
             checkMsg(id){
                 let onRespond = jsonObj => {

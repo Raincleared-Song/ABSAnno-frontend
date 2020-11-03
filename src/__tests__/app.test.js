@@ -10,8 +10,8 @@ localVue.use(Antd);
 localVue.use(VueRouter);
 
 describe('App', () => {
-    test('App default power', () => {
+    it('App default power', () => {
         const wrapper = shallowMount(App, { localVue });
         expect(wrapper.vm.power).toBe(-1);
-    })
+    });
 })

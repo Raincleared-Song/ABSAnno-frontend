@@ -32,7 +32,7 @@ unit-test:
   extends: .test
   script:
     - ls
-    - npm test
+    - npm run test
     - FRONTEND_RET=$?
     - exit $FRONTEND_RET
 
@@ -48,9 +48,9 @@ style-test:
 
   script:
     - ls
-#    - npm run lint
-#    - FRONTEND_RET=$?
-#    - exit $FRONTEND_RET
+    - npm run lint
+    - FRONTEND_RET=$?
+    - exit $FRONTEND_RET
 
 deploy:
   stage: deploy

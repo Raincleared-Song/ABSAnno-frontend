@@ -70,7 +70,7 @@
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "**/*.{js,vue}",
+      "src/**/*.{js,vue}",
       "!**/node_modules/**",
       "!**/dist/**",
       "!**/nginx/**"
@@ -93,11 +93,12 @@
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/src/$1"
     },
-    "preset": "@vue/cli-plugin-unit-jest"
+    "preset": "@vue/cli-plugin-unit-jest",
+    "coverageDirectory": "coverage"
   },
   "jestSonar": {
     "reportPath": "coverage",
     "reportFile": "test-report.xml",
-    "indent": 2
+    "indent": 4
   }
 }

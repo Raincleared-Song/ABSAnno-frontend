@@ -40,7 +40,7 @@
         <el-table-column align="right">
             <template slot-scope="scope">
                 <a-space>
-                    <router-link v-if="power!==-1" :to="{path:'/question/'+ scope.row.id}">
+                    <router-link v-if="power!==-1" :to="{path:'/question/'+ scope.row.mission_id}">
                         <el-button size="mini">做题</el-button>
                     </router-link>
                     <el-button

@@ -25,7 +25,7 @@
                                     <a-divider type="vertical" />
                                     <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />{{msg.deadline}}
                                     <a-divider type="vertical" />
-                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.now}}/{{msg.total}}
+                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.to_ans}}/{{msg.total}}
                                     <a-divider type="vertical" />
                                     {{msg.info}}
                                 </div>
@@ -67,6 +67,7 @@
 <script>
     import getBackend from "../utils/getBackend"
     import API from "../utils/API"
+    import convertTime from "../utils/timestamp";
 
     export default {
         name: "publicate",
@@ -116,7 +117,7 @@
                     }
                 };
                 getBackend("backend/mymission", {
-                    "mission_id":key.id.toString()
+                    mission_id:key.id.toString()
                 }, onRespond);
             },
         },
@@ -126,6 +127,11 @@
                 if (jsonObj.code === 201) {
                     let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                     this.pubList = data.mission_list;
+                    var i;
+                    console.log(this.pubList)
+                    for(i = 0; i < 12; i+=1){
+                        this.pubList[i].deadline = convertTime(this.pubList[i].deadline)
+                    }
                 }
             };
             getBackend("backend/user", {

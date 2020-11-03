@@ -1,4 +1,4 @@
-import { mount, createLocalVue, RouterLinkStub } from "@vue/test-utils";
+import { mount, createLocalVue } from "@vue/test-utils";
 import ElementUI from "element-ui";
 import Antd from "ant-design-vue";
 import VueRouter from "vue-router";

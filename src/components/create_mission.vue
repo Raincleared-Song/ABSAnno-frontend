@@ -70,7 +70,11 @@
           <a-date-picker
               v-model="mission_info.ddl"
               @blur="$refs.ddl.onFieldBlur()"
-              @change="$refs.ddl.onFieldChange()" />
+              @change="$refs.ddl.onFieldChange()"
+              format="YYYY-MM-DD"
+              :disabled-date="disabledDate"
+          >
+          </a-date-picker>
         </a-form-model-item>
 
         <a-form-model-item
@@ -142,6 +146,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 
 export default {
   name: "create_mission",
@@ -171,6 +176,9 @@ export default {
           this.$message.warning("error submit");
         }
       });
+    },
+    disabledDate(current) {
+      return current < moment().endOf('day')
     }
   }
 }

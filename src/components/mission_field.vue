@@ -73,7 +73,7 @@ export default {
         info: this.mission.info,
         total: this.mission.min.toString(),
         reward: this.mission.reward.toString(),
-        // TODO: deadline
+        deadline: this.mission.ddl.format('YYYY-MM-DD').toString(),
         retrieve_time: this.mission.retrieve.toString(),
         check_way: this.mission.check_way
       };
@@ -92,6 +92,7 @@ export default {
           ret.image_name = question.image.name;
         return ret;
       });
+      console.log('#### submitObj ####');
       console.log(submitObj);
 
       if (this.mission.has_image) {

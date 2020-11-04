@@ -1,7 +1,7 @@
 <!-- 这是个判断题的页面 -->
 <template>
   <div>
-    <h2>判断题</h2>
+    <h2>选择题</h2>
 
     <!-- 题目描述区 -->
     <div v-if="editable" style="margin: 10px">

@@ -65,7 +65,7 @@
 </template>
 
 <script>
-  import JudgementGroup from "@/components/questions/judgement_group";
+  import JudgementGroup from "@/components/questions/choice_group";
   import TextEdit from "@/components/questions/text_edit";
   import CheckboxGroup from "@/components/questions/checkbox_group";
 

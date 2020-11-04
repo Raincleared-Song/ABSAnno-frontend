@@ -2,17 +2,17 @@
   <body id="root">
     <!-- 显示问题的区域 -->
     <div v-if="nowQuestion != null">
-      <JudgementGroup
-          v-if="nowQuestion.type === 'judgement'"
+<!--      <JudgementGroup-->
+<!--          v-if="nowQuestion.type === 'judgement'"-->
+<!--          :editable="false"-->
+<!--          :question="nowQuestion"-->
+<!--          :has_image="nowQuestion.has_image" />-->
+      <choice_group
+          v-if="nowQuestion.type === 'chosen'"
           :editable="false"
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
-      <CheckboxGroup
-          v-else-if="nowQuestion.type === 'chosen'"
-          :editable="false"
-          :question="nowQuestion"
-          :has_image="nowQuestion.has_image" />
-      <TextEdit
+      <text_edit
           v-else-if="nowQuestion.type === 'text'"
           :editable="false"
           :question="nowQuestion"
@@ -53,9 +53,8 @@
 </template>
 
 <script>
-import JudgementGroup from "@/components/questions/judgement_group";
-import TextEdit from "@/components/questions/text_edit";
-import CheckboxGroup from "@/components/questions/checkbox_group";
+import text_edit from "@/components/questions/text_edit";
+import choice_group from "@/components/questions/choice_group";
 import getBackend from "@/utils/getBackend";
 import postBackend from "@/utils/postBackend";
 import API from "@/utils/API";
@@ -63,9 +62,9 @@ import API from "@/utils/API";
 export default {
   name: "answer_question",
   components: {
-    JudgementGroup: JudgementGroup,
-    CheckboxGroup: CheckboxGroup,
-    TextEdit: TextEdit
+    // JudgementGroup: JudgementGroup,
+    choice_group: choice_group,
+    text_edit: text_edit
   },  // end of components
   data() {
     return {
@@ -85,7 +84,7 @@ export default {
     submit() {
       let answers = this.questions.map(question => {
         if (question.type === 'chosen') {
-          return question.answer.join('|');
+          return question.answer.join('||');
         } else {
           return question.answer;
         }
@@ -174,7 +173,7 @@ function getDataObj(jsonObj) {
 function getNewQuestion(dataObj) {
   let newQuestion = {
     index: dataObj.ret,
-    type: dataObj.type !== undefined? dataObj.type: 'judgement',
+    type: dataObj.type || 'chosen',
     description: dataObj.word,
     answer: "",
     has_image: false
@@ -184,10 +183,11 @@ function getNewQuestion(dataObj) {
   if (type_list.length === 2 && type_list[1] === 'image') {
     newQuestion.type = type_list[0];
     newQuestion.has_image = true;
+    newQuestion.image = dataObj.image_url;
   }
   // 对于选择题
   if (newQuestion.type === 'chosen') {
-    newQuestion.options = dataObj.options.split('||');
+    newQuestion.options = dataObj.choices.split('||');
     newQuestion.answer = [];
   }
   return newQuestion;

@@ -9,7 +9,7 @@
 
           <!-- 申请发题者 -->
           <a-button
-              v-if="power === 1"
+              v-if="power === 0"
               @click="onApplyUpgrade"
               block
               style="margin: 10px 0">
@@ -28,7 +28,7 @@
             <a-button
                 @click="editing = true"
                 type="primary" block
-                :disabled="power === 0"
+                :disabled="power === -1"
                 style="margin: 10px 0">
               <a-icon type="form" />
               Edit profile
@@ -88,7 +88,7 @@ export default {
   },  // end of components
   methods: {
     onApplyUpgrade() {
-      postBackend(API.POST_APPLY, {
+      postBackend(API.POST_APPLY.path, {
         type: "upgrade"
       }, jsonObj => {
         if (jsonObj.code === 201) {

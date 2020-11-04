@@ -80,7 +80,7 @@ export default {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        if (question.type === 'choice') {
+        if (question.type === 'chosen') {
           return question.answer.join('|');
         } else {
           return question.answer;

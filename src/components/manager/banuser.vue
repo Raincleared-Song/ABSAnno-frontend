@@ -50,9 +50,9 @@
 </template>
 
 <script>
-    import dealAdmin from "../utils/admin"
-    import postBackend from "../utils/postBackend"
-    import getBackend from "../utils/getBackend"
+    import dealAdmin from "../../utils/admin"
+    import postBackend from "../../utils/postBackend"
+    import getBackend from "../../utils/getBackend"
     export default {
         name: "banuser",
         data(){

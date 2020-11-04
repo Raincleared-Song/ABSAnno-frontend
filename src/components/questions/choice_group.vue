@@ -1,7 +1,7 @@
 <!-- 这是个判断题的页面 -->
 <template>
   <div>
-    <h2>判断题</h2>
+    <h2>选择题</h2>
 
     <!-- 题目描述区 -->
     <div v-if="editable" style="margin: 10px">
@@ -35,21 +35,51 @@
     </div>
 
     <!-- 选项区 -->
-    <a-radio-group
-        :disabled="editable"
-        v-model="question.answer"
-        style="margin: 10px">
-      <a-radio value="1">True</a-radio>
-      <a-radio value="0">False</a-radio>
-    </a-radio-group>
+    <div
+        v-if="editable"
+        style="margin: 15px 10px">
+      编辑选项：
+    </div>
+    <div>
+      <a-radio-group
+          v-if="question.options.length"
+          :disabled="editable"
+          v-model="question.answer"
+          style="margin: 10px">
+        <div
+            v-for="(option, index) in question.options"
+            :key="index"
+            style="margin: 5px">
+          <a-radio :value="optionCode[index]">{{ option }}</a-radio>
+          <a-button
+              v-if="editable"
+              size="small" ghost
+              @click="$emit('removeOption', question.index, index)">
+            <a-icon type="delete" />
+          </a-button>
+        </div>
+      </a-radio-group>
+      <div
+          v-else style="margin: 10px">
+        No option added...
+      </div>
+    </div>
+    <div v-if="editable">
+      <a-input
+          v-model="question.new_option"
+          placeholder="Add new option, press enter to commit."
+          @keydown.enter="$emit('addOption', question.index, question.new_option)" />
+    </div>
   </div>
 </template>
 
 <script>
 export default {
+  name: "choice_group",
   data() {
     return {
-      image_url: ''
+      image_url: '',
+      optionCode: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
     };
   },
   props: [

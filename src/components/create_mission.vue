@@ -28,8 +28,7 @@
           <a-select
               v-model="mission_info.type"
               @blur="$refs.type.onFieldBlur()">
-            <a-select-option value="judgement">判断题任务</a-select-option>
-            <a-select-option value="choice">选择题任务</a-select-option>
+            <a-select-option value="chosen">选择题任务</a-select-option>
             <a-select-option value="text">文字描述题任务</a-select-option>
           </a-select>
         </a-form-model-item>
@@ -71,7 +70,11 @@
           <a-date-picker
               v-model="mission_info.ddl"
               @blur="$refs.ddl.onFieldBlur()"
-              @change="$refs.ddl.onFieldChange()" />
+              @change="$refs.ddl.onFieldChange()"
+              format="YYYY-MM-DD"
+              :disabled-date="disabledDate"
+          >
+          </a-date-picker>
         </a-form-model-item>
 
         <a-form-model-item
@@ -111,7 +114,7 @@
           <a-input-number
               v-model.trim.number="mission_info.retrieve"
               @blur="$refs.retrieve.onFieldBlur()" />
-          <span class="ant-form-text">单位：天</span>
+          <span class="ant-form-text">单位：小时</span>
         </a-form-model-item>
 
         <a-form-model-item
@@ -143,6 +146,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 
 export default {
   name: "create_mission",
@@ -172,6 +176,9 @@ export default {
           this.$message.warning("error submit");
         }
       });
+    },
+    disabledDate(current) {
+      return current < moment().endOf('day')
     }
   }
 }

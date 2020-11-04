@@ -1,7 +1,7 @@
 <template>
-    <a-collapse v-model="activeKey" :bordered="false" accordion>
-        <a-collapse-panel v-for="pub in pubList" v-bind:key="pub"
-                          style="background: #ffffff;" :disabled="pub.is_banned === true || pub.is_banned === 1">
+    <a-collapse v-model="activeKey" :bordered="false" accordion >
+        <a-collapse-panel v-for="pub in pubList" v-bind:key="pub" style="background: #ffffff;"
+                          :disabled="pub.is_banned === 1 || pub.to_ans === 1">
             <template slot="header">
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
@@ -15,7 +15,15 @@
                             <a-icon type="download" />
                         </a>
                         <a-list-item-meta>
-                            <a slot="title" style="font-size: 15pt" >{{ msg.name }}</a>
+                            <a slot="title" style="font-size: 15pt" >
+                                {{ msg.name }}
+                                <a-tag v-if="msg.is_banned === 1" color="red">
+                                    被封禁
+                                </a-tag>
+                                <a-tag v-if="msg.to_ans === 1" color="orange">
+                                    未被作答
+                                </a-tag>
+                            </a>
                             <a slot="description">
                                 <div style="color: #5e5e5e" >
                                     <a-tag color="green">
@@ -25,7 +33,7 @@
                                     <a-divider type="vertical" />
                                     <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />{{msg.deadline}}
                                     <a-divider type="vertical" />
-                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.to_ans}}/{{msg.total}}
+                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.num}}/{{msg.total}}
                                     <a-divider type="vertical" />
                                     {{msg.info}}
                                 </div>
@@ -104,6 +112,9 @@
                 getBackend("backend/check", {
                     "mission_id":id.toString()
                 }, onRespond);
+            },
+            judgeDisable(msg){
+
             },
         },
 

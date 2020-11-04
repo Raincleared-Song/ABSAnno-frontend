@@ -390,6 +390,9 @@
                             else if(this.intList[i].questionForm === "chosen"){
                                 this.intList[i].type = "选择"
                             }
+                            else{
+                                this.intList[i].type = "图片"
+                            }
                         }
                     } else {
                         console.log(jsonObj.data);

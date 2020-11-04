@@ -6,7 +6,7 @@
                     <a-button type="link" @click="dealUser(user.id, 'Accept')">
                         同意
                     </a-button>
-                    <a-button type="link" style="color:#ff4d4f" @click="dealUser(user.id, 'Reject')">
+                    <a-button type="link" style="color:#ff4d4f" @click="dealUser(user.id, 'Rejected')">
                         拒绝
                     </a-button>
                 </div>

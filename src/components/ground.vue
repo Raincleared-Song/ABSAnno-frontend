@@ -404,13 +404,13 @@
                 this.intNum = num + 1;
 
                 // for test only
-                while(this.intList.length < 5){
-                    this.intList.push({ 'id': -1, 'name': "none", 'user': "none",
-                        'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
-                        'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
-                        'tags':['food', 'sports'], "received":"F","type" : "选择"});
-                }
-                console.log(num)
+                // while(this.intList.length < 5){
+                //     this.intList.push({ 'id': -1, 'name': "none", 'user': "none",
+                //         'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
+                //         'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
+                //         'tags':['food', 'sports'], "received":"F","type" : "选择"});
+                // }
+                // console.log(num)
             },
         },
         mounted:function () {   //自动触发写入的函数

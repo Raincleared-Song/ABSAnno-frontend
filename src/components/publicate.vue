@@ -1,7 +1,7 @@
 <template>
     <a-collapse v-model="activeKey" :bordered="false" accordion >
         <a-collapse-panel v-for="pub in pubList" v-bind:key="pub" style="background: #ffffff;"
-                          :disabled="pub.is_banned === 1 || pub.to_ans === 1">
+                          :disabled="pub.is_banned === 1 || pub.num === 0">
             <template slot="header">
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
@@ -19,7 +19,7 @@
                                 <a-tag v-if="msg.is_banned === 1" color="red">
                                     被封禁
                                 </a-tag>
-                                <a-tag v-if="msg.to_ans === 1" color="orange">
+                                <a-tag v-if="msg.num === 0" color="orange">
                                     未被作答
                                 </a-tag>
                             </a>

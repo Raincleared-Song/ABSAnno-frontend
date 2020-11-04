@@ -58,7 +58,6 @@
 
 <script>
     import postBackend from "../utils/postBackend"
-    import getBackend from "../utils/getBackend"
 
     export default {
         name: "navigation",

@@ -168,7 +168,8 @@ function getNewQuestion(dataObj) {
     type: dataObj.type || 'chosen',
     description: dataObj.word,
     answer: "",
-    has_image: false
+    has_image: false,
+    has_pre_ans: false
   };
   // 对于含有图片的题
   const type_list = newQuestion.type.split('-');

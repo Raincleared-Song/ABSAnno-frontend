@@ -15,42 +15,63 @@
     </div>
 
     <!-- 图片区 -->
-    <div v-if="has_image" style="margin: 20px 10px">
+    <div v-if="has_image" style="margin: 10px 15px">
       <div v-if="editable">
         <el-upload
+            v-if="!question.image"
             ref="upload_img"
-            list-type="picture-card"
+            class="img-uploader"
             action="#"
-            :limit="1"
             :auto-upload="false"
-            :on-change="onChangeImage"
-            :on-remove="onRemoveImage">
-          <i class="el-icon-plus" />
+            :show-file-list="false"
+            :on-change="onChangeImage">
+          <a-button style="margin: 10px 0">
+            <i class="el-icon-plus" />
+            <span style="margin: 0 10px">点击上传图片</span>
+          </a-button>
         </el-upload>
+        <div v-else>
+          <i class="el-icon-picture-outline" />
+          <span style="margin: 0 30px 0 10px">{{ question.image.name }}</span>
+          <a-button
+              @click="onRemoveImage"
+              size="small" shape="circle" ghost>
+            <a-icon type="delete" />
+          </a-button>
+        </div>
       </div>
       <div v-else>
-        <el-image
-            :src="question.image" />
+        <el-image :src="question.image" />
       </div>
     </div>
 
     <!-- 选项区 -->
     <div
         v-if="editable"
-        style="margin: 15px 10px">
-      编辑选项：
+        style="margin: 15px 10px; width: 100%;">
+      <span><strong>编辑选项：</strong></span>
+      <span style="margin: 0 50px 0 0; text-align: right">
+        设置预设答案
+        <a-switch
+            v-model="question.has_pre_ans"
+            checked-children="yes"
+            un-checked-children="no" />
+      </span>
     </div>
     <div>
       <a-radio-group
           v-if="question.options.length"
-          :disabled="editable"
+          :disabled="editable && (!question.has_pre_ans)"
           v-model="question.answer"
           style="margin: 10px">
         <div
             v-for="(option, index) in question.options"
             :key="index"
             style="margin: 5px">
-          <a-radio :value="optionCode[index]">{{ option }}</a-radio>
+          <a-radio
+              :value="optionCode[index]">
+            {{ option }}
+          </a-radio>
           <a-button
               v-if="editable"
               size="small" ghost
@@ -78,29 +99,54 @@ export default {
   name: "choice_group",
   data() {
     return {
-      image_url: '',
       optionCode: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
     };
-  },
+  },  // end of data
   props: [
       'question',
       'editable',
       'has_image'
   ],  // end of props
   methods: {
-    onChangeImage(file) {
-      console.log(this.question.index);
-      this.image_url = file.url;
-      this.$emit('updateImage', this.question.index, file);
+    onChangeImage(file, fileList) {
+      this.question.image = file;
     },
-    onRemoveImage(file) {
+    onRemoveImage() {
       console.log('remove');
-      this.image_url = '';
+      this.question.image = undefined;
+    }
+  },
+  watch: {
+    'question.has_pre_ans': function (newVal, oldVal) {
+      if (newVal === false && oldVal === true)
+        this.question.answer = "";
     }
   }
 }
 </script>
 
 <style scoped>
-
+.img-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.img-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+.img-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 </style>

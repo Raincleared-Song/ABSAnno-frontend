@@ -59,7 +59,6 @@ export default {
   },
   methods: {
     onSubmitInfo() {
-      console.log(this.mission);
       this.$router.push('/mission/edit');
     },
     // 向后端发送数据
@@ -77,23 +76,26 @@ export default {
         retrieve_time: this.mission.retrieve.toString(),
         check_way: this.mission.check_way
       };
+
       // 问题列表
       submitObj.question_list = this.questions.map(question => {
         let ret;
         if (this.mission.type === 'chosen') {
           ret = {
             contains: question.description,
-            choices: question.options.join('||')
+            choices: question.options.join('||'),
+            ans: question.answer
           };
         } else if (this.mission.type === 'text') {
-          ret = { contains: question.description };
+          ret = {
+            contains: question.description,
+            ans: question.answer
+          };
         }
         if (ret !== undefined && this.mission.has_image)
           ret.image_name = question.image.name;
         return ret;
       });
-      console.log('#### submitObj ####');
-      console.log(submitObj);
 
       if (this.mission.has_image) {
         // 图片

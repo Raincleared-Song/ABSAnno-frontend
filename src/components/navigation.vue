@@ -26,9 +26,9 @@
                 <router-link to="/users">管理用户</router-link>
             </a-menu-item>
             <a-menu-item v-if="power===-1" key="/login" style="float: right;">
-                    <a-button ghost>
-                        <router-link to="/login">登录</router-link>
-                    </a-button>
+                <a-button ghost>
+                    <router-link to="/login">登录</router-link>
+                </a-button>
             </a-menu-item>
             <a-menu-item v-if="power===-1" key="/signin" style="float: right;">
                 <a-button ghost>
@@ -43,10 +43,9 @@
             <a-menu-item v-if="power!==-1" style="float: right;" key="/user">
                 <div>
                     <span>
-                        <a-popover :title="'欢迎，'+username" placement="bottom" >
+                        <a-popover placement="bottom" >
                             <template slot="content">
-                                用户名：{{this.username}}<br/>
-                                您的权限：{{this.realPower}}
+                                欢迎，{{this.username}}<br/>
                             </template>
                             <router-link to="/user"><a-avatar shape="square" icon="user"/></router-link>
                         </a-popover>
@@ -72,7 +71,6 @@
         data() {
             return {
                 current: [],
-                realPower:"",
             };
         },
         methods: {
@@ -92,19 +90,6 @@
                 console.log(this.current);
             }
         },
-        mounted:function(){
-            this.current = [this.$route.path];
-            console.log(this.current);
-            if(this.power===0){
-                this.realPower="普通用户"
-            }
-            else if(this.power===1){
-                this.realPower="VIP用户"
-            }
-            else if(this.power===2){
-                this.realPower="管理员"
-            }
-        }
     }
 </script>
 

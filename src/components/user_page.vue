@@ -1,18 +1,18 @@
 <template>
   <div>
-    <a-layout id="components-layout-demo-side" style="min-height: 100vh">
+    <a-layout id="components-layout-demo-side" style="min-height: 450px">
 
       <!-- 侧栏 -->
-      <a-layout-sider theme="light" width="320">
+      <a-layout-sider theme="light" width="280">
         <div style="margin: 15px">
-          <a-avatar :size="260" icon="user">USER</a-avatar>
+          <a-avatar :size="220" icon="user">USER</a-avatar>
 
           <!-- 申请发题者 -->
           <a-button
-              v-if="power === 0"
-              @click="onApplyUpgrade"
-              block
-              style="margin: 10px 0">
+                  v-if="power === 0"
+                  @click="onApplyUpgrade"
+                  block
+                  style="margin: 10px 0">
             <a-icon type="rocket" />
             发题者申请
           </a-button>
@@ -26,23 +26,23 @@
               用户权限：{{ userPower[this.power? this.power + 1: 0] }}
             </h4>
             <a-button
-                @click="editing = true"
-                type="primary" block
-                :disabled="power === -1"
-                style="margin: 10px 0">
+                    @click="editing = true"
+                    type="primary" block
+                    :disabled="power === -1"
+                    style="margin: 10px 0">
               <a-icon type="form" />
               Edit profile
             </a-button>
             <basic_info
-                style="margin: 10px" />
+                    style="margin: 10px" />
           </div>
 
           <!-- 用户信息编辑 -->
           <div v-else>
             <edit_info
-                :username="username"
-                @submit-edit="editing = false"
-                @cancel-edit="editing = false" />
+                    :username="username"
+                    @submit-edit="editing = false"
+                    @cancel-edit="editing = false" />
           </div>
         </div>
       </a-layout-sider>
@@ -68,44 +68,44 @@
 </template>
 
 <script>
-import basic_info from "@/components/userpage/basic_info";
-import edit_info from "@/components/userpage/edit_info";
-import history from "@/components/userpage/history";
-import postBackend from "@/utils/postBackend";
-import API from "@/utils/API";
-import message from "@/components/userpage/message"
-export default {
-  name: "user_page",
-  data() {
-    return {
-      editing: false,
-      userPower: ['未登录', '用户', '发布者', '管理员']
-    }
-  },  // end of data
-  props: [
+  import basic_info from "@/components/userpage/basic_info";
+  import edit_info from "@/components/userpage/edit_info";
+  import history from "@/components/userpage/history";
+  import postBackend from "@/utils/postBackend";
+  import API from "@/utils/API";
+  import message from "@/components/userpage/message"
+  export default {
+    name: "user_page",
+    data() {
+      return {
+        editing: false,
+        userPower: ['未登录', '用户', '发布者', '管理员']
+      }
+    },  // end of data
+    props: [
       'power',
       'username'
-  ],  // end of props
-  components: {
-    basic_info: basic_info,
-    edit_info: edit_info,
-    history: history,
-    message: message,
-  },  // end of components
-  methods: {
-    onApplyUpgrade() {
-      postBackend(API.POST_APPLY.path, {
-        type: "upgrade"
-      }, jsonObj => {
-        if (jsonObj.code === 201) {
-          this.$message.success("申请已发送！");
-        } else {
-          this.$message.error("发送失败！请稍后再试！");
-        }
-      });
-    }
-  }   // end of methods
-}
+    ],  // end of props
+    components: {
+      basic_info: basic_info,
+      edit_info: edit_info,
+      history: history,
+      message: message,
+    },  // end of components
+    methods: {
+      onApplyUpgrade() {
+        postBackend(API.POST_APPLY.path, {
+          type: "upgrade"
+        }, jsonObj => {
+          if (jsonObj.code === 201) {
+            this.$message.success("申请已发送！");
+          } else {
+            this.$message.error("发送失败！请稍后再试！");
+          }
+        });
+      }
+    }   // end of methods
+  }
 </script>
 
 <style scoped>

@@ -17,7 +17,7 @@
             <template slot-scope="scope">
                 {{scope.row.mission_name}}
                 <a-tag color="green">
-                    {{scope.row.question_form}}
+                    {{scope.row.type}}
                 </a-tag>
             </template>
         </el-table-column>
@@ -34,8 +34,8 @@
         >
         </el-table-column>
         <el-table-column
-            prop="mission_info"
-            label="任务简介">
+                prop="mission_info"
+                label="任务简介">
         </el-table-column>
         <el-table-column align="right">
             <template slot-scope="scope">
@@ -108,6 +108,12 @@
                     var i;
                     for(i = 0; i < data.total_num; i+=1){
                         this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
+                        if(this.msgList[i].question_form === "judgement"){
+                            this.msgList[i].type = "判断"
+                        }
+                        else if(this.msgList[i].question_form === "chosen"){
+                            this.msgList[i].type = "选择"
+                        }
                     }
                 }
             };

@@ -30,6 +30,16 @@ const router = new VueRouter({
     routes
 });
 
+const mockXmlCsrf = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 200,
+    responseText: '123456',
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
 describe('mission_field', function () {
 
     const wrapper = mount(mission_field, {
@@ -66,5 +76,12 @@ describe('mission_field', function () {
         wrapper.vm.$emit('submit-questions');
         await wrapper.vm.$nextTick();
         expect(wrapper.emitted('submit-questions')).toBeTruthy();
+    })
+    it('check postFile csrf', () => {
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        wrapper.vm.submit();
+        mockXmlCsrf.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
     })
 });

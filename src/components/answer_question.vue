@@ -3,17 +3,17 @@
     <!-- 显示问题的区域 -->
     <div v-if="nowQuestion != null">
       <JudgementGroup
-          v-if="nowQuestion.type === 'judgement'"
+          v-if="nowQuestion != null && nowQuestion.type === 'judgement'"
           :editable="false"
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
       <CheckboxGroup
-          v-else-if="nowQuestion.type === 'chosen'"
+          v-else-if="nowQuestion != null && nowQuestion.type === 'chosen'"
           :editable="false"
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
       <TextEdit
-          v-else-if="nowQuestion.type === 'text'"
+          v-else-if="nowQuestion != null && nowQuestion.type === 'text'"
           :editable="false"
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />

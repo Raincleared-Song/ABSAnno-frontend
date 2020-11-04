@@ -52,11 +52,28 @@ export default {
       image_url: ''
     };
   },
-  props: [
-      'question',
-      'editable',
-      'has_image'
-  ],  // end of props
+  props: {
+    question: {
+      type: Object,
+      default() {
+        return {
+          index: 0,
+          type: 'chosen',
+          description: "",
+          answer: "",
+          image: ""
+        }
+      }
+    },
+    editable: {
+      type: Boolean,
+      default: false
+    },
+    has_image: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
     onChangeImage(file) {
       console.log(this.question.index);

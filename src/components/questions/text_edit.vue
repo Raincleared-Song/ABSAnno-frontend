@@ -24,11 +24,28 @@
 
 <script>
   export default {
-    props: [
-        'question',
-        'editable',
-        'has_image'
-    ]   // end of props
+    props: {
+      question: {
+        type: Object,
+        default() {
+          return {
+            id: 0,
+            type: 'text',
+            description: "",
+            answer: "",
+            has_image: ""
+          }
+        }
+      },
+      editable: {
+        type: Boolean,
+        default: false
+      },
+      has_image: {
+        type: Boolean,
+        default: false
+      }
+    }
   }
 </script>
 

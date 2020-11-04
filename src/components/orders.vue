@@ -29,7 +29,7 @@
         <el-table-column
                 prop="mission_reward"
                 label="悬赏金额"
-                width="80"
+                width="100"
                 sortable
         >
         </el-table-column>

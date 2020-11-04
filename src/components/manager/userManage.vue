@@ -1,0 +1,81 @@
+<template>
+    <a-list item-layout="horizontal" :data-source="userList">
+        <a-list-item slot="renderItem" slot-scope="user" :v-if="user.accept === False || user.accept === 0">
+            <a slot="extra">
+                <div>
+                    <a-button type="link" @click="dealUser(user.id, 'Accept')">
+                        同意
+                    </a-button>
+                    <a-button type="link" @click="dealUser(user.id, 'Reject')">
+                        拒绝
+                    </a-button>
+                </div>
+            </a>
+            <a-list-item-meta>
+                <a slot="title" >{{ user.user }}</a>
+                <a slot="description">
+                    <div style="color: #5e5e5e">
+                        申请时间：{{user.pub_time}}
+                        <a-divider type="vertical" />
+                        信誉积分：{{user.weight}}
+                        <a-divider type="vertical" />
+                        金币值：{{user.score}}
+                        <a-divider type="vertical" />
+                        已完成任务：{{user.fin_num}}
+                    </div>
+                </a>
+            </a-list-item-meta>
+        </a-list-item>
+    </a-list>
+</template>
+
+<script>
+    import postBackend from "../../utils/postBackend"
+    import getBackend from "../../utils/getBackend"
+    export default {
+        name: "userManage",
+        data(){
+            return {
+                userList:[],
+                current: 1,
+                num: 0,
+            }
+        },
+        props:[
+            "username",
+            "power",
+        ],
+        methods:{
+            dealUser(id, method){
+                postBackend("backend/admin-apply",
+                    {apply_id: id.toString(),method:method},
+                    jsonObj => {
+                        if (jsonObj.code === 201) {
+                            console.log("Admin Success")
+                        } else {
+                            console.log("can't admin")
+                        }
+                    });
+            },
+
+            onChange(pageNumber) {
+                let onRespond = jsonObj => {
+                    if (jsonObj.code === 201) {
+                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                        console.log(data)
+                        this.num = data.apply_num;
+                        this.userList = data.apply_list;
+                    }
+                };
+                getBackend("backend/applyshow", {}, onRespond);
+            },
+        },
+        mounted:function () {
+            this.onChange(1);
+        },
+    }
+</script>
+
+<style scoped>
+
+</style>

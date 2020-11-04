@@ -13,7 +13,7 @@ import login from "@/components/login";
 import signin from "@/components/signin";
 import user_page from "@/components/user_page";
 import answer_question from "@/components/answer_question";
-import banuser from "@/components/banuser";
+import manager from "@/components/manager";
 import orders from "@/components/orders";
 import publicate from "@/components/publicate";
 
@@ -27,7 +27,7 @@ const routes=[
     { path:'/signin', component: signin },
     { path:'/user', component: user_page },
     { path:'/question/:id', component: answer_question },
-    { path:'/users', component: banuser },
+    { path:'/users', component: manager },
     { path:'/orders', component: orders },
     { path:"/pub", component: publicate},
     {

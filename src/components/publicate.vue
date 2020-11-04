@@ -1,31 +1,39 @@
 <template>
-    <a-collapse v-model="activeKey" :bordered="false" accordion>
-        <a-collapse-panel v-for="pub in pubList" v-bind:key="pub"
-                          style="background: #ffffff;" :disabled="pub.is_banned === true || pub.is_banned === 1">
+    <a-collapse v-model="activeKey" :bordered="false" accordion >
+        <a-collapse-panel v-for="pub in pubList" v-bind:key="pub" style="background: #ffffff;"
+                          :disabled="pub.is_banned === 1 || pub.to_ans === 1">
             <template slot="header">
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
                         <a slot="actions" @click="checkMsg(msg.id)" style="font-size: 15pt; color: #d95656">
-                              <a-icon type="pause" />
+                            <a-icon type="pause" />
                         </a>
                         <a slot="actions"
-                                :disabled="msg.now === 0"
-                                :href="`/backend/result?mission_id=${msg.id}`"
-                                style="font-size: 15pt">
+                           :disabled="msg.now === 0"
+                           :href="`/backend/result?mission_id=${msg.id}`"
+                           style="font-size: 15pt">
                             <a-icon type="download" />
                         </a>
                         <a-list-item-meta>
-                            <a slot="title" style="font-size: 15pt" >{{ msg.name }}</a>
+                            <a slot="title" style="font-size: 15pt" >
+                                {{ msg.name }}
+                                <a-tag v-if="msg.is_banned === 1" color="red">
+                                    被封禁
+                                </a-tag>
+                                <a-tag v-if="msg.to_ans === 1" color="orange">
+                                    未被作答
+                                </a-tag>
+                            </a>
                             <a slot="description">
                                 <div style="color: #5e5e5e" >
                                     <a-tag color="green">
-                                        {{msg.question_form}}
+                                        {{msg.type}}
                                     </a-tag>
                                     题目数量：{{msg.question_num}}
                                     <a-divider type="vertical" />
                                     <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />{{msg.deadline}}
                                     <a-divider type="vertical" />
-                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.now}}/{{msg.total}}
+                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.num}}/{{msg.total}}
                                     <a-divider type="vertical" />
                                     {{msg.info}}
                                 </div>
@@ -67,6 +75,7 @@
 <script>
     import getBackend from "../utils/getBackend"
     import API from "../utils/API"
+    import convertTime from "../utils/timestamp";
 
     export default {
         name: "publicate",
@@ -104,6 +113,9 @@
                     "mission_id":id.toString()
                 }, onRespond);
             },
+            judgeDisable(msg){
+
+            },
         },
 
         watch: {
@@ -116,7 +128,7 @@
                     }
                 };
                 getBackend("backend/mymission", {
-                    "mission_id":key.id.toString()
+                    mission_id:key.id.toString()
                 }, onRespond);
             },
         },
@@ -126,6 +138,17 @@
                 if (jsonObj.code === 201) {
                     let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                     this.pubList = data.mission_list;
+                    var i;
+                    console.log(this.pubList)
+                    for(i = 0; i < 12; i+=1){
+                        this.pubList[i].deadline = convertTime(this.pubList[i].deadline)
+                        if(this.pubList[i].question_form === "judgement"){
+                            this.pubList[i].type = "判断"
+                        }
+                        else if(this.pubList[i].question_form === "chosen"){
+                            this.pubList[i].type = "选择"
+                        }
+                    }
                 }
             };
             getBackend("backend/user", {

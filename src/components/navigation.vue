@@ -13,17 +13,14 @@
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>
             </a-menu-item>
-            <a-menu-item v-if="power===1 || power===2" key="/mission">
-                <router-link to="/mission/create">发布题目</router-link>
-            </a-menu-item>
             <a-menu-item v-if="power!==-1" key="/orders">
                 <router-link to="/orders">我的接单</router-link>
             </a-menu-item>
+            <a-menu-item v-if="power===1 || power===2" key="/mission">
+                <router-link to="/mission/create">发布题目</router-link>
+            </a-menu-item>
             <a-menu-item v-if="power===1 || power===2" key="/pub">
                 <router-link to="/pub">我的发布</router-link>
-            </a-menu-item>
-            <a-menu-item v-if="power!==-1" key="/user">
-                <router-link to="/user">个人中心</router-link>
             </a-menu-item>
             <a-menu-item v-if="power===2" key="/users">
                 <router-link to="/users">管理用户</router-link>
@@ -43,15 +40,14 @@
                     <router-link to="/ground">登出</router-link>
                 </a-button>
             </a-menu-item>
-            <a-menu-item v-if="power!==-1" key="0" style="float: right;">
+            <a-menu-item v-if="power!==-1" style="float: right;" key="/user">
                 <div>
                     <span>
-                        <a-popover :title="'欢迎，'+username" placement="bottom" >
+                        <a-popover placement="bottom" >
                             <template slot="content">
-                                用户名：{{this.username}}<br/>
-                                您的权限：{{this.power}}
+                                欢迎，{{this.username}}<br/>
                             </template>
-                            <a-avatar shape="square" icon="user"/>
+                            <router-link to="/user"><a-avatar shape="square" icon="user"/></router-link>
                         </a-popover>
                     </span>
                 </div>
@@ -94,10 +90,6 @@
                 console.log(this.current);
             }
         },
-        mounted:function(){
-            this.current = [this.$route.path];
-            console.log(this.current);
-        }
     }
 </script>
 

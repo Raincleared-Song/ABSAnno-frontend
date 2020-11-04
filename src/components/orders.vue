@@ -17,7 +17,7 @@
             <template slot-scope="scope">
                 {{scope.row.mission_name}}
                 <a-tag color="green">
-                    {{scope.row.question_form}}
+                    {{scope.row.type}}
                 </a-tag>
             </template>
         </el-table-column>
@@ -29,16 +29,18 @@
         <el-table-column
                 prop="mission_reward"
                 label="悬赏金额"
-                width="80">
+                width="100"
+                sortable
+        >
         </el-table-column>
         <el-table-column
-            prop="mission_info"
-            label="任务简介">
+                prop="mission_info"
+                label="任务简介">
         </el-table-column>
         <el-table-column align="right">
             <template slot-scope="scope">
                 <a-space>
-                    <router-link v-if="power!==-1" :to="{path:'/question/'+ scope.row.id}">
+                    <router-link v-if="power!==-1" :to="{path:'/question/'+ scope.row.mission_id}">
                         <el-button size="mini">做题</el-button>
                     </router-link>
                     <el-button
@@ -54,6 +56,7 @@
 <script>
     import postBackend from "../utils/postBackend"
     import getBackend from "../utils/getBackend"
+    import convertTime from "../utils/timestamp";
 
     export default {
         name: "orders",
@@ -78,38 +81,23 @@
         methods: {
             handleDelete(index, row) {
                 console.log(row)
-                postBackend("backend/receive", {mission_id: row.id.toString()},
+                postBackend("backend/receive", {mission_id: row.mission_id.toString()},
                     jsonObj => {
                         if (jsonObj.code === 201) {
-                            console.log("book success")
+                            console.log("book deleted")
                         } else {
-                            console.log("can't book/unbook")
+                            console.log("can't undo book")
                         }
                     });
             },
 
             warnDDL({row, rowIndex}) {
-                if (row.deadline === this.getNowFormatDate()) {
+                var date = new Date().getTime()
+                if (row.deadline === convertTime(date)) {
                     return 'warning-row';
                 }
                 return '';
             },
-
-            getNowFormatDate() {
-                var date = new Date();
-                var seperator1 = "-";
-                var year = date.getFullYear();
-                var month = date.getMonth() + 1;
-                var strDate = date.getDate();
-                if (month >= 1 && month <= 9) {
-                    month = "0" + month;
-                }
-                if (strDate >= 0 && strDate <= 9) {
-                    strDate = "0" + strDate;
-                }
-                var currentdate = year + seperator1 + month + seperator1 + strDate;
-                return currentdate;
-            }
         },
 
         mounted() {
@@ -117,6 +105,16 @@
                 if (jsonObj.code === 201) {
                     let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                     this.msgList = data.rep_list;
+                    var i;
+                    for(i = 0; i < data.total_num; i+=1){
+                        this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
+                        if(this.msgList[i].question_form === "judgement"){
+                            this.msgList[i].type = "判断"
+                        }
+                        else if(this.msgList[i].question_form === "chosen"){
+                            this.msgList[i].type = "选择"
+                        }
+                    }
                 }
             };
             getBackend("backend/repshow", {}, onRespond);

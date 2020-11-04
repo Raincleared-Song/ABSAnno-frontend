@@ -62,7 +62,6 @@ import API from "@/utils/API";
 export default {
   name: "answer_question",
   components: {
-    // JudgementGroup: JudgementGroup,
     choice_group: choice_group,
     text_edit: text_edit
   },  // end of components
@@ -83,21 +82,18 @@ export default {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        if (question.type === 'chosen') {
-          return question.answer.join('||');
-        } else {
-          return question.answer;
-        }
+        return question.answer;
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION.path, {
         mission_id: this.missionId.toString(),
-        ans: answers
+        ans: answers.join('||')
       }, jsonObj => {
         if (jsonObj.code === 201) {
           this.$message.success("提交成功，返回广场！");
           this.$router.push("/ground");
         } else {
+          console.log(jsonObj.data);
           this.$message.error("Try later!");
         }
       });
@@ -188,7 +184,6 @@ function getNewQuestion(dataObj) {
   // 对于选择题
   if (newQuestion.type === 'chosen') {
     newQuestion.options = dataObj.choices.split('||');
-    newQuestion.answer = [];
   }
   return newQuestion;
 }

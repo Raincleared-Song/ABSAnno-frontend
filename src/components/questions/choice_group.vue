@@ -54,7 +54,7 @@
           <a-button
               v-if="editable"
               size="small" ghost
-              @click="$emit('removeOption', question.id, index)">
+              @click="$emit('removeOption', question.index, index)">
             <a-icon type="delete" />
           </a-button>
         </div>
@@ -68,7 +68,7 @@
       <a-input
           v-model="question.new_option"
           placeholder="Add new option, press enter to commit."
-          @keydown.enter="$emit('addOption', question.id, question.new_option)" />
+          @keydown.enter="$emit('addOption', question.index, question.new_option)" />
     </div>
   </div>
 </template>

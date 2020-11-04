@@ -3,7 +3,7 @@
     <a-descriptions
         title="用户信息"
         :column="1">
-      <a-descriptions-item label="用户积分">
+      <a-descriptions-item label="金币值">
         {{ this.userCoin }}
       </a-descriptions-item>
       <a-descriptions-item label="用户信誉">

@@ -31,6 +31,7 @@ export default function postBackend(url, requestBody, onRespond) {
                 xmlHttpPost.open('POST', url, true);
                 xmlHttpPost.setRequestHeader('content-type', 'application/json');
                 xmlHttpPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
+                console.log(requestBody);
                 xmlHttpPost.send(JSON.stringify(requestBody));
             } else {
                 console.log(xmlHttpCsrf.responseText);

@@ -237,8 +237,9 @@
                                 'tags': ""
                             });
                         }
+                        let context = this;
                         this.msgList.forEach(function(item, index, arr) {
-                            arr[index].tags = this.parseTag(item.tags)
+                            arr[index].tags = context.parseTag(item.tags)
                         });
                     } else {
                         console.log(jsonObj.data);

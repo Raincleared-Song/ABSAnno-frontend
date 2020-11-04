@@ -30,7 +30,7 @@ describe('navigation', function () {
             propsData: { username: 'test', power: 0 }
         });
         const menuItems = wrapper.findAllComponents(MenuItem);
-        expect(menuItems).toHaveLength(6);
+        expect(menuItems).toHaveLength(5);
     });
 
     it('check tabs for publishers', function () {
@@ -40,7 +40,7 @@ describe('navigation', function () {
             propsData: { username: 'test', power: 1 }
         });
         const menuItems = wrapper.findAllComponents(MenuItem);
-        expect(menuItems).toHaveLength(8);
+        expect(menuItems).toHaveLength(7);
     });
 
     it('check tabs for attendants', function () {
@@ -50,7 +50,7 @@ describe('navigation', function () {
             propsData: { username: 'test', power: 2 }
         });
         const menuItems = wrapper.findAllComponents(MenuItem);
-        expect(menuItems).toHaveLength(9);
+        expect(menuItems).toHaveLength(8);
     });
 
     it('check routers', function () {
@@ -63,21 +63,11 @@ describe('navigation', function () {
         const routerLinks = wrapper.findAllComponents(RouterLinkStub);
         expect(routerLinks.at(0).props('to')).toBe('/ground');
         expect(routerLinks.at(1).props('to')).toBe('/rules');
-        expect(routerLinks.at(2).props('to')).toBe('/mission/create');
-        expect(routerLinks.at(3).props('to')).toBe('/orders');
+        expect(routerLinks.at(2).props('to')).toBe('/orders');
+        expect(routerLinks.at(3).props('to')).toBe('/mission/create');
         expect(routerLinks.at(4).props('to')).toBe('/pub');
-        expect(routerLinks.at(5).props('to')).toBe('/user');
-        expect(routerLinks.at(6).props('to')).toBe('/users');
-    });
-
-    it('route -> current', function () {
-        const wrapper = mount(navigation, {
-            localVue,
-            router,
-            propsData: { username: 'test', power: 2 },
-            stubs: { RouterLink: RouterLinkStub }
-            // mocks: { $route }
-        });
-        expect(wrapper.vm.current[0]).toBe(wrapper.vm.$route.path);
+        expect(routerLinks.at(5).props('to')).toBe('/users');
+        expect(routerLinks.at(6).props('to')).toBe('/ground');
+        expect(routerLinks.at(7).props('to')).toBe('/user');
     });
 });

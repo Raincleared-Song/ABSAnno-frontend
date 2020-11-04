@@ -1,11 +1,10 @@
 // 通信函数，向后端发送GET请求
-import triggerEvent from "ant-design-vue/lib/_util/triggerEvent";
 
 /* 这是一个高阶函数，负责向后端发送请求，包装在communication.js里也许方便一些？？？
-*  param api: 定义在API.js里的东西
+*  param url: url
 *  param requestParams: GET的请求参数
 *  param onRespond: 一个函数，参数是返回的json object */
-export default function getBackend(api, requestParams, onRespond) {
+export default function getBackend(url, requestParams, onRespond) {
     let xmlHttp = null;
     if (window.XMLHttpRequest)
         xmlHttp = new XMLHttpRequest();
@@ -17,10 +16,11 @@ export default function getBackend(api, requestParams, onRespond) {
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState === 4) {
                 const jsonObj = JSON.parse(xmlHttp.responseText);
+                console.log(jsonObj);
                 onRespond(jsonObj);
             }
         }
-        let trueUrl = api.path;
+        let trueUrl = url;
         console.log(requestParams);
         if (requestParams !== null && typeof requestParams === "object") {
             trueUrl += "?";
@@ -36,3 +36,4 @@ export default function getBackend(api, requestParams, onRespond) {
         alert("Your browser does not support XmlHTTP...");
     }
 }
+

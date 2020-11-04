@@ -5,20 +5,17 @@ Vue.use(VueRouter)
 
 import ground from "@/components/ground";
 import rules from "@/components/rules";
-
 import mission_field from "@/components/mission_field";
 import create_mission from "@/components/create_mission";
 import edit_question from "@/components/edit_question";
 import upload_mission from "@/components/upload_mission";
-
-import login from "@/components/login"
-import signin from "@/components/signin"
-
+import login from "@/components/login";
+import signin from "@/components/signin";
 import user_page from "@/components/user_page";
-import admin_page from "@/components/admin_page";
-
 import answer_question from "@/components/answer_question";
-import banuser from "@/components/banuser"
+import manager from "@/components/manager";
+import orders from "@/components/orders";
+import publicate from "@/components/publicate";
 
 //定义routes路由的集合，数组类型
 
@@ -29,9 +26,10 @@ const routes=[
     { path:'/login', component:login },
     { path:'/signin', component: signin },
     { path:'/user', component: user_page },
-    { path:'/admin', component: admin_page },
     { path:'/question/:id', component: answer_question },
-    { path:'/users', component: banuser },
+    { path:'/users', component: manager },
+    { path:'/orders', component: orders },
+    { path:"/pub", component: publicate},
     {
         path: '/mission',
         component: mission_field,

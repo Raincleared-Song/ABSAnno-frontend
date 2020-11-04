@@ -1,32 +1,19 @@
 <template>
-  <body id="root">
+  <div id="root">
     <!-- 显示问题的区域 -->
     <div v-if="nowQuestion != null">
-      <JudgementGroup
-          v-if="nowQuestion.type === 'judgement'"
+      <choice_group
+          v-if="nowQuestion.type === 'chosen'"
           :editable="false"
-          :question="nowQuestion" />
-      <CheckboxGroup
-          v-else-if="nowQuestion.type === 'choice'"
-          :editable="false"
-          :question="nowQuestion" />
-      <TextEdit
+          :question="nowQuestion"
+          :has_image="nowQuestion.has_image" />
+      <text_edit
           v-else-if="nowQuestion.type === 'text'"
           :editable="false"
-          :question="nowQuestion" />
+          :question="nowQuestion"
+          :has_image="nowQuestion.has_image" />
     </div>
     <a-empty v-else :description="false" />
-
-    <!-- 提交成功的消息框 -->
-    <a-modal
-        title="Success!"
-        :visible="modal.visible"
-        @ok="returnSquare"
-        @cancel="onCancelModal"
-        closable="false">
-      <div style="margin: 20px">答案提交成功！</div>
-      <div style="margin: 20px">是否返回广场？</div>
-    </a-modal>
 
     <!-- 答题进度条 -->
     <a-steps :current="nowQuestionIndex" style="margin: 40px">
@@ -42,7 +29,7 @@
           <a-icon type="arrow-left" />上一题
         </a-button>
         <a-button
-            :disabled="this.questions.length < totalNum || modal.submitted"
+            :disabled="this.questions.length < totalNum"
             @click="submit" type="primary">
           提交任务<a-icon type="check" />
         </a-button>
@@ -55,24 +42,38 @@
             @click="returnSquare">
           返回广场<a-icon type="rollback" />
         </a-button>
+<!--        <div v-if="showTime">-->
+<!--          <strong style="color: #2f54eb">{{ countTimer }}</strong>-->
+<!--          <a-button-->
+<!--              @click="showTime = false"-->
+<!--              type="link">-->
+<!--            隐藏时间-->
+<!--          </a-button>-->
+<!--        </div>-->
+<!--        <div v-else>-->
+<!--          <a-button-->
+<!--              @click="showTime = true"-->
+<!--              type="link">-->
+<!--            显示时间-->
+<!--          </a-button>-->
+<!--        </div>-->
       </a-space>
     </div>
-  </body>
+  </div>
 </template>
 
 <script>
-import JudgementGroup from "@/components/questions/judgement_group";
-import TextEdit from "@/components/questions/text_edit";
-import CheckboxGroup from "@/components/questions/checkbox_group";
+import text_edit from "@/components/questions/text_edit";
+import choice_group from "@/components/questions/choice_group";
 import getBackend from "@/utils/getBackend";
 import postBackend from "@/utils/postBackend";
 import API from "@/utils/API";
 
 export default {
+  name: "answer_question",
   components: {
-    JudgementGroup: JudgementGroup,
-    CheckboxGroup: CheckboxGroup,
-    TextEdit: TextEdit
+    choice_group: choice_group,
+    text_edit: text_edit
   },  // end of components
   data() {
     return {
@@ -81,36 +82,33 @@ export default {
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
       nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
-      modal: {
-        visible: false,
-        submitted: false
-      }
+      startTimer: 0
+      // countTimer: moment(new Date()).diff(this.startTimer).format('hh:mm'),
+      // showTime: true
     };
   },  // end of data
   props:[
-    "username",
-    "id",
+      'username',
+      'power'
   ],
   methods: {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        if (question.type === 'choice') {
-          return question.answer.join('|');
-        } else {
-          return question.answer;
-        }
+        return question.answer;
       });
       console.log(answers);
-      postBackend(API.POST_SINGLE_QUESTION, {
-        // user_id: this.id.toString(),
+      postBackend(API.POST_SINGLE_QUESTION.path, {
         mission_id: this.missionId.toString(),
-        ans: answers
+        ans: answers.join('||'),
+        time: (new Date().getTime() - this.startTimer).toLocaleString()
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          console.log(jsonObj);
-          this.modal.visible = true;
+          this.$message.success("提交成功，返回广场！", 1).then(() => {
+            this.$router.push("/ground");
+          });
         } else {
+          console.log(jsonObj.data);
           this.$message.error("Try later!");
         }
       });
@@ -120,22 +118,15 @@ export default {
       let nextIndex = this.nowQuestionIndex + 1;
       if (nextIndex === this.questions.length) {
         // 下一题未加载，从后端获取
-        getBackend(API.GET_SINGLE_QUESTION, {
+        getBackend(API.GET_SINGLE_QUESTION.path, {
           id: this.missionId,
           num: nextIndex,
           step: 0
         }, jsonObj => {
           if (jsonObj.code === 201) {
+            console.log(jsonObj);
             let dataObj = getDataObj(jsonObj);
-            let newQuestion = {
-              index: dataObj.ret,
-              type: dataObj.type,
-              description: dataObj.word,
-              answer: ""
-            }
-            // 对于选择题
-            if (newQuestion.type === 'choice')
-              newQuestion.options = dataObj.options.split('|');
+            let newQuestion = getNewQuestion(dataObj);
             this.questions.push(newQuestion);
             this.nowQuestionIndex = this.questions.length - 1;
           } else {
@@ -154,18 +145,14 @@ export default {
     // 返回广场
     returnSquare() {
       this.$router.push("/ground");
-    },
-    // 消息框点击取消之后
-    onCancelModal() {
-      this.modal.visible = false;
-      this.modal.submitted = true;
     }
   },  // end of methods
-  created() {
-    let name = this.$route.path;
-    this.missionId = Number(name.slice(10,));
+  created: function() {
+    console.log(this.$route.params.id);
+    this.startTimer = new Date().getTime();
+    this.missionId = Number(this.$route.params.id);
     // 从后台申请数据加载
-    getBackend(API.GET_SINGLE_QUESTION, {
+    getBackend(API.GET_SINGLE_QUESTION.path, {
       id: this.missionId,
       num: 0,
       step: 0
@@ -173,15 +160,8 @@ export default {
       if (jsonObj.code === 201) {
         let dataObj = getDataObj(jsonObj);
         this.totalNum = dataObj.total;
-        let newQuestion = {
-          index: dataObj.ret,
-          type: dataObj.type,
-          description: dataObj.word,
-          answer: ""
-        };
-        // 对于选择题
-        if (newQuestion.type === 'choice')
-          newQuestion.options = dataObj.options.split('|');
+        let newQuestion = getNewQuestion(dataObj);
+        console.log(newQuestion);
         this.questions.push(newQuestion);
         this.nowQuestionIndex = this.questions.length - 1;
       } else {
@@ -200,6 +180,31 @@ function getDataObj(jsonObj) {
   let dataStr = jsonObj.data;
   dataStr = dataStr.replace(/'/g, '"');
   return JSON.parse(dataStr);
+}
+
+function getNewQuestion(dataObj) {
+  let newQuestion = {
+    index: dataObj.ret,
+    type: dataObj.type || 'chosen',
+    description: dataObj.word,
+    answer: "",
+    has_image: false,
+    has_pre_ans: false
+  };
+
+  // 对于含有图片的题
+  const type_list = newQuestion.type.split('-');
+  if (type_list.length === 2 && type_list[1] === 'image') {
+    newQuestion.type = type_list[0];
+    newQuestion.has_image = true;
+    newQuestion.image = { url: dataObj.image_url };
+    console.log(dataObj.image_url);
+  }
+  // 对于选择题
+  if (newQuestion.type === 'chosen') {
+    newQuestion.options = dataObj.choices.split('||');
+  }
+  return newQuestion;
 }
 </script>
 

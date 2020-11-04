@@ -13,8 +13,14 @@
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>
             </a-menu-item>
-            <a-menu-item v-if="power!==-1" key="/mission">
+            <a-menu-item v-if="power===1 || power===2" key="/mission">
                 <router-link to="/mission/create">发布题目</router-link>
+            </a-menu-item>
+            <a-menu-item v-if="power!==-1" key="/orders">
+                <router-link to="/orders">我的接单</router-link>
+            </a-menu-item>
+            <a-menu-item v-if="power===1 || power===2" key="/pub">
+                <router-link to="/pub">我的发布</router-link>
             </a-menu-item>
             <a-menu-item v-if="power!==-1" key="/user">
                 <router-link to="/user">个人中心</router-link>
@@ -23,9 +29,9 @@
                 <router-link to="/users">管理用户</router-link>
             </a-menu-item>
             <a-menu-item v-if="power===-1" key="/login" style="float: right;">
-                    <a-button ghost>
-                        <router-link to="/login">登录</router-link>
-                    </a-button>
+                <a-button ghost>
+                    <router-link to="/login">登录</router-link>
+                </a-button>
             </a-menu-item>
             <a-menu-item v-if="power===-1" key="/signin" style="float: right;">
                 <a-button ghost>
@@ -55,6 +61,9 @@
 </template>
 
 <script>
+    import postBackend from "../utils/postBackend"
+    import getBackend from "../utils/getBackend"
+
     export default {
         name: "navigation",
         components:{
@@ -70,33 +79,13 @@
         },
         methods: {
             onClick() {
-                let context = this;
-                let xmlRequestGet = new XMLHttpRequest();
-                xmlRequestGet.open("get", "backend/csrf", true);
-                let xmlRequestPost = new XMLHttpRequest();
-
-                xmlRequestPost.onreadystatechange = function() {
-                    if (xmlRequestPost.readyState === 4 && xmlRequestPost.status === 201){
-                        console.log("successfully logged out")
-                        context.$emit('logout',true);
-                    }
-                    else if(xmlRequestPost.readyState === 4){
+                postBackend("backend/logout", {}, jsonObj => {
+                    if (jsonObj.code === 201) {
+                        this.$emit('logout',true);
+                    } else {
                         console.log("can't logout")
                     }
-                }
-
-                // xmlRequestPost.setRequestHeader('content-type', 'application/json');
-                xmlRequestGet.onreadystatechange = function () {
-                    if (xmlRequestGet.readyState === 4 && xmlRequestGet.status === 200) {  // 注意返回码是 200
-                        let csrfToken = this.responseText;  // 获取 CSRF token
-                        xmlRequestPost.open("post","backend/logout", true);
-                        xmlRequestPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
-                        xmlRequestPost.setRequestHeader('content-type', 'application/json');
-                        xmlRequestPost.send(JSON.stringify({}));
-                    }
-                }
-
-                xmlRequestGet.send();
+                });
             },
         },
         watch: {

@@ -4,7 +4,7 @@
       <a-layout style="padding: 24px 0; background: #fff">
 
         <!-- 左侧边栏 -->
-        <a-layout-sider width="300" style="background: #fff">
+        <a-layout-sider width="250" style="background: #fff">
           <div style="margin: 20px">
             任务名称：{{ mission_info.name }}
           </div>
@@ -23,17 +23,23 @@
           <div v-if="nowQuestion != null">
             <JudgementGroup
                 v-if="mission_info.type === 'judgement'"
+                @updateImage="onUpdateImage"
                 :editable="true"
+                :has_image="mission_info.has_image"
                 :question="nowQuestion" />
             <CheckboxGroup
                 v-else-if="mission_info.type === 'choice'"
                 @addOption="addOption"
                 @removeOption="removeOption"
+                @updateImage="onUpdateImage"
                 :editable="true"
+                :has_image="mission_info.has_image"
                 :question="nowQuestion" />
             <TextEdit
                 v-else-if="mission_info.type === 'text'"
+                @updateImage="onUpdateImage"
                 :editable="true"
+                :has_image="mission_info.has_image"
                 :question="nowQuestion" />
             <p v-else>{{ mission_info.type }}</p>
           </div>
@@ -47,7 +53,7 @@
                 :page-size="1" />
           </div>
           <a-button
-              @click="$emit('on-submit-questions')"
+              @click="$emit('submit-questions')"
               v-show="questions.length > 0 || nowQuestion != null"
               type="primary"
           >submit</a-button>
@@ -78,26 +84,10 @@
         nowQuestion: null
       }
     },  // end of data
-    props: {
-      mission_info: {
-        type: Object,
-        default() {
-          return {
-            name: '',
-            type: '',
-            min: 10,
-            ddl: null,
-            tags: []
-          };
-        }
-      },
-      questions: {
-        type: Array,
-        default() {
-          return [];
-        }
-      }
-    },
+    props: [
+        'mission_info',
+        'questions'
+    ],  // end of props
     methods: {
       // 增加题目
       addQuestion() {
@@ -111,7 +101,7 @@
       },
       addJudgementQuestion() {
         this.questions.push({
-          id: nowId++,
+          index: nowId++,
           type: 'judgement',
           description: ""
         });
@@ -119,7 +109,7 @@
       },
       addMultipleChoiceQuestion() {
         this.questions.push({
-          id: nowId++,
+          index: nowId++,
           type: 'choice',
           description: "",
           options: [],
@@ -129,7 +119,7 @@
       },
       addTextEditQuestion() {
         this.questions.push({
-          id: nowId++,
+          index: nowId++,
           type: 'text',
           description: ""
         });
@@ -137,28 +127,38 @@
       },
       // 返回题型的中文名称
       missionType() {
-        if (this.mission_info.type === 'judgement')
+        if (this.mission_info.type === 'judgement') {
           return '判断题';
-        else if (this.mission_info.type === 'choice')
+        } else if (this.mission_info.type === 'choice') {
           return '选择题';
-        else if (this.mission_info.type === 'text')
+        } else if (this.mission_info.type === 'text') {
           return '文字描述题';
+        } else if (this.mission_info.type === 'image') {
+          return '图片题';
+        }
       },
-      // 这两个方法处理子组件触发的事件
+      // 这3个方法处理子组件触发的事件
       addOption(questionId, newOption) {
         console.log(questionId);
         let targetIdx = this.questions.findIndex(question => {
-          return question.id === questionId;
+          return question.index === questionId;
         });
         this.questions[targetIdx].options.push(newOption);
         this.questions[targetIdx].new_option = "";
       },
       removeOption(questionId, optionIdx) {
         let targetIdx = this.questions.findIndex(question => {
-          return question.id === questionId;
+          return question.index === questionId;
         });
         console.log(targetIdx, optionIdx);
         this.questions[targetIdx].options.splice(optionIdx, 1);
+      },
+      onUpdateImage(questionId, file) {
+        console.log(file);
+        let targetIdx = this.questions.findIndex(question => {
+          return question.index === questionId;
+        });
+        this.questions[targetIdx].image = file;
       }
     },  // end of methods
     watch: {

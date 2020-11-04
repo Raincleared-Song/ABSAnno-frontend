@@ -7,7 +7,7 @@
                         解禁
                     </a-button>
                     <a-button type="link" disabled>
-                        禁言
+                        封禁
                     </a-button>
                 </div>
                 <div v-if="user.is_banned === 0">
@@ -15,7 +15,7 @@
                         解禁
                     </a-button>
                     <a-button type="link" @click="dealUser(user.id, 'user_ban')">
-                        禁言
+                        封禁
                     </a-button>
                 </div>
             </a>
@@ -28,7 +28,7 @@
                         VIP用户
                     </a-tag>
                     <a-tag v-if="user.is_banned === 1" color="#f50">
-                        banned
+                        封禁
                     </a-tag>
                 </a>
                 <a slot="description">
@@ -50,7 +50,9 @@
 </template>
 
 <script>
-    import dealAdmin from "@/utils/admin"
+    import dealAdmin from "../utils/admin"
+    import postBackend from "../utils/postBackend"
+    import getBackend from "../utils/getBackend"
     export default {
         name: "banuser",
         data(){
@@ -80,28 +82,22 @@
                 });
                 dealAdmin(id, method);
             },
+
             onChange(pageNumber) {
-                this.current = pageNumber;
-                console.log('Users Page: ', pageNumber);
-                const xhr = new XMLHttpRequest()
-                let context = this
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4 && xhr.status === 201){
-                        let res = JSON.parse(xhr.responseText);
-                        let data = JSON.parse(res.data.replace(/'/g,'"'));
+                let onRespond = jsonObj => {
+                    if (jsonObj.code === 201) {
+                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                         console.log(data)
-                        context.totalUserNum = data.total;
-                        // context.thisPageSize = data.num - context.getUserNum;
-                        context.userList = data.user_list;
-                        context.getUserNum = data.num;
+                        this.totalUserNum = data.total;
+                        this.userList = data.user_list;
+                        this.getUserNum = data.num;
                     }
                 };
-                console.log("backend/alluser?now_num="+this.getUserNum.toString());
-                xhr.open("get","backend/alluser?now_num="+this.getUserNum.toString());
-                xhr.send();
+                getBackend("backend/alluser", {"now_num":this.getUserNum.toString()}, onRespond);
+
             },
         },
-        mounted:function () {   //自动触发写入的函数
+        mounted:function () {
             this.onChange(1);
         },
     }

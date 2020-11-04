@@ -12,7 +12,7 @@ export default function getBackend(url, requestParams, onRespond) {
         // eslint-disable-next-line no-undef
         xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
 
-    if (xmlHttp !== null) {
+    if (xmlHttp != null) {
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState === 4) {
                 const jsonObj = JSON.parse(xmlHttp.responseText);

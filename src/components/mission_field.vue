@@ -88,7 +88,7 @@ export default {
         } else if (this.mission.type === 'text') {
           ret = { contains: question.description };
         }
-        if (this.mission.has_image)
+        if (ret !== undefined && this.mission.has_image)
           ret.image_name = question.image.name;
         return ret;
       });

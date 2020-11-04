@@ -53,8 +53,9 @@ export default {
       postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
         if (jsonObj.code === 201) {
           console.log(jsonObj);
-          this.$message.success("Upload Success!");
-          this.$router.push("/ground");
+          this.$message.success("Upload Success!", 1).then(() => {
+            this.$router.push("/ground");
+          });
         } else {
           console.log(jsonObj);
           this.$message.error(jsonObj.data);

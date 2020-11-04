@@ -2,11 +2,6 @@
   <body id="root">
     <!-- 显示问题的区域 -->
     <div v-if="nowQuestion != null">
-<!--      <JudgementGroup-->
-<!--          v-if="nowQuestion.type === 'judgement'"-->
-<!--          :editable="false"-->
-<!--          :question="nowQuestion"-->
-<!--          :has_image="nowQuestion.has_image" />-->
       <choice_group
           v-if="nowQuestion.type === 'chosen'"
           :editable="false"
@@ -90,8 +85,9 @@ export default {
         ans: answers.join('||')
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          this.$message.success("提交成功，返回广场！");
-          this.$router.push("/ground");
+          this.$message.success("提交成功，返回广场！", 1).then(() => {
+            this.$router.push("/ground");
+          });
         } else {
           console.log(jsonObj.data);
           this.$message.error("Try later!");

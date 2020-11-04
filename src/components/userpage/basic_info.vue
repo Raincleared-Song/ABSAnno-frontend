@@ -24,9 +24,9 @@ export default {
   name: "basic_info",
   data() {
     return {
-      userCoin: undefined,
-      userWeight: undefined,
-      userAnsNum: undefined
+      userCoin: '',
+      userWeight: '',
+      userAnsNum: ''
     };
   },  // end of data
   mounted: function() {

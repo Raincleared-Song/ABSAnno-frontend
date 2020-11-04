@@ -26,7 +26,7 @@ const mockXmlBasic = {
 describe('basic_info', () => {
     it('Check data', () => {
         const wrapper = mount(basic_info, {localVue, router});
-        expect(wrapper.vm.userScore).toBe('')
+        expect(wrapper.vm.userCoin).toBe('')
         expect(wrapper.vm.userWeight).toBe('')
         expect(wrapper.vm.userAnsNum).toBe('')
     })

@@ -2,11 +2,11 @@ import check_group from "@/components/questions/checkbox_group";
 import judgement_group from "@/components/questions/judgement_group"
 import text_edit from "@/components/questions/text_edit"
 import answer_question from "@/components/answer_question";
+import choice_group from "@/components/questions/choice_group";
 import {mount, createLocalVue, shallowMount} from '@vue/test-utils'
 import VueRouter from "vue-router";
 import ElementUI from "element-ui";
 import Antd from "ant-design-vue";
-import CheckboxGroup from "@/components/questions/checkbox_group";
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)
@@ -94,7 +94,7 @@ describe('answer_question', () => {
                 }
             }
         });
-        const chosenGroup = wrapper.findComponent(CheckboxGroup);
+        const chosenGroup = wrapper.findComponent(choice_group);
         expect(chosenGroup.exists()).toBeTruthy();
         expect(chosenGroup.props('editable')).toBe(false);
         expect(chosenGroup.props('question')).toBe(wrapper.vm.nowQuestion);

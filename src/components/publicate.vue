@@ -6,12 +6,12 @@
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
                         <a slot="actions" @click="checkMsg(msg.id)" style="font-size: 15pt; color: #d95656">
-                              <a-icon type="pause" />
+                            <a-icon type="pause" />
                         </a>
                         <a slot="actions"
-                                :disabled="msg.now === 0"
-                                :href="`/backend/result?mission_id=${msg.id}`"
-                                style="font-size: 15pt">
+                           :disabled="msg.now === 0"
+                           :href="`/backend/result?mission_id=${msg.id}`"
+                           style="font-size: 15pt">
                             <a-icon type="download" />
                         </a>
                         <a-list-item-meta>
@@ -27,7 +27,7 @@
                             <a slot="description">
                                 <div style="color: #5e5e5e" >
                                     <a-tag color="green">
-                                        {{msg.question_form}}
+                                        {{msg.type}}
                                     </a-tag>
                                     题目数量：{{msg.question_num}}
                                     <a-divider type="vertical" />
@@ -142,6 +142,12 @@
                     console.log(this.pubList)
                     for(i = 0; i < 12; i+=1){
                         this.pubList[i].deadline = convertTime(this.pubList[i].deadline)
+                        if(this.pubList[i].question_form === "judgement"){
+                            this.pubList[i].type = "判断"
+                        }
+                        else if(this.pubList[i].question_form === "chosen"){
+                            this.pubList[i].type = "选择"
+                        }
                     }
                 }
             };

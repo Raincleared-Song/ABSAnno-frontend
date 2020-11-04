@@ -42,21 +42,6 @@
             @click="returnSquare">
           返回广场<a-icon type="rollback" />
         </a-button>
-<!--        <div v-if="showTime">-->
-<!--          <strong style="color: #2f54eb">{{ countTimer }}</strong>-->
-<!--          <a-button-->
-<!--              @click="showTime = false"-->
-<!--              type="link">-->
-<!--            隐藏时间-->
-<!--          </a-button>-->
-<!--        </div>-->
-<!--        <div v-else>-->
-<!--          <a-button-->
-<!--              @click="showTime = true"-->
-<!--              type="link">-->
-<!--            显示时间-->
-<!--          </a-button>-->
-<!--        </div>-->
       </a-space>
     </div>
   </div>

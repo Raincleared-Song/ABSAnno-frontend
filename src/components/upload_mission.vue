@@ -41,7 +41,6 @@ export default {
   data() {
     return {
       file: undefined
-      // headers: {"X-CSRFToken": ""}
     }
   },
   methods: {

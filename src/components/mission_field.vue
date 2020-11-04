@@ -18,7 +18,7 @@
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="上传压缩包">
-        <upload_mission/>
+        <upload_mission />
       </a-tab-pane>
     </a-tabs>
   </div>

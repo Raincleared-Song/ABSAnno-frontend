@@ -2,11 +2,11 @@ import check_group from "@/components/questions/checkbox_group";
 import judgement_group from "@/components/questions/judgement_group"
 import text_edit from "@/components/questions/text_edit"
 import answer_question from "@/components/answer_question";
+import choice_group from "@/components/questions/choice_group";
 import {mount, createLocalVue, shallowMount} from '@vue/test-utils'
 import VueRouter from "vue-router";
 import ElementUI from "element-ui";
 import Antd from "ant-design-vue";
-import choice_group from "@/components/questions/choice_group";
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)

@@ -41,7 +41,7 @@
         </div>
       </div>
       <div v-else>
-        <el-image :src="question.image" />
+        <el-image :src="question.image.url" />
       </div>
     </div>
 

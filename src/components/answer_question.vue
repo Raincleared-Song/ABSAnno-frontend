@@ -1,5 +1,5 @@
 <template>
-  <body id="root">
+  <div id="root">
     <!-- 显示问题的区域 -->
     <div v-if="nowQuestion != null">
       <choice_group
@@ -42,9 +42,24 @@
             @click="returnSquare">
           返回广场<a-icon type="rollback" />
         </a-button>
+<!--        <div v-if="showTime">-->
+<!--          <strong style="color: #2f54eb">{{ countTimer }}</strong>-->
+<!--          <a-button-->
+<!--              @click="showTime = false"-->
+<!--              type="link">-->
+<!--            隐藏时间-->
+<!--          </a-button>-->
+<!--        </div>-->
+<!--        <div v-else>-->
+<!--          <a-button-->
+<!--              @click="showTime = true"-->
+<!--              type="link">-->
+<!--            显示时间-->
+<!--          </a-button>-->
+<!--        </div>-->
       </a-space>
     </div>
-  </body>
+  </div>
 </template>
 
 <script>
@@ -66,7 +81,10 @@ export default {
       totalNum: 0,    // 总题目数量
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
-      nowQuestion: null     // 不要显式地去改，监听nowQuestionIndex来更改
+      nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
+      startTimer: 0
+      // countTimer: moment(new Date()).diff(this.startTimer).format('hh:mm'),
+      // showTime: true
     };
   },  // end of data
   props:[
@@ -82,7 +100,8 @@ export default {
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION.path, {
         mission_id: this.missionId.toString(),
-        ans: answers.join('||')
+        ans: answers.join('||'),
+        time: (new Date().getTime() - this.startTimer).toLocaleString()
       }, jsonObj => {
         if (jsonObj.code === 201) {
           this.$message.success("提交成功，返回广场！", 1).then(() => {
@@ -130,6 +149,7 @@ export default {
   },  // end of methods
   created: function() {
     console.log(this.$route.params.id);
+    this.startTimer = new Date().getTime();
     this.missionId = Number(this.$route.params.id);
     // 从后台申请数据加载
     getBackend(API.GET_SINGLE_QUESTION.path, {
@@ -171,12 +191,13 @@ function getNewQuestion(dataObj) {
     has_image: false,
     has_pre_ans: false
   };
+
   // 对于含有图片的题
   const type_list = newQuestion.type.split('-');
   if (type_list.length === 2 && type_list[1] === 'image') {
     newQuestion.type = type_list[0];
     newQuestion.has_image = true;
-    newQuestion.image = dataObj.image_url;
+    newQuestion.image = { url: dataObj.image_url };
   }
   // 对于选择题
   if (newQuestion.type === 'chosen') {

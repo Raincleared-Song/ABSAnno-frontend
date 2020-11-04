@@ -79,14 +79,18 @@ export default {
       };
       // 问题列表
       submitObj.question_list = this.questions.map(question => {
+        let ret;
         if (this.mission.type === 'chosen') {
-          return {
+          ret = {
             contains: question.description,
             choices: question.options.join('||')
           };
         } else if (this.mission.type === 'text') {
-          return { contains: question.description };
+          ret = { contains: question.description };
         }
+        if (this.mission.has_image)
+          ret.image_name = question.image.name;
+        return ret;
       });
       console.log(submitObj);
 

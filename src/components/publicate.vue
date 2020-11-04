@@ -9,9 +9,8 @@
                             <a-icon type="pause" />
                         </a>
                         <a slot="actions"
-                           :disabled="msg.now === 0"
-                           :href="`/backend/result?mission_id=${msg.id}`"
-                           style="font-size: 15pt">
+                                :href="`/backend/result?mission_id=${msg.id}`"
+                                style="font-size: 15pt">
                             <a-icon type="download" />
                         </a>
                         <a-list-item-meta>
@@ -142,17 +141,19 @@
                     console.log(this.pubList)
                     for(i = 0; i < 12; i+=1){
                         this.pubList[i].deadline = convertTime(this.pubList[i].deadline)
-                        if(this.pubList[i].question_form === "judgement"){
+                        if(this.pubList[i].question_form === "judgement" ||
+                            this.pubList[i].question_form === "judgement-image") {
                             this.pubList[i].type = "判断"
                         }
-                        else if(this.pubList[i].question_form === "chosen"){
+                        else if(this.pubList[i].question_form === "chosen" ||
+                            this.pubList[i].question_form === "chosen-image") {
                             this.pubList[i].type = "选择"
                         }
                     }
                 }
             };
             getBackend("backend/user", {
-                "method":"mission"
+                "method": "mission"
             }, onRespond);
         }
     }

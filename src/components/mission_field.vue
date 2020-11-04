@@ -68,7 +68,7 @@ export default {
         name: this.mission.name,
         question_form: this.mission.type + (this.mission.has_image ? '-image' : ''),
         question_num: this.questions.length.toString(),
-        mission_tags: this.mission.tags,
+        mission_tags: this.mission.tags.join('||'),
         info: this.mission.info,
         total: this.mission.min.toString(),
         reward: this.mission.reward.toString(),
@@ -96,6 +96,8 @@ export default {
           ret.image_name = question.image.name;
         return ret;
       });
+
+      console.log(submitObj.question_list);
 
       if (this.mission.has_image) {
         // 图片

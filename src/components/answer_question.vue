@@ -198,6 +198,7 @@ function getNewQuestion(dataObj) {
     newQuestion.type = type_list[0];
     newQuestion.has_image = true;
     newQuestion.image = { url: dataObj.image_url };
+    console.log(dataObj.image_url);
   }
   // 对于选择题
   if (newQuestion.type === 'chosen') {

@@ -7,11 +7,13 @@ import ATabs from "ant-design-vue/lib/tabs/tabs";
 import create_mission from "@/components/create_mission";
 import edit_question from "@/components/edit_question";
 import upload_mission from "@/components/upload_mission";
+import moment from 'moment';
 
 let localVue = createLocalVue();
 localVue.use(ElementUI);
 localVue.use(Antd);
 localVue.use(VueRouter);
+localVue.use(moment);
 
 const routes = [
     {
@@ -77,9 +79,11 @@ describe('mission_field', function () {
         await wrapper.vm.$nextTick();
         expect(wrapper.emitted('submit-questions')).toBeTruthy();
     })
+
     it('check postFile csrf', () => {
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        wrapper.vm.mission.ddl.format = jest.fn((str) => '2020-11-05');
         wrapper.vm.submit();
         mockXmlCsrf.onreadystatechange();
         window.XMLHttpRequest = oldXml;

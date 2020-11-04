@@ -26,9 +26,9 @@ const mockXmlBasic = {
 describe('basic_info', () => {
     it('Check data', () => {
         const wrapper = mount(basic_info, {localVue, router});
-        expect(wrapper.vm.userScore).toBe('')
-        expect(wrapper.vm.userWeight).toBe('')
-        expect(wrapper.vm.userAnsNum).toBe('')
+        expect(wrapper.vm.userCoin).toBe(-1)
+        expect(wrapper.vm.userWeight).toBe(-1)
+        expect(wrapper.vm.userAnsNum).toBe(-1)
     })
     it('Check mounted', () => {
         const oldXml = window.XMLHttpRequest;

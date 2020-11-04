@@ -14,7 +14,7 @@
         ref="upload_file"
         action="#"
         :accept="zip"
-        :file-list="[file]"
+        :file-list="fileList"
         :on-change="onChangeFile"
         :auto-upload="false"
         style="margin: 0 auto">
@@ -66,6 +66,12 @@ export default {
     },
     onClickKnowRule() {
       this.$message.info("还没写");
+    }
+  },
+  computed: {
+    fileList: function () {
+      if (this.file) return [this.file];
+      else return [];
     }
   }
 }

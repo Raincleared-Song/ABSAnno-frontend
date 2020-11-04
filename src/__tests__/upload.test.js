@@ -37,7 +37,6 @@ describe('test upload mission', () => {
             router
         });
         expect(wrapper.vm.fileList).toStrictEqual([])
-        expect(wrapper.vm.headers).toStrictEqual({"X-CSRFToken": ""})
     })
     it('upload csrf', () => {
         const wrapper = mount(upload_mission, {

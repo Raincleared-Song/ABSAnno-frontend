@@ -51,7 +51,12 @@
 
       <!-- 做题历史 -->
       <a-layout>
-        <a-layout-content style="background: #fff; padding: 80px">
+        <a-layout-content style="background: #fff; padding: 30px">
+          <a-divider>最新消息</a-divider>
+          <div :style="{ padding: '24px', background: '#fff'}">
+            <message :username="username" :power="power"/>
+          </div>
+          <a-divider>答题历史</a-divider>
           <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
             <history />
           </div>
@@ -68,7 +73,7 @@ import edit_info from "@/components/userpage/edit_info";
 import history from "@/components/userpage/history";
 import postBackend from "@/utils/postBackend";
 import API from "@/utils/API";
-
+import message from "@/components/userpage/message"
 export default {
   name: "user_page",
   data() {
@@ -84,7 +89,8 @@ export default {
   components: {
     basic_info: basic_info,
     edit_info: edit_info,
-    history: history
+    history: history,
+    message: message,
   },  // end of components
   methods: {
     onApplyUpgrade() {

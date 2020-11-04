@@ -13,17 +13,14 @@
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>
             </a-menu-item>
-            <a-menu-item v-if="power===1 || power===2" key="/mission">
-                <router-link to="/mission/create">发布题目</router-link>
-            </a-menu-item>
             <a-menu-item v-if="power!==-1" key="/orders">
                 <router-link to="/orders">我的接单</router-link>
             </a-menu-item>
+            <a-menu-item v-if="power===1 || power===2" key="/mission">
+                <router-link to="/mission/create">发布题目</router-link>
+            </a-menu-item>
             <a-menu-item v-if="power===1 || power===2" key="/pub">
                 <router-link to="/pub">我的发布</router-link>
-            </a-menu-item>
-            <a-menu-item v-if="power!==-1" key="/user">
-                <router-link to="/user">个人中心</router-link>
             </a-menu-item>
             <a-menu-item v-if="power===2" key="/users">
                 <router-link to="/users">管理用户</router-link>
@@ -43,15 +40,15 @@
                     <router-link to="/ground">登出</router-link>
                 </a-button>
             </a-menu-item>
-            <a-menu-item v-if="power!==-1" key="0" style="float: right;">
+            <a-menu-item v-if="power!==-1" style="float: right;" key="/user">
                 <div>
                     <span>
                         <a-popover :title="'欢迎，'+username" placement="bottom" >
                             <template slot="content">
                                 用户名：{{this.username}}<br/>
-                                您的权限：{{this.power}}
+                                您的权限：{{this.realPower}}
                             </template>
-                            <a-avatar shape="square" icon="user"/>
+                            <router-link to="/user"><a-avatar shape="square" icon="user"/></router-link>
                         </a-popover>
                     </span>
                 </div>
@@ -75,6 +72,7 @@
         data() {
             return {
                 current: [],
+                realPower:"",
             };
         },
         methods: {
@@ -97,6 +95,15 @@
         mounted:function(){
             this.current = [this.$route.path];
             console.log(this.current);
+            if(this.power===0){
+                this.realPower="普通用户"
+            }
+            else if(this.power===1){
+                this.realPower="VIP用户"
+            }
+            else if(this.power===2){
+                this.realPower="管理员"
+            }
         }
     }
 </script>

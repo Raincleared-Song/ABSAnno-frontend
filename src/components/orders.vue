@@ -81,7 +81,7 @@
         methods: {
             handleDelete(index, row) {
                 console.log(row)
-                postBackend("backend/receive", {mission_id: row.id.toString()},
+                postBackend("backend/receive", {mission_id: row.mission_id.toString()},
                     jsonObj => {
                         if (jsonObj.code === 201) {
                             console.log("book deleted")

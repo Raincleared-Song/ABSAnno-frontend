@@ -14,7 +14,7 @@
                     <a-button type="link" disabled>
                         解禁
                     </a-button>
-                    <a-button type="link" @click="dealUser(user.id, 'user_ban')">
+                    <a-button type="link" style="color:#ff4d4f" @click="dealUser(user.id, 'user_ban')">
                         封禁
                     </a-button>
                 </div>
@@ -35,7 +35,7 @@
                     <div style="color: #5e5e5e">
                         信誉积分：{{user.weight}}
                         <a-divider type="vertical" />
-                        金币值：{{user.score}}
+                        金币值：{{user.coin}}
                         <a-divider type="vertical" />
                         已完成任务：{{user.fin_num}}
                     </div>

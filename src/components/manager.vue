@@ -2,7 +2,7 @@
     <div>
         <a-divider>待审批升级用户</a-divider>
         <user-manage :username="username" :power="power"/>
-        <a-divider>封禁用户</a-divider>
+        <a-divider>管理用户</a-divider>
         <banuser :username="username" :power="power"/>
     </div>
 </template>

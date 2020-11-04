@@ -190,6 +190,7 @@
     import postBackend from "../utils/postBackend"
     import getBackend from "../utils/getBackend"
     import API from "@/utils/API";
+    import convertTime from "../utils/timestamp";
     export default {
         name: "ground",
         data(){
@@ -217,11 +218,6 @@
                 if(a>b) return b;
                 return a;
             },
-
-            parseTag(s){
-                return s.split("||");
-            },
-
             onChange(pageNumber) {
                 this.getMsgNum = (pageNumber - 1) * 12;
                 let onRespond = jsonObj => {
@@ -237,9 +233,10 @@
                                 'tags': ""
                             });
                         }
-                        this.msgList.forEach(function(item, index, arr) {
-                            arr[index].tags = this.parseTag(item.tags)
-                        });
+                        var i;
+                        for(i = 0; i < 12; i+=1){
+                            this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
+                        }
                     } else {
                         console.log(jsonObj.data);
                     }

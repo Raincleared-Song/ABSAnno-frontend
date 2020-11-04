@@ -1,6 +1,6 @@
 <template>
     <a-list item-layout="horizontal" :data-source="userList">
-        <a-list-item slot="renderItem" slot-scope="user" :v-if="user.accept === False || user.accept === 0">
+        <a-list-item slot="renderItem" slot-scope="user" :v-if="user.accept === 0">
             <a slot="extra">
                 <div>
                     <a-button type="link" @click="dealUser(user.id, 'Accept')">
@@ -32,6 +32,7 @@
 <script>
     import postBackend from "../../utils/postBackend"
     import getBackend from "../../utils/getBackend"
+    import convertTime from "../../utils/timestamp";
     export default {
         name: "userManage",
         data(){
@@ -65,6 +66,10 @@
                         console.log(data)
                         this.num = data.apply_num;
                         this.userList = data.apply_list;
+                        var i;
+                        for(i = 0; i < this.num; i+=1){
+                            this.userList[i].pub_time = convertTime(this.userList[i].pub_time)
+                        }
                     }
                 };
                 getBackend("backend/applyshow", {}, onRespond);

@@ -25,11 +25,29 @@
 <script>
   export default {
     name: "text_edit",
-    props: [
-        'question',
-        'editable',
-        'has_image'
-    ]   // end of props
+    props: {
+      question: {
+        type: Object,
+        default() {
+          return {
+            id: 0,
+            type: 'chosen',
+            description: "",
+            new_option: "",
+            answer: "A||B",
+            image: ""
+          }
+        }
+      },
+      editable: {
+        type: Boolean,
+        default: false
+      },
+      has_image: {
+        type: Boolean,
+        default: false
+      }
+    }
   }
 </script>
 

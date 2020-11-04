@@ -18,7 +18,7 @@
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="上传压缩包">
-        <upload_mission/>
+        <upload_mission />
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -29,6 +29,7 @@ import API from "@/utils/API";
 import upload_mission from "@/components/upload_mission";
 import postFile from "@/utils/postFile";
 import postBackend from "@/utils/postBackend";
+import moment from 'moment';
 
 export default {
   name: "mission_field",
@@ -46,7 +47,7 @@ export default {
         type: '',
         info: '',
         min: 10,
-        ddl: '',
+        ddl: moment('2014-04-23T09:54:51'),
         tags: [],
         reward: 5,
         retrieve: 24,

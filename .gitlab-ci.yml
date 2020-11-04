@@ -32,9 +32,9 @@ unit-test:
   extends: .test
   script:
     - ls
-#    - npm test
-#    - FRONTEND_RET=$?
-#    - exit $FRONTEND_RET
+    - npm run test
+    - FRONTEND_RET=$?
+    - exit $FRONTEND_RET
 
   after_script:
     - SUFFIX=$RANDOM
@@ -48,9 +48,9 @@ style-test:
 
   script:
     - ls
-#    - npm run lint
-#    - FRONTEND_RET=$?
-#    - exit $FRONTEND_RET
+    - npm run lint
+    - FRONTEND_RET=$?
+    - exit $FRONTEND_RET
 
 deploy:
   stage: deploy

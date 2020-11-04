@@ -75,11 +75,32 @@ export default {
       optionCode: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
     };
   },
-  props: [
-      'question',
-      'editable',
-      'has_image'
-  ],  // end of props
+  props: {
+    question: {
+      type: Object,
+      default() {
+        return {
+          id: 0,
+          type: 'chosen',
+          // 出题者可编辑
+          description: "",
+          options: [],
+          new_option: "",
+          // 做题者可编辑
+          answer: [],
+          image: ""
+        }
+      }
+    },
+    editable: {
+      type: Boolean,
+      default: false
+    },
+    has_image: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
     onChangeImage(file) {
       this.$emit('updateImage', file);

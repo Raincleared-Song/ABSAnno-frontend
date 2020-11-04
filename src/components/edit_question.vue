@@ -21,42 +21,34 @@
         <!-- 题目预览区 -->
         <a-layout-content style="margin: 10px 40px">
           <div v-if="nowQuestion != null">
-<!--            <JudgementGroup-->
-<!--                v-if="mission_info.type === 'judgement'"-->
-<!--                @updateImage="onUpdateImage"-->
-<!--                :editable="true"-->
-<!--                :has_image="mission_info.has_image"-->
-<!--                :question="nowQuestion"/>-->
             <choice_group
                 v-if="mission_info.type === 'chosen'"
                 @addOption="addOption"
                 @removeOption="removeOption"
-                @updateImage="onUpdateImage"
                 :editable="true"
                 :has_image="mission_info.has_image"
-                :question="nowQuestion"/>
+                :question="nowQuestion" />
             <text_edit
                 v-else-if="mission_info.type === 'text'"
-                @updateImage="onUpdateImage"
                 :editable="true"
                 :has_image="mission_info.has_image"
-                :question="nowQuestion"/>
+                :question="nowQuestion" />
             <p v-else>{{ mission_info.type }}</p>
           </div>
-          <a-empty v-else :description="false"/>
+          <a-empty v-else :description="false" />
 
           <!-- 底部分页栏和提交按钮 -->
           <div style="margin: 20px auto">
             <a-pagination
                 v-model="nowQuestionIndex"
                 :total="questions.length"
-                :page-size="1"/>
+                :page-size="1" />
           </div>
           <a-button
               @click="$emit('submit-questions')"
               v-show="questions.length > 0 || nowQuestion != null"
-              type="primary"
-          >submit
+              type="primary">
+            submit
           </a-button>
         </a-layout-content>
 
@@ -66,9 +58,8 @@
 </template>
 
 <script>
-import choice_group from "@/components/questions/choice_group";
 import text_edit from "@/components/questions/text_edit";
-import Choice_group from "@/components/questions/choice_group";
+import choice_group from "@/components/questions/choice_group";
 
 let nowId = 0;
 
@@ -82,7 +73,7 @@ export default {
     return {
       nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
       nowQuestion: null
-    }
+    };
   },  // end of data
   props: [
       'mission_info',
@@ -103,7 +94,10 @@ export default {
         type: 'chosen',
         description: "",
         options: [],
-        new_option: ""
+        new_option: "",
+        answer: "",
+        has_pre_ans: false,
+        image: undefined
       });
       this.nowQuestionIndex = this.questions.length;
     },
@@ -111,7 +105,10 @@ export default {
       this.questions.push({
         index: nowId++,
         type: 'text',
-        description: ""
+        description: "",
+        answer: "",
+        has_pre_ans: false,
+        image: undefined
       });
       this.nowQuestionIndex = this.questions.length;
     },
@@ -125,7 +122,6 @@ export default {
     },
     // 这3个方法处理子组件触发的事件
     addOption(questionId, newOption) {
-      console.log(questionId);
       let targetIdx = this.questions.findIndex(question => {
         return question.index === questionId;
       });
@@ -138,20 +134,13 @@ export default {
       });
       console.log(targetIdx, optionIdx);
       this.questions[targetIdx].options.splice(optionIdx, 1);
-    },
-    onUpdateImage(questionId, file) {
-      console.log(file);
-      let targetIdx = this.questions.findIndex(question => {
-        return question.index === questionId;
-      });
-      this.questions[targetIdx].image = file;
     }
   },  // end of methods
   watch: {
     nowQuestionIndex(newVal) {
       this.nowQuestion = this.questions[newVal - 1];
     }
-  }
+  }   // end of watch
 }
 </script>
 

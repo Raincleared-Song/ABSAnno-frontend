@@ -43,8 +43,8 @@
                     console.log(data)
                     this.num = data.message_num;
                     this.items = data.message_list;
-                    var i;
-                    for(i = 0; i < this.num; i+=1){
+                    var j;
+                    for(j = 0; j < this.num; j += 1){
                         this.items[i].time = convertTime( this.items[i].time)
                     }
                 }

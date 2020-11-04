@@ -40,8 +40,8 @@
           <a-switch
               v-model="mission_info.has_image"
               @blur="$refs.has_image.onFieldBlur()"
-              checked-children="是"
-              un-checked-children="否" />
+              checked-children="yes"
+              un-checked-children="no" />
         </a-form-model-item>
 
         <a-form-model-item

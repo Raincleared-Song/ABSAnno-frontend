@@ -39,6 +39,7 @@
 <script>
 import getBackend from "@/utils/getBackend";
 import API from "@/utils/API";
+import convertTime from "../../utils/timestamp";
 
 export default {
   name: "history",
@@ -80,7 +81,7 @@ export default {
             actions: [
               { type: 'user', text: mission.user },
               { type: 'profile', text: mission.question_num },
-              { type: 'clock-circle', text: mission.ret_time },
+              { type: 'clock-circle', text: convertTime(mission.ret_time) },
               { type: 'dollar', text: mission.reward }
             ]
           };

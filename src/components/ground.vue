@@ -64,8 +64,12 @@
 
                                 <!--                        图片尺寸：500*350            -->
 
-                                <img v-if="msg.questionForm === 'judgement'" src="@/assets/ground/judgement2.jpg" alt="" width="230" >
-                                <img v-if="msg.questionForm === 'chosen'" src="@/assets/ground/choice2.jpg" alt="" width="230" >
+                                <img
+                                    v-if="msg.questionForm === 'judgement' || msg.questionForm === 'judgement-image'"
+                                    src="@/assets/ground/judgement2.jpg" alt="" width="230" >
+                                <img
+                                    v-if="msg.questionForm === 'chosen' || msg.questionForm === 'chosen-image'"
+                                    src="@/assets/ground/choice2.jpg" alt="" width="230" >
                                 <div  class="portfolio-info">
                                     <h4>{{msg.name}}</h4>
                                     <p>题目数量：{{msg.questionNum}}</p>
@@ -73,7 +77,7 @@
                                         <div class="icons-list">
                                             <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg)" />
                                             <a-icon v-if="power!==-1 && msg.received==='T'" type="star" theme="filled" @click="getOrder(msg)" />
-                                            <a-popover :title="msg.title+' 题组'" trigger="hover" >
+                                            <a-popover :title="msg.name+' 题组'" trigger="hover" >
                                                 <template slot="content">
                                                     题目数量：{{msg.questionNum}}<br />
                                                     <!--                                            <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />-->
@@ -273,6 +277,7 @@
                 this.getMsgNum = (pageNumber - 1) * 12;
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
+                        console.log(jsonObj.data.replace(/'/g, '"'));
                         let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                         this.totalMsgNum = data.total;
                         this.msgList = data.question_list;
@@ -287,10 +292,12 @@
                         var i;
                         for(i = 0; i < 12; i+=1){
                             this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
-                            if(this.msgList[i].questionForm === "judgement"){
+                            if (this.msgList[i].questionForm === "judgement" ||
+                                this.msgList[i].questionForm === "judgement-image"){
                                 this.msgList[i].type = "判断"
                             }
-                            else if(this.msgList[i].questionForm === "chosen"){
+                            else if(this.msgList[i].questionForm === "chosen" ||
+                                this.msgList[i].questionForm === "chosen-image"){
                                 this.msgList[i].type = "选择"
                             }
                         }
@@ -384,14 +391,13 @@
                         var i;
                         for(i = 0; i < 5; i+=1){
                             this.intList[i].deadline = convertTime(this.intList[i].deadline)
-                            if(this.intList[i].questionForm === "judgement"){
+                            if(this.intList[i].questionForm === "judgement" ||
+                                this.intList[i].questionForm === "judgement-image"){
                                 this.intList[i].type = "判断"
                             }
-                            else if(this.intList[i].questionForm === "chosen"){
+                            else if(this.intList[i].questionForm === "chosen" ||
+                                this.intList[i].questionForm === "chosen-image"){
                                 this.intList[i].type = "选择"
-                            }
-                            else{
-                                this.intList[i].type = "图片"
                             }
                         }
                     } else {

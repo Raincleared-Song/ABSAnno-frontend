@@ -24,29 +24,30 @@
 
 <script>
   export default {
+    name: "text_edit",
     props: {
-      index: {
-        type: Number,
-        default: -1
-      },
       question: {
         type: Object,
         default() {
           return {
             id: 0,
-            type: 'text',
-            // 出题者可编辑
+            type: 'chosen',
             description: "",
-            // 做题者可编辑
-            answer: ""
+            new_option: "",
+            answer: "A||B",
+            image: ""
           }
         }
       },
       editable: {
         type: Boolean,
         default: false
+      },
+      has_image: {
+        type: Boolean,
+        default: false
       }
-    }   // end of props
+    }
   }
 </script>
 

@@ -36,7 +36,7 @@
 <script>
     import postBackend from "../../utils/postBackend"
     import getBackend from "../../utils/getBackend"
-    import convertTime from "../../utils/timestamp";
+    import convertTime from "../../utils/convertTime";
     export default {
         name: "userManage",
         data(){

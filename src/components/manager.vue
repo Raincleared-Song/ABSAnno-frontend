@@ -38,7 +38,6 @@
     import Banuser from "./manager/banuser";
     import UserManage from "./manager/userManage";
     import postBackend from "../utils/postBackend"
-    import getBackend from "../utils/getBackend"
 
     export default {
         name: "manager",

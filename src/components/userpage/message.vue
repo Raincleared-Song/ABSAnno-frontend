@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import convertTime from "../../utils/timestamp";
+    import convertTime from "../../utils/convertTime";
     import getBackend from "../../utils/getBackend";
 
     export default {

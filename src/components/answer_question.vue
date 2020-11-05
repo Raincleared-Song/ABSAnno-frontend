@@ -94,7 +94,7 @@ export default {
           });
         } else {
           console.log(jsonObj.data);
-          this.$message.error("Try later!");
+          this.$message.error(jsonObj.data, 1);
         }
       });
     },

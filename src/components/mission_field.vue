@@ -47,7 +47,7 @@ export default {
         type: '',
         info: '',
         min: 10,
-        ddl: moment('2014-04-23T09:54:51'),
+        ddl: moment(new Date()),
         tags: [],
         reward: 5,
         retrieve: 24,

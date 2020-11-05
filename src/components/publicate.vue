@@ -74,7 +74,7 @@
 <script>
     import getBackend from "../utils/getBackend"
     import API from "../utils/API"
-    import convertTime from "../utils/timestamp";
+    import convertTime from "../utils/convertTime";
 
     export default {
         name: "publicate",

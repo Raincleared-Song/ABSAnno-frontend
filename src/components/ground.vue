@@ -176,36 +176,6 @@
             </a-layout-content>
 
             <a-layout-sider class="sidebar" width="280">
-                <!--                <h3 class="sidebar-title">Search</h3>-->
-                <!--                <a-input-search placeholder="题目关键词" enter-button @search="onSearch" />-->
-                <!--                <br/>-->
-                <!--                <div class="sidebar-item categories">-->
-                <!--                    题目类型-->
-                <!--                    <a-select-->
-                <!--                            mode="multiple"-->
-                <!--                            :default-value="type"-->
-                <!--                            style="width: 100%"-->
-                <!--                            placeholder="请选择"-->
-                <!--                            @change="handleChangeType"-->
-                <!--                    >-->
-                <!--                        <a-select-option v-for="t in typeTotal" :key="t">-->
-                <!--                            {{t}}-->
-                <!--                        </a-select-option>-->
-                <!--                    </a-select>-->
-                <!--                    <br/>-->
-                <!--                    题目主题-->
-                <!--                    <a-select-->
-                <!--                            mode="multiple"-->
-                <!--                            :default-value="theme"-->
-                <!--                            style="width: 100%"-->
-                <!--                            placeholder="请选择"-->
-                <!--                            @change="handleChangeTheme"-->
-                <!--                    >-->
-                <!--                        <a-select-option v-for="t in themeTotal" :key="t">-->
-                <!--                            {{t}}-->
-                <!--                        </a-select-option>-->
-                <!--                    </a-select>-->
-                <!--                </div>-->
                 <h3 class="sidebar-title">Discover   <a-icon type="reload" @click="getNewInterest(intNum)"/></h3>
                 <div v-for="msg in intList" :key="msg">
                     <a-card size="small" style="width: 220px">
@@ -324,6 +294,7 @@
             deleteMsg(msgId){
                 dealAdmin(msgId, 'mission_ban');
                 console.log("delete message"+msgId);
+                this.$message.success('删除成功', 2);
                 var count = 0;
                 this.msgList.forEach(function(item, index, arr) {
                     if(item.id === msgId) {
@@ -350,8 +321,10 @@
                 let id = msg.id
                 if(msg.received === "T"){
                     msg.received = "F";
+                    this.$message.warning('取消接单:'+msg.name, 2);
                 }else{
                     msg.received = "T";
+                    this.$message.success('成功接单:'+msg.name, 2);
                 }
                 postBackend("backend/receive", {mission_id: id.toString()},
                     jsonObj => {

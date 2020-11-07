@@ -7,7 +7,7 @@
                 <div>
                     <a-row >
                         <a-col :span="9">
-                            <a-input-search placeholder="请输入题目关键词" enter-button @search="onSearch" />
+                            <a-input-search placeholder="请输入题目关键词/发题者" enter-button @search="onSearch" />
                         </a-col>
                     </a-row>
                     <br/>
@@ -64,13 +64,15 @@
 
                                 <!--                        图片尺寸：500*350            -->
 
-                                <img :src="msg.url" alt="" width="100%" >
-
+<!--                                TODO    改完接口后换成下面的url-->
+<!--                                <img :src="msg.url" alt="" width="100%" >-->
+                                <img src="@/assets/ground/7-1.png" alt="" width="100%" >
                                 <div  class="portfolio-info">
                                     <h4>{{msg.name}}</h4>
                                     <p>题目数量：{{msg.questionNum}}</p>
                                     <div class="portfolio-links">
                                         <div class="icons-list">
+                                            <a-icon v-if="power!==-1" type="form" @click="goOrder(msg)"></a-icon>
                                             <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg, true)" />
                                             <a-icon v-if="power!==-1 && msg.received==='T'" type="star" theme="filled" @click="getOrder(msg, true)" />
                                             <a-popover :title="msg.name+' 题组'" trigger="hover" >
@@ -122,6 +124,7 @@
                         <a-list-item slot="renderItem" slot-scope="msg" v-if="msg.questionNum !== 0">
                             <a slot="actions" v-if="power!==-1 && msg.received === 'F'" @click="getOrder(msg, true)">接单</a>
                             <a slot="actions" v-if="power!==-1 && msg.received === 'T'" @click="getOrder(msg, true)">取消接单</a>
+                            <a slot="actions" v-if="power!==-1" @click="goOrder(msg)">做题</a>
                             <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)" style="color: #ff5c4d">删除</a>
                             <a-list-item-meta>
                                 <!--                                <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}</a>-->
@@ -182,8 +185,10 @@
                             <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg, false)" />
                             <a-icon v-if="power!==-1 && msg.received==='T'" type="star"
                                     theme="twoTone" two-tone-color="#ffb84d" @click="getOrder(msg, false)" />
-                            {{msg.name}}
+                            <a @click="goOrder(msg)" v-if="power!==-1" style="color:#192c3e">-{{msg.name}}-</a>
+                            <a v-else>-{{msg.name}}-</a>
                             <a-tag color="green">{{msg.type}}</a-tag>
+
                         </template>
                         <div style="font-size: 13px">
                             题目数量：{{msg.questionNum}}<br/>
@@ -328,7 +333,7 @@
                         if (jsonObj.code === 201) {
                             if(msg.received === "T"){
                                 msg.received = "F";
-                                this.$message.warning('取消接单；'+msg.name, 2);
+                                this.$message.warning('取消接单：'+msg.name, 2);
                             }else{
                                 msg.received = "T";
                                 this.$message.success('成功接单：'+msg.name, 2);
@@ -399,6 +404,13 @@
                 //         'tags':['food', 'sports'], "received":"F","type" : "选择"});
                 // }
                 // console.log(num)
+            },
+            goOrder(msg){
+                this.$router.push('/question/'+msg.id);
+                if(msg.received === "F"){
+                    this.getOrder(msg, false)
+                }
+
             },
         },
         mounted:function () {   //自动触发写入的函数

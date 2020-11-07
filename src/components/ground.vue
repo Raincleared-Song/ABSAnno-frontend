@@ -64,19 +64,15 @@
 
                                 <!--                        图片尺寸：500*350            -->
 
-                                <img
-                                    v-if="msg.questionForm === 'judgement' || msg.questionForm === 'judgement-image'"
-                                    src="@/assets/ground/judgement2.jpg" alt="" width="230" >
-                                <img
-                                    v-if="msg.questionForm === 'chosen' || msg.questionForm === 'chosen-image'"
-                                    src="@/assets/ground/choice2.jpg" alt="" width="230" >
+                                <img :src="msg.url" alt="" width="100%" >
+
                                 <div  class="portfolio-info">
                                     <h4>{{msg.name}}</h4>
                                     <p>题目数量：{{msg.questionNum}}</p>
                                     <div class="portfolio-links">
                                         <div class="icons-list">
-                                            <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg)" />
-                                            <a-icon v-if="power!==-1 && msg.received==='T'" type="star" theme="filled" @click="getOrder(msg)" />
+                                            <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg, true)" />
+                                            <a-icon v-if="power!==-1 && msg.received==='T'" type="star" theme="filled" @click="getOrder(msg, true)" />
                                             <a-popover :title="msg.name+' 题组'" trigger="hover" >
                                                 <template slot="content">
                                                     题目数量：{{msg.questionNum}}<br />
@@ -98,6 +94,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <br/>
 
                             <!--                    空白答题页面的填充-->
                             <div v-if="msg.questionForm === 'none'" align="center">
@@ -123,8 +120,8 @@
                     </div>
                     <a-list item-layout="horizontal" :data-source="msgList" v-if="isRouterAlive">
                         <a-list-item slot="renderItem" slot-scope="msg" v-if="msg.questionNum !== 0">
-                            <a slot="actions" v-if="power!==-1 && msg.received === 'F'" @click="getOrder(msg)">接单</a>
-                            <a slot="actions" v-if="power!==-1 && msg.received === 'T'" @click="getOrder(msg)">取消接单</a>
+                            <a slot="actions" v-if="power!==-1 && msg.received === 'F'" @click="getOrder(msg, true)">接单</a>
+                            <a slot="actions" v-if="power!==-1 && msg.received === 'T'" @click="getOrder(msg, true)">取消接单</a>
                             <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)" style="color: #ff5c4d">删除</a>
                             <a-list-item-meta>
                                 <!--                                <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}</a>-->
@@ -172,17 +169,19 @@
                 <p></p>
                 <!--   分页符     -->
                 <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum"
-                              :style="{textAlign: 'center' }" @change="onChange" v-if="isRouterAlive"/>
+                              :style="{textAlign: 'center' }" @change="onChange(current)" v-if="isRouterAlive"/>
             </a-layout-content>
 
-            <a-layout-sider class="sidebar" width="280">
+
+<!--            感兴趣-->
+            <a-layout-sider class="sidebar" width="250">
                 <h3 class="sidebar-title">Discover   <a-icon type="reload" @click="getNewInterest(intNum)"/></h3>
                 <div v-for="msg in intList" :key="msg">
-                    <a-card size="small" style="width: 220px">
+                    <a-card size="small" style="width: 200px">
                         <template slot="title">
-                            <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg)" />
+                            <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg, false)" />
                             <a-icon v-if="power!==-1 && msg.received==='T'" type="star"
-                                    theme="twoTone" two-tone-color="#ffb84d" @click="getOrder(msg)" />
+                                    theme="twoTone" two-tone-color="#ffb84d" @click="getOrder(msg, false)" />
                             {{msg.name}}
                             <a-tag color="green">{{msg.type}}</a-tag>
                         </template>
@@ -223,15 +222,16 @@
                 totalMsgNum: 1,
                 pagesize: 12,
                 getMsgNum:0,
-                type:["total"],
-                theme:["total"],
-                themeTotal:["total","science", "art","sports","literature","food","music","game","daily","others"],
-                typeTotal:["total","judgement","chosen"],
+                type:[],
+                theme:[],
+                themeTotal:["science", "art","sports","literature","food","music","game","daily","others"],
+                typeTotal:["judgement","chosen"],
                 groundType: 1,
                 isRouterAlive: true,
                 keyword:"",
                 intList:[],
                 intNum: 0,
+                pageNumber: 0,
             }
         },
         props:[
@@ -244,6 +244,7 @@
                 return a;
             },
             onChange(pageNumber) {
+                this.pageNumber = pageNumber;
                 this.getMsgNum = (pageNumber - 1) * 12;
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
@@ -287,7 +288,7 @@
                 //     this.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
                 //         'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
                 //         'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
-                //         'tags':['food', 'sports']});
+                //         'tags':['food', 'sports'], "url":'@/assets/ground/6-1.jpg'});
                 // }
             },
 
@@ -313,23 +314,31 @@
                     // this.totalMsgNum = this.totalMsgNum - 1;
                     console.log(this.totalMsgNum)
                 }
+                this.getNewInterest(this.intNum - 1)
+
                 // reload
-                this.isRouterAlive = false
-                this.$nextTick(() => (this.isRouterAlive = true))
+                // this.isRouterAlive = false
+                // this.$nextTick(() => (this.isRouterAlive = true))
             },
-            getOrder(msg){
+            getOrder(msg, ground){
                 let id = msg.id
-                if(msg.received === "T"){
-                    msg.received = "F";
-                    this.$message.warning('取消接单:'+msg.name, 2);
-                }else{
-                    msg.received = "T";
-                    this.$message.success('成功接单:'+msg.name, 2);
-                }
+
                 postBackend("backend/receive", {mission_id: id.toString()},
                     jsonObj => {
                         if (jsonObj.code === 201) {
-                            console.log("book success")
+                            if(msg.received === "T"){
+                                msg.received = "F";
+                                this.$message.warning('取消接单；'+msg.name, 2);
+                            }else{
+                                msg.received = "T";
+                                this.$message.success('成功接单：'+msg.name, 2);
+                            }
+                            if(ground){
+                                this.getNewInterest(this.intNum - 1)
+                            }
+                            else{
+                                this.onChange(this.pageNumber)
+                            }
                         } else {
                             console.log("can't book/unbook")
                         }

@@ -143,8 +143,10 @@ export default {
         this.current = 0;
       } else if (newVal === '/mission/edit') {
         this.current = 1;
-        this.questions = [];
       }
+    },
+    'this.mission.type': function (newVal) {
+      this.questions = [];
     }
   }
 }

@@ -98,8 +98,6 @@ export default {
         return ret;
       });
 
-      console.log(submitObj.question_list);
-
       if (this.mission.has_image) {
         // 图片
         let formData = new FormData();

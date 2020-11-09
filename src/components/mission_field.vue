@@ -105,9 +105,10 @@ export default {
         let formData = new FormData();
         formData.append('info', JSON.stringify(submitObj));
         if (this.mission.has_cover)
-          formData.append('mission_image', this.mission.cover.raw);
+          formData.append('mission_image', this.mission.cover);
         if (this.mission.has_image)
           this.questions.forEach(question => {
+            console.log(question.image);
             formData.append('img_list', question.image.raw);
           });
 

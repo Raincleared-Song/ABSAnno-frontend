@@ -45,30 +45,18 @@
         </a-form-model-item>
 
         <a-form-model-item
-            ref="info"
-            label="任务简介"
-            prop="info">
-          <a-textarea
-              v-model="mission_info.info"
-              @blur="$refs.info.onFieldBlur()"
-              allow-clear />
-        </a-form-model-item>
-
-        <a-form-model-item
-            ref="cover"
-            label="任务封面"
-            prop="cover">
-          <el-upload
-              v-if="!mission_info.cover"
+            label="任务封面">
+          <a-upload
+              v-if="!mission_info.has_cover"
+              ref="upload_cover"
+              class="img-uploader"
               action="#"
-              :auto-upload="false"
-              :show-file-list="false"
-              :on-change="onChangeCover">
+              :before-upload="onChangeCover">
             <a-button style="margin: 10px 0">
               <i class="el-icon-plus" />
               <span style="margin: 0 10px">点击上传封面</span>
             </a-button>
-          </el-upload>
+          </a-upload>
           <span v-else>
             <i class="el-icon-picture-outline" />
             <span style="margin: 0 30px 0 10px">{{ this.mission_info.cover.name }}</span>
@@ -78,6 +66,16 @@
               <a-icon type="delete" />
             </a-button>
           </span>
+        </a-form-model-item>
+
+        <a-form-model-item
+            ref="info"
+            label="任务简介"
+            prop="info">
+          <a-textarea
+              v-model="mission_info.info"
+              @blur="$refs.info.onFieldBlur()"
+              allow-clear />
         </a-form-model-item>
 
         <a-form-model-item
@@ -98,9 +96,7 @@
               @blur="$refs.ddl.onFieldBlur()"
               @change="$refs.ddl.onFieldChange()"
               format="YYYY-MM-DD"
-              :disabled-date="disabledDate"
-          >
-          </a-date-picker>
+              :disabled-date="disabledDate" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -213,14 +209,26 @@ export default {
     onChangeCover(file) {
       this.mission_info.has_cover = true;
       this.mission_info.cover = file;
+      return false;
     },
     onRemoveCover() {
       this.mission_info.has_cover = false;
+      this.mission_info.cover = null;
     }
   }
 }
 </script>
 
 <style scoped>
+.img-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
 
+.img-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
 </style>

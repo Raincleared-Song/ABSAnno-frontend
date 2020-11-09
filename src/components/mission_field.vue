@@ -112,8 +112,7 @@ export default {
               this.$router.push("/ground");
             });
           } else {
-            console.log(jsonObj);
-            this.$message.error("Upload Error! Try later!");
+            this.$message.error(jsonObj.data);
           }
         });
       } else {
@@ -122,12 +121,10 @@ export default {
           if (jsonObj.code === 201) {
             console.log(jsonObj);
             this.$message.success("Upload Success!", 1).then(() => {
-              console.log(12345678);
               this.$router.push("/ground");
             });
           } else {
-            console.log(jsonObj);
-            this.$message.error("Upload Error! Try later!");
+            this.$message.error(jsonObj.data);
           }
         });
       }
@@ -139,6 +136,7 @@ export default {
         this.current = 0;
       } else if (newVal === '/mission/edit') {
         this.current = 1;
+        this.questions = [];
       }
     }
   }

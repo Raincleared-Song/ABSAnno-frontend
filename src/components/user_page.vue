@@ -23,7 +23,7 @@
               {{ this.username }}
             </h3>
             <h4 style="margin: 10px auto">
-              用户权限：{{ userPower[this.power? this.power + 1: 0] }}
+              用户权限：{{ userPower[this.power + 1] }}
             </h4>
             <a-button
                     @click="editing = true"

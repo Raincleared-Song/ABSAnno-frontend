@@ -277,7 +277,6 @@
                 this.getMsgNum = (pageNumber - 1) * 12;
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
-                        console.log(jsonObj.data.replace(/'/g, '"'));
                         let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                         this.totalMsgNum = data.total;
                         this.msgList = data.question_list;

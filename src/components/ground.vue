@@ -5,20 +5,20 @@
 
                 <!--   导航栏，提供检索功能     -->
                 <div>
-                    <a-row >
-                        <a-col :span="9">
-                            <a-input-search placeholder="请输入题目关键词/发题者" enter-button @search="onSearch" />
+                    <a-row  type="flex">
+                        <a-col span="10">
+                            <a-input-search placeholder="关键词/发题者" enter-button @search="onSearch" />
                         </a-col>
                     </a-row>
                     <br/>
-                    <a-row >
-                        <a-col :span="11">
+                    <a-row justify="space-around" align="middle" type="flex">
+                        <a-col span="7">
                             题目类型
                             <a-select
                                     mode="multiple"
                                     :default-value="type"
                                     style="width: 70%"
-                                    placeholder="请选择您期待的题目类型"
+                                    placeholder="题目类型"
                                     @change="handleChangeType"
                             >
                                 <a-select-option v-for="t in typeTotal" :key="t">
@@ -26,13 +26,13 @@
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col :span="11">
+                        <a-col span="16">
                             题目主题
                             <a-select
                                     mode="multiple"
                                     :default-value="theme"
                                     style="width: 70%"
-                                    placeholder="请选择您期待的题目主题"
+                                    placeholder="题目主题"
                                     @change="handleChangeTheme"
                             >
                                 <a-select-option v-for="t in themeTotal" :key="t">
@@ -40,7 +40,7 @@
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col :span="2">
+                        <a-col :span="1">
                             <a-button @click="sendSelect">确定</a-button>
                         </a-col>
                     </a-row>
@@ -58,15 +58,12 @@
                             文字列表
                         </a-button>
                     </div>
+                    <br/>
                     <a-row type="flex" justify="space-around" v-if="isRouterAlive">
                         <a-col :span="7" v-for="msg in msgList" :key="msg">
                             <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
 
-                                <!--                        图片尺寸：500*350            -->
-
-<!--                                TODO    改完接口后换成下面的url-->
-<!--                                <img :src="msg.url" alt="" width="100%" >-->
-                                <img src="@/assets/ground/7-1.png" alt="" width="100%" >
+                                <img :src="msg.image_url" alt="" width="100%" >
                                 <div  class="portfolio-info">
                                     <h4>{{msg.name}}</h4>
                                     <p>题目数量：{{msg.questionNum}}</p>
@@ -75,19 +72,14 @@
                                             <a-icon v-if="power!==-1" type="form" @click="goOrder(msg)"></a-icon>
                                             <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg, true)" />
                                             <a-icon v-if="power!==-1 && msg.received==='T'" type="star" theme="filled" @click="getOrder(msg, true)" />
-                                            <a-popover :title="msg.name+' 题组'" trigger="hover" >
+                                            <a-popover :title="msg.name+' 题组'" trigger="hover">
                                                 <template slot="content">
-                                                    题目数量：{{msg.questionNum}}<br />
-                                                    <!--                                            <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />-->
-                                                    悬赏金额：{{msg.cash}}<br/>
-                                                    <!--                                            <a-icon type="user" />-->
-                                                    发布者：{{msg.user}}<br />
-                                                    <!--                                            <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />-->
-                                                    截止时间：{{msg.deadline}}<br/>
-                                                    <!--                                            <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />-->
+                                                    发题者：{{msg.user}}<br/>
                                                     完成情况：{{msg.ans_num}}/{{msg.total_ans}}<br/>
                                                     <a-icon type="tags" />
                                                     {{msg.tags.toString()}}
+                                                    <br/>
+                                                    任务简介：{{msg.info}}
                                                 </template>
                                                 <a-icon type="info-circle" />
                                             </a-popover>
@@ -120,6 +112,7 @@
                             文字列表
                         </a-button>
                     </div>
+                    <br/>
                     <a-list item-layout="horizontal" :data-source="msgList" v-if="isRouterAlive">
                         <a-list-item slot="renderItem" slot-scope="msg" v-if="msg.questionNum !== 0">
                             <a slot="actions" v-if="power!==-1 && msg.received === 'F'" @click="getOrder(msg, true)">接单</a>
@@ -163,6 +156,7 @@
                                         <a-divider type="vertical" />
                                         <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.ans_num}}/{{msg.total_ans}}
                                     </div>
+                                    <div style="color: #5e5e5e; font-size: 13px">{{msg.info}}</div>
                                 </a>
                             </a-list-item-meta>
                         </a-list-item>
@@ -185,8 +179,8 @@
                             <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg, false)" />
                             <a-icon v-if="power!==-1 && msg.received==='T'" type="star"
                                     theme="twoTone" two-tone-color="#ffb84d" @click="getOrder(msg, false)" />
-                            <a @click="goOrder(msg)" v-if="power!==-1" style="color:#192c3e">-{{msg.name}}-</a>
-                            <a v-else>-{{msg.name}}-</a>
+                            <a @click="goOrder(msg)" v-if="power!==-1" style="color: #5e5e5e">-{{msg.name}}-</a>
+                            <a v-else style="color: #5e5e5e">-{{msg.name}}-</a>
                             <a-tag color="green">{{msg.type}}</a-tag>
 
                         </template>
@@ -229,8 +223,14 @@
                 getMsgNum:0,
                 type:[],
                 theme:[],
-                themeTotal:["science", "art","sports","literature","food","music","game","daily","others"],
-                typeTotal:["judgement","chosen"],
+                themeTotal:["青年", "中年","老年","学生","教师",
+                    "上班族","研究者","人脸识别","图片识别","文字识别",
+                    "AI写作","翻译校对","文本分析","生活场景","工作场景","购物",
+                    "运动","旅游","动物","道德准则","地理","科学","心理学"],
+                typeTotal:["选择","判断","图片","文字"],
+                typeCheckList:{"选择":false,"判断":false,"图片":false,"文字":false},
+                typeSelect:[],
+                themeSelect:[],
                 groundType: 1,
                 isRouterAlive: true,
                 keyword:"",
@@ -357,6 +357,7 @@
                 this.theme = value;
             },
             handleChangeType(value) {
+                // this.typeCheckList.value = !this.typeCheckList.value;
                 this.type = value;
             },
             sendSelect(){

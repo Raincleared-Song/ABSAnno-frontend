@@ -57,7 +57,7 @@
                         let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                         console.log(data)
                         console.log(data.name, data.power);
-                        this.$emit('login', {"name":data.name, "power":data.power});
+                        this.$emit('login', {"name":data.name, "power":data.power, "avatar":data.avatar});
                         this.$router.push('/ground');
                     } else {
                         let error = jsonObj.data;

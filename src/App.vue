@@ -1,11 +1,11 @@
 <template >
     <a-layout id="components-layout-demo-fixed" >
 
-        <navigation @logout='logout' :power="power" :username="userName"/>
+        <navigation @logout='logout' :power="power" :username="userName" :avatar="avatar"/>
 
         <a-layout-content :style="{ padding: '0 50px', marginTop: '100px' }" >
             <div :style="{ background: '#fff', padding: '24px', minHeight: '610px' }" >
-            <router-view :username="userName" :power="power" @login="login"></router-view>
+            <router-view :username="userName" :power="power" :avatar="avatar" @login="login"></router-view>
             </div>
         </a-layout-content>
 
@@ -38,33 +38,42 @@
             return {
                 userName:"游客，请登录/注册",
                 power:-1,
+                avatar: "",
             }
         },
         methods: {
             logout(data) {
                 this.userName = "游客，请登录/注册";
                 this.power = -1;
+                this.avatar="";
                 console.log("logout!");
                 sessionStorage.setItem("userName", this.userName);
                 sessionStorage.setItem("power", this.power);
+                sessionStorage.setItem("avatar", this.avatar);
             },
             login(data) {
                 this.userName = data.name;
                 this.power = data.power;
+                this.avatar = data.avatar;
                 console.log(this.userName);
                 sessionStorage.setItem("userName", this.userName);
                 sessionStorage.setItem("power", this.power);
+                sessionStorage.setItem("avatar", this.avatar);
             },
         },
         mounted(){
             if(sessionStorage.getItem("userName") !== null){
                 this.userName = sessionStorage.getItem("userName");
                 this.power = parseInt(sessionStorage.getItem("power"));
+                this.avatar = sessionStorage.getItem("avatar");
             }else{
                 this.userName = "游客，请登录/注册";
                 this.power = -1;
+                this.avatar="";
+                console.log("logout!");
                 sessionStorage.setItem("userName", this.userName);
                 sessionStorage.setItem("power", this.power);
+                sessionStorage.setItem("avatar", this.avatar);
             }
             console.log(this.userName);
         },

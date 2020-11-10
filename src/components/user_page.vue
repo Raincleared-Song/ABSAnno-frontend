@@ -5,7 +5,7 @@
       <!-- 侧栏 -->
       <a-layout-sider theme="light" width="280">
         <div style="margin: 15px">
-          <a-avatar :size="220" icon="user">USER</a-avatar>
+          <a-avatar :src="avatar" :size="220" />
           <a-upload
               ref="upload-avatar"
               action="#"
@@ -46,6 +46,7 @@
               Edit profile
             </a-button>
             <basic_info
+                @change-avatar="onChangeAvatar"
                 style="margin: 10px" />
           </div>
 
@@ -66,7 +67,7 @@
         <a-layout-content style="background: #fff; padding: 30px">
           <a-divider>最新消息</a-divider>
           <div :style="{ padding: '24px', background: '#fff'}">
-            <message :username="username" :power="power"/>
+            <message :username="username" :power="power" :avatar="avatar" />
           </div>
           <a-divider>答题历史</a-divider>
           <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
@@ -87,25 +88,27 @@
   import postFile from "@/utils/postFile";
   import API from "@/utils/API";
   import message from "@/components/userpage/message";
+  import getBackend from "@/utils/getBackend";
 
   export default {
     name: "user_page",
     data() {
       return {
         editing: false,
-        avatar: null,
+        upload_avatar: null,
         userPower: ['未登录', '用户', '发布者', '管理员']
       }
     },  // end of data
     props: [
-      'power',
-      'username'
+        'power',
+        'username',
+        'avatar'
     ],  // end of props
     components: {
       basic_info: basic_info,
       edit_info: edit_info,
       history: history,
-      message: message,
+      message: message
     },  // end of components
     methods: {
       onApplyUpgrade() {
@@ -132,20 +135,22 @@
           this.$message.error('Image must smaller than 2MB!');
           return false;
         }
-        this.avatar = file;
+        this.upload_avatar = file;
         return true;
       },
       uploadAvatar() {
         let formData = new FormData();
-        formData.append('avatar', this.avatar);
+        formData.append('avatar', this.upload_avatar);
         postFile(API.CHANGE_AVATAR.path, formData, jsonObj => {
           if (jsonObj.code === 201) {
-            this.$message.success('Upload avatar success!');
-            this.editing = false;
+            this.$message.success(jsonObj.data);
           } else {
             this.$message.error(jsonObj.data);
           }
         });
+      },
+      onChangeAvatar(url) {
+        this.$emit('change-avatar', url);
       }
     }   // end of methods
   }

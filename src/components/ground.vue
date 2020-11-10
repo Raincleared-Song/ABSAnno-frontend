@@ -267,6 +267,7 @@
         props:[
             "username",
             "power",
+            "avatar"
         ],
         methods: {
             min(a, b){

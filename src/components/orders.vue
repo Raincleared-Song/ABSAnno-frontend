@@ -70,6 +70,7 @@
         props:[
             "username",
             "power",
+            "avatar"
         ],
 
         methods: {

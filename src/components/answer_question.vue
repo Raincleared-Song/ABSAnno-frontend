@@ -74,7 +74,8 @@ export default {
   },  // end of data
   props:[
       'username',
-      'power'
+      'power',
+      'avatar'
   ],
   methods: {
     // 向后端发送数据

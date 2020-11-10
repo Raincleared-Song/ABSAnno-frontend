@@ -35,7 +35,8 @@ export default {
   name: "mission_field",
   props: [
       'username',
-      'id'
+      'power',
+      'avatar'
   ],
   components: {
     upload_mission: upload_mission

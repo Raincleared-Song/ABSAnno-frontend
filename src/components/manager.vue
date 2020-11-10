@@ -55,6 +55,7 @@
         props:[
             "username",
             "power",
+            "avatar"
         ],
         methods:{
             onBroadCast(value){

@@ -65,7 +65,7 @@
                         if (jsonObj.code === 201) {
                             let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                             console.log(data.name, data.power);
-                            this.$emit('login', {"name":data.name, "power": data.power});
+                            this.$emit('login', {"name":data.name, "power": data.power, "avatar":data.avatar});
                             this.$router.push('/user');
                         } else {
                             let error = jsonObj.data;

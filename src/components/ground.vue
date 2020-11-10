@@ -228,9 +228,7 @@
                     "AI写作","翻译校对","文本分析","生活场景","工作场景","购物",
                     "运动","旅游","动物","道德准则","地理","科学","心理学"],
                 typeTotal:["选择","判断","图片","文字"],
-                typeCheckList:{"选择":false,"判断":false,"图片":false,"文字":false},
-                typeSelect:[],
-                themeSelect:[],
+                typeSend:[],
                 groundType: 1,
                 isRouterAlive: true,
                 keyword:"",
@@ -281,12 +279,33 @@
                         console.log(jsonObj.data);
                     }
                 };
+
+
+                // 将中文选项映射至英文
+                this.typeSend = [];
+                var i;
+                for(i = 0; i < this.type.length; i+=1){
+                    if(this.type[i] === "选择"){
+                        this.typeSend.push("chosen");
+                    }
+                    else if(this.type[i] === "判断"){
+                        this.typeSend.push("judge");
+                    }
+                    else if(this.type[i] === "文字"){
+                        this.typeSend.push("text");
+                    }
+                    else if(this.type[i] === "图片"){
+                        this.typeSend.push("image");
+                    }
+                }
+
                 getBackend("backend/square", {
                     "num":this.getMsgNum,
-                    "type":this.type,
+                    "type":this.typeSend,
                     "theme":this.theme,
                     "kw":this.keyword,
                 }, onRespond);
+
 
                 // for test only
                 // while(this.msgList.length < 12){

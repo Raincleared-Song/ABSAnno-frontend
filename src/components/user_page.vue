@@ -11,6 +11,7 @@
               action="#"
               :show-upload-list="false"
               :before-upload="beforeUploadAvatar"
+              :custom-request="uploadAvatar"
               style="top: -40px; left: 55%; position: relative">
             <a-button shape="round">
               <a-icon type="edit" />Edit
@@ -137,7 +138,7 @@
       uploadAvatar() {
         let formData = new FormData();
         formData.append('avatar', this.avatar);
-        postFile('/backend/avatar', formData, jsonObj => {
+        postFile(API.CHANGE_AVATAR.path, formData, jsonObj => {
           if (jsonObj.code === 201) {
             this.$message.success('Upload avatar success!');
             this.editing = false;

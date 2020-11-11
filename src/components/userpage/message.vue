@@ -20,16 +20,8 @@
         name: "message",
         data() {
             return {
-                num: 7,
-                items:[
-                    {"title":"1", "content":"this is the message content", "time":1569507418772},
-                    {"title":"2", "content":"this is the message content", "time":1569507418772},
-                    {"title":"3", "content":"this is the message content", "time":1569507418772},
-                    {"title":"4", "content":"this is the message content", "time":1569507418772},
-                    {"title":"5", "content":"this is the message content", "time":1569507418772},
-                    {"title":"6", "content":"this is the message content", "time":1569507418772},
-                    {"title":"7", "content":"this is the message content", "time":1569507418772},
-                    ],
+                num: 0,
+                items:[],
             }
         },  // end of data
         props: [

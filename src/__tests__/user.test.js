@@ -47,7 +47,6 @@ describe('edit_info', () => {
         expect(info.question_form).toStrictEqual([])
         expect(info.question_num).toStrictEqual([5, 50])
         expect(wrapper.vm.questionForms).toStrictEqual([
-            { label: '判断题', value: 'judgement' },
             { label: '选择题', value: 'chosen' },
             { label: '文字题', value: 'text' }
         ])

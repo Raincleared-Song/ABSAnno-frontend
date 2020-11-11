@@ -35,7 +35,8 @@ export default {
   name: "mission_field",
   props: [
       'username',
-      'id'
+      'power',
+      'avatar'
   ],
   components: {
     upload_mission: upload_mission
@@ -46,12 +47,14 @@ export default {
         name: '',
         type: '',
         info: '',
+        cover: null,
         min: 10,
         ddl: moment(new Date()),
         tags: [],
         reward: 5,
         retrieve: 24,
         check_way: '',
+        has_cover: false,
         has_image: false
       },
       questions: [],
@@ -98,15 +101,18 @@ export default {
         return ret;
       });
 
-      console.log(submitObj.question_list);
-
-      if (this.mission.has_image) {
+      if (this.mission.has_cover || this.mission.has_image) {
         // 图片
         let formData = new FormData();
         formData.append('info', JSON.stringify(submitObj));
-        this.questions.forEach(question => {
-          formData.append('img_list', question.image.raw);
-        });
+        if (this.mission.has_cover)
+          formData.append('mission_image', this.mission.cover);
+        if (this.mission.has_image)
+          this.questions.forEach(question => {
+            console.log(question.image);
+            formData.append('img_list', question.image.raw);
+          });
+
         postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
           if (jsonObj.code === 201) {
             console.log(jsonObj);
@@ -114,8 +120,7 @@ export default {
               this.$router.push("/ground");
             });
           } else {
-            console.log(jsonObj);
-            this.$message.error("Upload Error! Try later!");
+            this.$message.error(jsonObj.data);
           }
         });
       } else {
@@ -124,12 +129,10 @@ export default {
           if (jsonObj.code === 201) {
             console.log(jsonObj);
             this.$message.success("Upload Success!", 1).then(() => {
-              console.log(12345678);
               this.$router.push("/ground");
             });
           } else {
-            console.log(jsonObj);
-            this.$message.error("Upload Error! Try later!");
+            this.$message.error(jsonObj.data);
           }
         });
       }
@@ -142,6 +145,9 @@ export default {
       } else if (newVal === '/mission/edit') {
         this.current = 1;
       }
+    },
+    'this.mission.type': function (newVal) {
+      this.questions = [];
     }
   }
 }

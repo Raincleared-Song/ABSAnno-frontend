@@ -80,7 +80,8 @@
         name: "publicate",
         props: [
             'username',
-            'power'
+            'power',
+            'avatar'
         ],
         data() {
             return {

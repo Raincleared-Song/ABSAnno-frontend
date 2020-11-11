@@ -15,9 +15,7 @@ export default function getBackend(url, requestParams, onRespond) {
     if (xmlHttp != null) {
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState === 4) {
-                console.log(xmlHttp.responseText);
                 const jsonObj = JSON.parse(xmlHttp.responseText);
-                console.log(jsonObj);
                 onRespond(jsonObj);
             }
         }

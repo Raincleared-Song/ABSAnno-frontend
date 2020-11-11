@@ -49,6 +49,7 @@
         props:[
             "username",
             "power",
+            "avatar"
         ],
         methods:{
             dealUser(id, method){

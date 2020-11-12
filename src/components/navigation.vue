@@ -47,7 +47,7 @@
                             <template slot="content">
                                 欢迎，{{this.username}}<br/>
                             </template>
-                            <router-link to="/user"><a-avatar shape="square" icon="user"/></router-link>
+                            <router-link to="/user"><a-avatar shape="square" :src="avatar"/></router-link>
                         </a-popover>
                     </span>
                 </div>
@@ -66,6 +66,7 @@
         props:[
             "username",
             "power",
+            "avatar"
         ],
         data() {
             return {

@@ -103,7 +103,6 @@ export default {
         question_num: [5, 50]
       },
       questionForms: [
-        { label: '判断题', value: 'judgement' },
         { label: '选择题', value: 'chosen' },
         { label: '文字题', value: 'text' }
       ]

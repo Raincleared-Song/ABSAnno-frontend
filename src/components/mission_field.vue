@@ -91,10 +91,7 @@ export default {
             ans: question.answer
           };
         } else if (this.mission.type === 'fill') {
-          ret = {
-            contains: question.description,
-            ans: question.answer
-          };
+          ret = { contains: question.description };
         }
         if (ret !== undefined && this.mission.has_image)
           ret.image_name = question.image.name;

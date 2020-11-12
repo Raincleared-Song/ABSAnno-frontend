@@ -46,16 +46,7 @@
     </div>
 
     <!-- 答题区 -->
-    <div style="margin: 15px 10px 10px 10px">
-      <strong>答题区：</strong>
-      <span style="margin: 0 50px 0 0; text-align: right">
-        设置预设答案
-        <a-switch
-            v-model="question.has_pre_ans"
-            checked-children="yes"
-            un-checked-children="no" />
-      </span>
-    </div>
+    <div style="margin: 15px 10px 10px 10px"><strong>答题区：</strong></div>
     <div>
       <a-input
           :disabled="editable && (!question.has_pre_ans)"

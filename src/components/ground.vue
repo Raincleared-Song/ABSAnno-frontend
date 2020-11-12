@@ -70,6 +70,9 @@
                                 <img
                                     v-if="msg.questionForm === 'chosen' || msg.questionForm === 'chosen-image'"
                                     src="@/assets/ground/choice2.jpg" alt="" width="230" >
+                                <img
+                                    v-if="msg.questionForm === 'fill' || msg.questionForm === 'fill-image'"
+                                    src="@/assets/ground/choice2.jpg" alt="" width="230" >
                                 <div  class="portfolio-info">
                                     <h4>{{msg.name}}</h4>
                                     <p>题目数量：{{msg.questionNum}}</p>
@@ -256,7 +259,7 @@
                 type:["total"],
                 theme:["total"],
                 themeTotal:["total","science", "art","sports","literature","food","music","game","daily","others"],
-                typeTotal:["total","judgement","chosen"],
+                typeTotal:["total", "chosen", "fill"],
                 groundType: 1,
                 isRouterAlive: true,
                 keyword:"",
@@ -299,6 +302,10 @@
                             else if(this.msgList[i].questionForm === "chosen" ||
                                 this.msgList[i].questionForm === "chosen-image"){
                                 this.msgList[i].type = "选择"
+                            }
+                            else if(this.msgList[i].questionForm === "fill" ||
+                                this.msgList[i].questionForm === "fill-image"){
+                                this.msgList[i].type = "文字"
                             }
                         }
                     } else {
@@ -398,6 +405,10 @@
                             else if(this.intList[i].questionForm === "chosen" ||
                                 this.intList[i].questionForm === "chosen-image"){
                                 this.intList[i].type = "选择"
+                            }
+                            else if(this.intList[i].questionForm === "fill" ||
+                                this.intList[i].questionForm === "fill-image"){
+                                this.intList[i].type = "文字"
                             }
                         }
                     } else {

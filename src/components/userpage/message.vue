@@ -37,17 +37,17 @@
                     this.items = data.message_list;
                     var j;
                     for(j = 0; j < this.num; j += 1){
-                        this.items[i].time = convertTime( this.items[i].time)
+                        this.items[j].time = convertTime( this.items[j].time)
                     }
                 }
             };
-            getBackend("backend/message", {}, onRespond);
+            getBackend("/backend/message", {}, onRespond);
 
             // test only
-            var i;
-            for(i = 0; i < this.num; i+=1){
-                this.items[i].time = convertTime( this.items[i].time)
-            }
+            // var i;
+            // for(i = 0; i < this.num; i+=1){
+            //     this.items[i].time = convertTime( this.items[i].time)
+            // }
         },
     }
 </script>

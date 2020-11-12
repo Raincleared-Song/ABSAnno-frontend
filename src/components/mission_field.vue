@@ -90,7 +90,7 @@ export default {
             choices: question.options.join('||'),
             ans: question.answer
           };
-        } else if (this.mission.type === 'text') {
+        } else if (this.mission.type === 'fill') {
           ret = {
             contains: question.description,
             ans: question.answer

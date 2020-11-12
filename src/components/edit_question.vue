@@ -29,7 +29,7 @@
                 :has_image="mission_info.has_image"
                 :question="nowQuestion" />
             <text_edit
-                v-else-if="mission_info.type === 'text'"
+                v-else-if="mission_info.type === 'fill'"
                 :editable="true"
                 :has_image="mission_info.has_image"
                 :question="nowQuestion" />
@@ -84,7 +84,7 @@ export default {
     addQuestion() {
       if (this.mission_info.type === 'chosen') {
         this.addChosenQuestion();
-      } else if (this.mission_info.type === 'text') {
+      } else if (this.mission_info.type === 'fill') {
         this.addTextEditQuestion();
       }
     },
@@ -104,7 +104,7 @@ export default {
     addTextEditQuestion() {
       this.questions.push({
         index: nowId++,
-        type: 'text',
+        type: 'fill',
         description: "",
         answer: "",
         has_pre_ans: false,
@@ -116,7 +116,7 @@ export default {
     missionType() {
       if (this.mission_info.type === 'chosen') {
         return '选择题';
-      } else if (this.mission_info.type === 'text') {
+      } else if (this.mission_info.type === 'fill') {
         return '文字描述题';
       }
     },

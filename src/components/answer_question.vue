@@ -8,7 +8,7 @@
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
       <text_edit
-          v-else-if="nowQuestion.type === 'text'"
+          v-else-if="nowQuestion.type === 'fill'"
           :editable="false"
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
@@ -177,7 +177,6 @@ function getNewQuestion(dataObj) {
     has_image: false,
     has_pre_ans: false
   };
-
   // 对于含有图片的题
   const type_list = newQuestion.type.split('-');
   if (type_list.length === 2 && type_list[1] === 'image') {

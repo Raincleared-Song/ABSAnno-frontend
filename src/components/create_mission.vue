@@ -29,7 +29,7 @@
               v-model="mission_info.type"
               @blur="$refs.type.onFieldBlur()">
             <a-select-option value="chosen">选择题任务</a-select-option>
-            <a-select-option value="text">文字描述题任务</a-select-option>
+            <a-select-option value="fill">文字描述题任务</a-select-option>
           </a-select>
         </a-form-model-item>
 

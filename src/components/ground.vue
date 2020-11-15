@@ -40,7 +40,7 @@
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col :span="1">
+                        <a-col span="1">
                             <a-button @click="sendSelect">确定</a-button>
                         </a-col>
                     </a-row>

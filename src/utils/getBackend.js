@@ -4,6 +4,7 @@
 *  param url: url
 *  param requestParams: GET的请求参数
 *  param onRespond: 一个函数，参数是返回的json object */
+import router from "../router/router"
 export default function getBackend(url, requestParams, onRespond) {
     let xmlHttp = null;
     if (window.XMLHttpRequest)
@@ -16,6 +17,11 @@ export default function getBackend(url, requestParams, onRespond) {
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState === 4) {
                 const jsonObj = JSON.parse(xmlHttp.responseText);
+                //console.log(jsonObj)
+                if(jsonObj.code === 400 &&
+                    (jsonObj.data === "Invalid Token or Have Not Login" || jsonObj.data === "No Token Found in Cookie")){
+                    router.push('/login');
+                }
                 onRespond(jsonObj);
             }
         }

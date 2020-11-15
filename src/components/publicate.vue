@@ -140,7 +140,7 @@
                     this.pubList = data.mission_list;
                     var i;
                     console.log(this.pubList)
-                    for(i = 0; i < 12; i+=1){
+                    for(i = 0; i < this.pubList.length; i+=1){
                         this.pubList[i].deadline = convertTime(this.pubList[i].deadline)
                         if(this.pubList[i].question_form === "judgement" ||
                             this.pubList[i].question_form === "judgement-image") {

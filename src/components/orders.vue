@@ -6,9 +6,9 @@
             :row-class-name="warnDDL">
         <el-table-column
                 prop="deadline"
-                label="截止日期"
+                label="最晚作答时间"
                 sortable
-                width="120">
+                width="150">
         </el-table-column>
         <el-table-column
                 prop="mission_name"

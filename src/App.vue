@@ -47,6 +47,9 @@
         },
         methods: {
             logout(data) {
+                if(data === 1){
+                    this.$message.success('退出登录', 2);
+                }
                 this.userName = "游客，请登录/注册";
                 this.power = -1;
                 this.avatar = '';
@@ -67,7 +70,10 @@
             onChangeAvatar(url) {
                 this.avatar = url;
                 sessionStorage.setItem("avatar", this.avatar);
-            }
+            },
+            // showLogoutMessage(){
+            //     this.$message.info('会话已过期，请重新登陆', 2);
+            // }
         },
         mounted(){
             if(sessionStorage.getItem("userName") !== null){

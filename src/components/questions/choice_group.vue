@@ -74,7 +74,7 @@
           </a-radio>
           <a-button
               v-if="editable"
-              size="small" ghost
+              size="small"
               @click="$emit('removeOption', question.index, index)">
             <a-icon type="delete" />
           </a-button>
@@ -85,7 +85,7 @@
         No option added...
       </div>
     </div>
-    <div v-if="editable">
+    <div v-if="editable" style="margin: 5px 15px">
       <a-input
           v-model="question.new_option"
           placeholder="Add new option, press enter to commit."

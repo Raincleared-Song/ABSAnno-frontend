@@ -39,8 +39,8 @@
           下一题<a-icon type="arrow-right" />
         </a-button>
         <a-button
-            @click="returnSquare">
-          返回广场<a-icon type="rollback" />
+            @click="$router.go(-1)">
+          返回<a-icon type="rollback" />
         </a-button>
       </a-space>
     </div>
@@ -90,8 +90,8 @@ export default {
         time: (new Date().getTime() - this.startTimer).toLocaleString()
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          this.$message.success("提交成功，返回广场！", 1).then(() => {
-            this.$router.push("/ground");
+          this.$message.success("提交成功，返回！", 1).then(() => {
+            this.$router.go(-1);
           });
         } else {
           console.log(jsonObj.data);
@@ -127,10 +127,6 @@ export default {
     // 上一题
     switchToPrev() {
       this.nowQuestionIndex -= 1;
-    },
-    // 返回广场
-    returnSquare() {
-      this.$router.push("/ground");
     }
   },  // end of methods
   created: function() {

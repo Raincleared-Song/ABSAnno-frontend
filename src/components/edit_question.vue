@@ -4,19 +4,22 @@
       <a-layout style="padding: 24px 0; background: #fff">
 
         <!-- 左侧边栏 -->
-        <a-layout-sider width="250" style="background: #fff">
+        <a-layout-sider width="230" style="background: #fff">
           <div style="margin: 20px">
             任务名称：{{ mission_info.name }}
           </div>
           <div style="margin: 20px">
             任务类型：{{ missionType() }}
           </div>
-          <a-button
-              type="dashed" block
-              @click="addQuestion">
-            添加新题目
-          </a-button>
+          <div style="margin: 20px">
+            任务简介：{{ mission_info.info === ''? '未填写': mission_info.info }}
+          </div>
+          <div style="margin: 20px">
+            是否图片任务：{{ mission_info.has_image? '是': '否' }}
+          </div>
         </a-layout-sider>
+
+        <i style="{ width: 1px, color: #8c939d }" />
 
         <!-- 题目预览区 -->
         <a-layout-content style="margin: 10px 40px">
@@ -41,15 +44,32 @@
           <div style="margin: 20px auto">
             <a-pagination
                 v-model="nowQuestionIndex"
+                @change="switchTo"
                 :total="questions.length"
-                :page-size="1" />
+                :default-current="10"
+                :page-size="1"
+                :hide-on-single-page="true" />
           </div>
-          <a-button
-              @click="$emit('submit-questions')"
-              v-show="questions.length > 0 || nowQuestion != null"
-              type="primary">
-            submit
-          </a-button>
+          <a-space style="{ width: 100% }">
+            <a-button
+                @click="addQuestion"
+                style="{ width: 30% }">
+              添加题目<a-icon type="plus" />
+            </a-button>
+            <a-button
+                v-show="questions.length > 0 || nowQuestion != null"
+                @click="removeQuestion"
+                style="{ width: 30% }">
+              删除题目<a-icon type="minus" />
+            </a-button>
+            <a-button
+                @click="$emit('submit-questions')"
+                v-show="questions.length > 0 || nowQuestion != null"
+                type="primary"
+                style="{ width: 30% }">
+              提交任务<a-icon type="check" />
+            </a-button>
+          </a-space>
         </a-layout-content>
 
       </a-layout>
@@ -88,6 +108,15 @@ export default {
         this.addTextEditQuestion();
       }
     },
+    removeQuestion() {
+      let prevIndex = this.nowQuestionIndex;
+      if (this.nowQuestionIndex > 1)
+        this.nowQuestionIndex--;
+      else if (this.questions.length === 1)
+        this.nowQuestionIndex = 0;
+      this.questions.splice(prevIndex - 1, 1);
+      console.log(this.nowQuestionIndex);
+    },
     addChosenQuestion() {
       this.questions.push({
         index: nowId++,
@@ -111,6 +140,10 @@ export default {
         image: undefined
       });
       this.nowQuestionIndex = this.questions.length;
+    },
+    switchTo(index) {
+      if (index > 0 && index <= this.questions.length)
+        this.nowQuestionIndex = index;
     },
     // 返回题型的中文名称
     missionType() {
@@ -137,8 +170,14 @@ export default {
     }
   },  // end of methods
   watch: {
-    nowQuestionIndex(newVal) {
+    nowQuestionIndex: function (newVal) {
       this.nowQuestion = this.questions[newVal - 1];
+    },
+    questions: {
+      handler(newVal) {
+        this.nowQuestion = newVal[this.nowQuestionIndex - 1];
+      },
+      deep: true
     }
   }   // end of watch
 }

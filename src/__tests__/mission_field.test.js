@@ -52,7 +52,7 @@ describe('mission_field', function () {
     const tab = wrapper.findComponent(ATabs);
 
     it('ATabs has two tabs', function () {
-        expect(tab.findAllComponents({ name: 'ATabPane' })).toHaveLength(2);
+        expect(tab.findAllComponents({ name: 'ATabPane' })).toHaveLength(4);    // ?
     })
 
     it('click edit mission tab', async function () {

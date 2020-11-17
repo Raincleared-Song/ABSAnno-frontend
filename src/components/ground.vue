@@ -5,20 +5,20 @@
 
                 <!--   导航栏，提供检索功能     -->
                 <div>
-                    <a-row >
-                        <a-col :span="9">
-                            <a-input-search placeholder="请输入题目关键词" enter-button @search="onSearch" />
+                    <a-row  type="flex">
+                        <a-col span="10">
+                            <a-input-search placeholder="关键词/发题者" enter-button @search="onSearch" />
                         </a-col>
                     </a-row>
                     <br/>
-                    <a-row >
-                        <a-col :span="11">
+                    <a-row justify="space-around" align="middle" type="flex">
+                        <a-col span="7">
                             题目类型
                             <a-select
                                     mode="multiple"
                                     :default-value="type"
                                     style="width: 70%"
-                                    placeholder="请选择您期待的题目类型"
+                                    placeholder="题目类型"
                                     @change="handleChangeType"
                             >
                                 <a-select-option v-for="t in typeTotal" :key="t">
@@ -26,13 +26,13 @@
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col :span="11">
+                        <a-col span="16">
                             题目主题
                             <a-select
                                     mode="multiple"
                                     :default-value="theme"
                                     style="width: 70%"
-                                    placeholder="请选择您期待的题目主题"
+                                    placeholder="题目主题"
                                     @change="handleChangeTheme"
                             >
                                 <a-select-option v-for="t in themeTotal" :key="t">
@@ -40,7 +40,7 @@
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col :span="2">
+                        <a-col span="1">
                             <a-button @click="sendSelect">确定</a-button>
                         </a-col>
                     </a-row>
@@ -58,34 +58,27 @@
                             文字列表
                         </a-button>
                     </div>
+                    <br/>
                     <a-row type="flex" justify="space-around" v-if="isRouterAlive">
                         <a-col :span="7" v-for="msg in msgList" :key="msg">
                             <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
-
-                                <!--                        图片尺寸：500*350            -->
-
-                                <img v-if="msg.questionForm === 'judgement'" src="@/assets/ground/judgement2.jpg" alt="" width="230" >
-                                <img v-if="msg.questionForm === 'chosen'" src="@/assets/ground/choice2.jpg" alt="" width="230" >
+                                <img :src="msg.image_url" alt="" width="100%" >
                                 <div  class="portfolio-info">
                                     <h4>{{msg.name}}</h4>
                                     <p>题目数量：{{msg.questionNum}}</p>
                                     <div class="portfolio-links">
                                         <div class="icons-list">
-                                            <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg)" />
-                                            <a-icon v-if="power!==-1 && msg.received==='T'" type="star" theme="filled" @click="getOrder(msg)" />
-                                            <a-popover :title="msg.title+' 题组'" trigger="hover" >
+                                            <a-icon v-if="power!==-1" type="form" @click="goOrder(msg)"></a-icon>
+                                            <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg, true)" />
+                                            <a-icon v-if="power!==-1 && msg.received==='T'" type="star" theme="filled" @click="getOrder(msg, true)" />
+                                            <a-popover :title="msg.name+' 题组'" trigger="hover">
                                                 <template slot="content">
-                                                    题目数量：{{msg.questionNum}}<br />
-                                                    <!--                                            <a-icon type="dollar"  theme="twoTone" two-tone-color="#ffb84d"  />-->
-                                                    悬赏金额：{{msg.cash}}<br/>
-                                                    <!--                                            <a-icon type="user" />-->
-                                                    发布者：{{msg.user}}<br />
-                                                    <!--                                            <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />-->
-                                                    截止时间：{{msg.deadline}}<br/>
-                                                    <!--                                            <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />-->
+                                                    发题者：{{msg.user}}<br/>
                                                     完成情况：{{msg.ans_num}}/{{msg.total_ans}}<br/>
                                                     <a-icon type="tags" />
                                                     {{msg.tags.toString()}}
+                                                    <br/>
+                                                    任务简介：{{msg.info}}
                                                 </template>
                                                 <a-icon type="info-circle" />
                                             </a-popover>
@@ -94,6 +87,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <br/>
 
                             <!--                    空白答题页面的填充-->
                             <div v-if="msg.questionForm === 'none'" align="center">
@@ -117,10 +111,12 @@
                             文字列表
                         </a-button>
                     </div>
+                    <br/>
                     <a-list item-layout="horizontal" :data-source="msgList" v-if="isRouterAlive">
                         <a-list-item slot="renderItem" slot-scope="msg" v-if="msg.questionNum !== 0">
-                            <a slot="actions" v-if="power!==-1 && msg.received === 'F'" @click="getOrder(msg)">接单</a>
-                            <a slot="actions" v-if="power!==-1 && msg.received === 'T'" @click="getOrder(msg)">取消接单</a>
+                            <a slot="actions" v-if="power!==-1 && msg.received === 'F'" @click="getOrder(msg, true)">接单</a>
+                            <a slot="actions" v-if="power!==-1 && msg.received === 'T'" @click="getOrder(msg, true)">取消接单</a>
+                            <a slot="actions" v-if="power!==-1" @click="goOrder(msg)">做题</a>
                             <a slot="actions" v-if="power===2" @click="deleteMsg(msg.id)" style="color: #ff5c4d">删除</a>
                             <a-list-item-meta>
                                 <!--                                <a v-if="power!==-1" slot="title" :href="'/#/question/'+ msg.id" >{{ msg.name }}</a>-->
@@ -159,6 +155,7 @@
                                         <a-divider type="vertical" />
                                         <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.ans_num}}/{{msg.total_ans}}
                                     </div>
+                                    <div style="color: #5e5e5e; font-size: 13px">{{msg.info}}</div>
                                 </a>
                             </a-list-item-meta>
                         </a-list-item>
@@ -168,49 +165,23 @@
                 <p></p>
                 <!--   分页符     -->
                 <a-pagination v-model="current" v-bind:pageSize="pagesize" v-bind:total="totalMsgNum"
-                              :style="{textAlign: 'center' }" @change="onChange" v-if="isRouterAlive"/>
+                              :style="{textAlign: 'center' }" @change="onChange(current)" v-if="isRouterAlive"/>
             </a-layout-content>
 
-            <a-layout-sider class="sidebar" width="280">
-                <!--                <h3 class="sidebar-title">Search</h3>-->
-                <!--                <a-input-search placeholder="题目关键词" enter-button @search="onSearch" />-->
-                <!--                <br/>-->
-                <!--                <div class="sidebar-item categories">-->
-                <!--                    题目类型-->
-                <!--                    <a-select-->
-                <!--                            mode="multiple"-->
-                <!--                            :default-value="type"-->
-                <!--                            style="width: 100%"-->
-                <!--                            placeholder="请选择"-->
-                <!--                            @change="handleChangeType"-->
-                <!--                    >-->
-                <!--                        <a-select-option v-for="t in typeTotal" :key="t">-->
-                <!--                            {{t}}-->
-                <!--                        </a-select-option>-->
-                <!--                    </a-select>-->
-                <!--                    <br/>-->
-                <!--                    题目主题-->
-                <!--                    <a-select-->
-                <!--                            mode="multiple"-->
-                <!--                            :default-value="theme"-->
-                <!--                            style="width: 100%"-->
-                <!--                            placeholder="请选择"-->
-                <!--                            @change="handleChangeTheme"-->
-                <!--                    >-->
-                <!--                        <a-select-option v-for="t in themeTotal" :key="t">-->
-                <!--                            {{t}}-->
-                <!--                        </a-select-option>-->
-                <!--                    </a-select>-->
-                <!--                </div>-->
+
+<!--            感兴趣-->
+            <a-layout-sider class="sidebar" width="250">
                 <h3 class="sidebar-title">Discover   <a-icon type="reload" @click="getNewInterest(intNum)"/></h3>
                 <div v-for="msg in intList" :key="msg">
-                    <a-card size="small" style="width: 220px">
+                    <a-card size="small" style="width: 200px">
                         <template slot="title">
-                            <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg)" />
+                            <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg, false)" />
                             <a-icon v-if="power!==-1 && msg.received==='T'" type="star"
-                                    theme="twoTone" two-tone-color="#ffb84d" @click="getOrder(msg)" />
-                            {{msg.name}}
+                                    theme="twoTone" two-tone-color="#ffb84d" @click="getOrder(msg, false)" />
+                            <a @click="goOrder(msg)" v-if="power!==-1" style="color: #5e5e5e">-{{msg.name}}-</a>
+                            <a v-else style="color: #5e5e5e">-{{msg.name}}-</a>
                             <a-tag color="green">{{msg.type}}</a-tag>
+
                         </template>
                         <div style="font-size: 13px">
                             题目数量：{{msg.questionNum}}<br/>
@@ -239,7 +210,7 @@
     import postBackend from "../utils/postBackend"
     import getBackend from "../utils/getBackend"
     import API from "@/utils/API";
-    import convertTime from "../utils/timestamp";
+    import convertTime from "../utils/convertTime";
     export default {
         name: "ground",
         data(){
@@ -249,20 +220,26 @@
                 totalMsgNum: 1,
                 pagesize: 12,
                 getMsgNum:0,
-                type:["total"],
-                theme:["total"],
-                themeTotal:["total","science", "art","sports","literature","food","music","game","daily","others"],
-                typeTotal:["total","judgement","chosen"],
+                type:[],
+                theme:[],
+                themeTotal:["青年", "中年","老年","学生","教师",
+                    "上班族","研究者","人脸识别","图片识别","文字识别",
+                    "AI写作","翻译校对","文本分析","生活场景","工作场景","购物",
+                    "运动","旅游","动物","道德准则","地理","科学","心理学"],
+                typeTotal:["选择","判断","图片","文字"],
+                typeSend:[],
                 groundType: 1,
                 isRouterAlive: true,
                 keyword:"",
                 intList:[],
                 intNum: 0,
+                pageNumber: 0,
             }
         },
         props:[
             "username",
             "power",
+            "avatar"
         ],
         methods: {
             min(a, b){
@@ -270,6 +247,7 @@
                 return a;
             },
             onChange(pageNumber) {
+                this.pageNumber = pageNumber;
                 this.getMsgNum = (pageNumber - 1) * 12;
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
@@ -287,36 +265,64 @@
                         var i;
                         for(i = 0; i < 12; i+=1){
                             this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
-                            if(this.msgList[i].questionForm === "judgement"){
+                            if (this.msgList[i].questionForm === "judgement" ||
+                                this.msgList[i].questionForm === "judgement-image"){
                                 this.msgList[i].type = "判断"
                             }
-                            else if(this.msgList[i].questionForm === "chosen"){
+                            else if(this.msgList[i].questionForm === "chosen" ||
+                                this.msgList[i].questionForm === "chosen-image"){
                                 this.msgList[i].type = "选择"
+                            }
+                            else if(this.msgList[i].questionForm === "fill" ||
+                                this.msgList[i].questionForm === "fill-image"){
+                                this.msgList[i].type = "文字"
                             }
                         }
                     } else {
                         console.log(jsonObj.data);
                     }
                 };
+
+
+                // 将中文选项映射至英文
+                this.typeSend = [];
+                var i;
+                for(i = 0; i < this.type.length; i+=1){
+                    if(this.type[i] === "选择"){
+                        this.typeSend.push("chosen");
+                    }
+                    else if(this.type[i] === "判断"){
+                        this.typeSend.push("judge");
+                    }
+                    else if(this.type[i] === "文字"){
+                        this.typeSend.push("text");
+                    }
+                    else if(this.type[i] === "图片"){
+                        this.typeSend.push("image");
+                    }
+                }
+
                 getBackend("backend/square", {
                     "num":this.getMsgNum,
-                    "type":this.type,
+                    "type":this.typeSend,
                     "theme":this.theme,
                     "kw":this.keyword,
                 }, onRespond);
+
 
                 // for test only
                 // while(this.msgList.length < 12){
                 //     this.msgList.push({ 'id': -1, 'name': "none", 'user': "none",
                 //         'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
                 //         'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
-                //         'tags':['food', 'sports']});
+                //         'tags':['food', 'sports'], "url":'@/assets/ground/6-1.jpg'});
                 // }
             },
 
             deleteMsg(msgId){
                 dealAdmin(msgId, 'mission_ban');
                 console.log("delete message"+msgId);
+                this.$message.success('删除成功', 2);
                 var count = 0;
                 this.msgList.forEach(function(item, index, arr) {
                     if(item.id === msgId) {
@@ -335,21 +341,31 @@
                     // this.totalMsgNum = this.totalMsgNum - 1;
                     console.log(this.totalMsgNum)
                 }
+                this.getNewInterest(this.intNum - 1)
+
                 // reload
-                this.isRouterAlive = false
-                this.$nextTick(() => (this.isRouterAlive = true))
+                // this.isRouterAlive = false
+                // this.$nextTick(() => (this.isRouterAlive = true))
             },
-            getOrder(msg){
+            getOrder(msg, ground){
                 let id = msg.id
-                if(msg.received === "T"){
-                    msg.received = "F";
-                }else{
-                    msg.received = "T";
-                }
+
                 postBackend("backend/receive", {mission_id: id.toString()},
                     jsonObj => {
                         if (jsonObj.code === 201) {
-                            console.log("book success")
+                            if(msg.received === "T"){
+                                msg.received = "F";
+                                this.$message.warning('取消接单：'+msg.name, 2);
+                            }else{
+                                msg.received = "T";
+                                this.$message.success('成功接单：'+msg.name, 2);
+                            }
+                            if(ground){
+                                this.getNewInterest(this.intNum - 1)
+                            }
+                            else{
+                                this.onChange(this.pageNumber)
+                            }
                         } else {
                             console.log("can't book/unbook")
                         }
@@ -363,6 +379,7 @@
                 this.theme = value;
             },
             handleChangeType(value) {
+                // this.typeCheckList.value = !this.typeCheckList.value;
                 this.type = value;
             },
             sendSelect(){
@@ -384,11 +401,17 @@
                         var i;
                         for(i = 0; i < 5; i+=1){
                             this.intList[i].deadline = convertTime(this.intList[i].deadline)
-                            if(this.intList[i].questionForm === "judgement"){
+                            if(this.intList[i].questionForm === "judgement" ||
+                                this.intList[i].questionForm === "judgement-image"){
                                 this.intList[i].type = "判断"
                             }
-                            else if(this.intList[i].questionForm === "chosen"){
+                            else if(this.intList[i].questionForm === "chosen" ||
+                                this.intList[i].questionForm === "chosen-image"){
                                 this.intList[i].type = "选择"
+                            }
+                            else if(this.intList[i].questionForm === "fill" ||
+                                this.intList[i].questionForm === "fill-image"){
+                                this.intList[i].type = "文字"
                             }
                         }
                     } else {
@@ -401,13 +424,20 @@
                 this.intNum = num + 1;
 
                 // for test only
-                while(this.intList.length < 5){
-                    this.intList.push({ 'id': -1, 'name': "none", 'user': "none",
-                        'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
-                        'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
-                        'tags':['food', 'sports'], "received":"F","type" : "选择"});
+                // while(this.intList.length < 5){
+                //     this.intList.push({ 'id': -1, 'name': "none", 'user': "none",
+                //         'questionNum': 1, 'questionForm': "judgement", 'is_banned':0,
+                //         'total_ans':0, 'ans_num':0, 'deadline':"none", 'cash':"none",
+                //         'tags':['food', 'sports'], "received":"F","type" : "选择"});
+                // }
+                // console.log(num)
+            },
+            goOrder(msg){
+                this.$router.push('/question/'+msg.id);
+                if(msg.received === "F"){
+                    this.getOrder(msg, false)
                 }
-                console.log(num)
+
             },
         },
         mounted:function () {   //自动触发写入的函数

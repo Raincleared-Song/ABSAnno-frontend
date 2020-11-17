@@ -1,19 +1,14 @@
 <template>
-  <body id="root">
+  <div id="root">
     <!-- 显示问题的区域 -->
     <div v-if="nowQuestion != null">
-      <JudgementGroup
-          v-if="nowQuestion != null && nowQuestion.type === 'judgement'"
+      <choice_group
+          v-if="nowQuestion.type === 'chosen'"
           :editable="false"
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
-      <CheckboxGroup
-          v-else-if="nowQuestion != null && nowQuestion.type === 'chosen'"
-          :editable="false"
-          :question="nowQuestion"
-          :has_image="nowQuestion.has_image" />
-      <TextEdit
-          v-else-if="nowQuestion != null && nowQuestion.type === 'text'"
+      <text_edit
+          v-else-if="nowQuestion.type === 'fill'"
           :editable="false"
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
@@ -44,18 +39,17 @@
           下一题<a-icon type="arrow-right" />
         </a-button>
         <a-button
-            @click="returnSquare">
-          返回广场<a-icon type="rollback" />
+            @click="$router.go(-1)">
+          返回<a-icon type="rollback" />
         </a-button>
       </a-space>
     </div>
-  </body>
+  </div>
 </template>
 
 <script>
-import JudgementGroup from "@/components/questions/judgement_group";
-import TextEdit from "@/components/questions/text_edit";
-import CheckboxGroup from "@/components/questions/checkbox_group";
+import text_edit from "@/components/questions/text_edit";
+import choice_group from "@/components/questions/choice_group";
 import getBackend from "@/utils/getBackend";
 import postBackend from "@/utils/postBackend";
 import API from "@/utils/API";
@@ -63,9 +57,8 @@ import API from "@/utils/API";
 export default {
   name: "answer_question",
   components: {
-    JudgementGroup: JudgementGroup,
-    CheckboxGroup: CheckboxGroup,
-    TextEdit: TextEdit
+    choice_group: choice_group,
+    text_edit: text_edit
   },  // end of components
   data() {
     return {
@@ -73,33 +66,36 @@ export default {
       totalNum: 0,    // 总题目数量
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
-      nowQuestion: null     // 不要显式地去改，监听nowQuestionIndex来更改
+      nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
+      startTimer: 0
+      // countTimer: moment(new Date()).diff(this.startTimer).format('hh:mm'),
+      // showTime: true
     };
   },  // end of data
   props:[
       'username',
-      'power'
+      'power',
+      'avatar'
   ],
   methods: {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        if (question.type === 'chosen') {
-          return question.answer.join('|');
-        } else {
-          return question.answer;
-        }
+        return question.answer;
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION.path, {
         mission_id: this.missionId.toString(),
-        ans: answers
+        ans: answers.join('||'),
+        time: (new Date().getTime() - this.startTimer).toLocaleString()
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          this.$message.success("提交成功，返回广场！");
-          this.$router.push("/ground");
+          this.$message.success("提交成功，返回！", 1).then(() => {
+            this.$router.go(-1);
+          });
         } else {
-          this.$message.error("Try later!");
+          console.log(jsonObj.data);
+          this.$message.error(jsonObj.data, 1);
         }
       });
     },
@@ -131,14 +127,11 @@ export default {
     // 上一题
     switchToPrev() {
       this.nowQuestionIndex -= 1;
-    },
-    // 返回广场
-    returnSquare() {
-      this.$router.push("/ground");
     }
   },  // end of methods
   created: function() {
     console.log(this.$route.params.id);
+    this.startTimer = new Date().getTime();
     this.missionId = Number(this.$route.params.id);
     // 从后台申请数据加载
     getBackend(API.GET_SINGLE_QUESTION.path, {
@@ -174,21 +167,23 @@ function getDataObj(jsonObj) {
 function getNewQuestion(dataObj) {
   let newQuestion = {
     index: dataObj.ret,
-    type: dataObj.type !== undefined? dataObj.type: 'judgement',
+    type: dataObj.type || 'chosen',
     description: dataObj.word,
     answer: "",
-    has_image: false
+    has_image: false,
+    has_pre_ans: false
   };
   // 对于含有图片的题
   const type_list = newQuestion.type.split('-');
   if (type_list.length === 2 && type_list[1] === 'image') {
     newQuestion.type = type_list[0];
     newQuestion.has_image = true;
+    newQuestion.image = { url: dataObj.image_url };
+    console.log(dataObj.image_url);
   }
   // 对于选择题
   if (newQuestion.type === 'chosen') {
-    newQuestion.options = dataObj.options.split('||');
-    newQuestion.answer = [];
+    newQuestion.options = dataObj.choices.split('||');
   }
   return newQuestion;
 }

@@ -37,44 +37,6 @@ describe('test upload mission', () => {
             router
         });
         expect(wrapper.vm.fileList).toStrictEqual([])
-        expect(wrapper.vm.headers).toStrictEqual({"X-CSRFToken": ""})
-    })
-    it('upload csrf', () => {
-        const wrapper = mount(upload_mission, {
-            localVue,
-            router
-        });
-        const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
-        wrapper.vm.onBeforeUpload();
-        mockXmlCsrf.onreadystatechange();
-        window.XMLHttpRequest = oldXml;
-    })
-    it('upload csrf invalid', () => {
-        const wrapper = mount(upload_mission, {
-            localVue,
-            router
-        });
-        const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlCsrfInvalid);
-        wrapper.vm.onBeforeUpload();
-        mockXmlCsrfInvalid.onreadystatechange();
-        window.XMLHttpRequest = oldXml;
-    })
-    it('upload onSuccess', () => {
-        const wrapper = mount(upload_mission, {
-            localVue,
-            router
-        });
-        wrapper.vm.onSuccess();
-        expect(wrapper.vm.$router.history.current.path).toBe('/ground')
-    })
-    it('upload onError', () => {
-        const wrapper = mount(upload_mission, {
-            localVue,
-            router
-        });
-        wrapper.vm.onError();
     })
     it('upload onClickKnowRule', () => {
         const wrapper = mount(upload_mission, {

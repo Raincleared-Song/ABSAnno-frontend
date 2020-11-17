@@ -28,9 +28,8 @@
           <a-select
               v-model="mission_info.type"
               @blur="$refs.type.onFieldBlur()">
-            <a-select-option value="judgement">判断题任务</a-select-option>
-            <a-select-option value="choice">选择题任务</a-select-option>
-            <a-select-option value="text">文字描述题任务</a-select-option>
+            <a-select-option value="chosen">选择题任务</a-select-option>
+            <a-select-option value="fill">文字描述题任务</a-select-option>
           </a-select>
         </a-form-model-item>
 
@@ -41,8 +40,32 @@
           <a-switch
               v-model="mission_info.has_image"
               @blur="$refs.has_image.onFieldBlur()"
-              checked-children="是"
-              un-checked-children="否" />
+              checked-children="yes"
+              un-checked-children="no" />
+        </a-form-model-item>
+
+        <a-form-model-item
+            label="任务封面">
+          <a-upload
+              v-if="!mission_info.has_cover"
+              ref="upload_cover"
+              class="img-uploader"
+              action="#"
+              :before-upload="onChangeCover">
+            <a-button style="margin: 10px 0">
+              <i class="el-icon-plus" />
+              <span style="margin: 0 10px">点击上传封面</span>
+            </a-button>
+          </a-upload>
+          <span v-else>
+            <i class="el-icon-picture-outline" />
+            <span style="margin: 0 30px 0 10px">{{ this.mission_info.cover.name }}</span>
+            <a-button
+                @click="onRemoveCover"
+                size="small" shape="circle" ghost>
+              <a-icon type="delete" />
+            </a-button>
+          </span>
         </a-form-model-item>
 
         <a-form-model-item
@@ -57,7 +80,7 @@
 
         <a-form-model-item
             ref="min"
-            label="标注次数下限"
+            label="标注次数上限"
             prop="min">
           <a-input-number
               v-model.trim.number="mission_info.min"
@@ -71,33 +94,33 @@
           <a-date-picker
               v-model="mission_info.ddl"
               @blur="$refs.ddl.onFieldBlur()"
-              @change="$refs.ddl.onFieldChange()" />
+              @change="$refs.ddl.onFieldChange()"
+              format="YYYY-MM-DD"
+              :disabled-date="disabledDate" />
         </a-form-model-item>
 
         <a-form-model-item
             ref="tags"
-            label="分发对象"
+            label="任务标签"
             prop="tags">
           <a-select
               v-model="mission_info.tags"
               @blur="$refs.tags.onFieldBlur()"
-              mode="tags">
-            <a-select-option :key="'student'">
-              学生
-            </a-select-option>
-            <a-select-option :key="'teacher'">
-              教师
-            </a-select-option>
-            <a-select-option :key="'code-farmer'">
-              程序员
+              mode="multiple">
+            <a-select-option
+                v-for="(tag, idx) in tagsTotal"
+                :key="idx">
+              {{ tag }}
             </a-select-option>
           </a-select>
         </a-form-model-item>
 
         <a-form-model-item
             ref="reward"
-            label="悬赏金额"
             prop="reward">
+          <a-tooltip placement="topLeft" title="用户做完一个子项目的悬赏金额">
+            <label slot="label">悬赏金额</label>
+          </a-tooltip>
           <a-input-number
               v-model.trim.number="mission_info.reward"
               @blur="$refs.reward.onFieldBlur()" />
@@ -111,7 +134,7 @@
           <a-input-number
               v-model.trim.number="mission_info.retrieve"
               @blur="$refs.retrieve.onFieldBlur()" />
-          <span class="ant-form-text">单位：天</span>
+          <span class="ant-form-text">单位：小时</span>
         </a-form-model-item>
 
         <a-form-model-item
@@ -125,7 +148,7 @@
               自动验收
             </a-select-option>
             <a-select-option :key="'human'">
-              手动验收（没写，不要选）
+              手动验收
             </a-select-option>
           </a-select>
         </a-form-model-item>
@@ -143,6 +166,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 
 export default {
   name: "create_mission",
@@ -157,7 +181,15 @@ export default {
         reward: [{ required: true, message: 'Mission reward cannot be null.', trigger: 'blur' }],
         retrieve: [{ required: true, message: 'Mission retrieve time cannot be null.', trigger: 'blur' }],
         check_way: [{ required: true, message: 'Mission check way cannot be null.', trigger: 'blur' }]
-      }
+      },
+      tagsTotal: [
+          "青年", "中年", "老年", "学生",
+          "教师", "上班族", "研究者",
+          "人脸识别", "图片识别", "文字识别",
+          "AI写作", "翻译校对", "文本分析",
+          "生活场景", "工作场景", "购物", "运动", "旅游",
+          "动物", "道德准则", "地理", "科学", "心理学"
+      ]
     };
   },  // end of data
   props: [
@@ -172,11 +204,33 @@ export default {
           this.$message.warning("error submit");
         }
       });
+    },
+    disabledDate(current) {
+      return current < moment().endOf('day')
+    },
+    onChangeCover(file) {
+      this.mission_info.has_cover = true;
+      this.mission_info.cover = file;
+      return false;
+    },
+    onRemoveCover() {
+      this.mission_info.has_cover = false;
+      this.mission_info.cover = null;
     }
   }
 }
 </script>
 
 <style scoped>
+.img-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
 
+.img-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
 </style>

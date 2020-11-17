@@ -6,9 +6,9 @@
             :row-class-name="warnDDL">
         <el-table-column
                 prop="deadline"
-                label="截止日期"
+                label="最晚作答时间"
                 sortable
-                width="120">
+                width="150">
         </el-table-column>
         <el-table-column
                 prop="mission_name"
@@ -56,26 +56,21 @@
 <script>
     import postBackend from "../utils/postBackend"
     import getBackend from "../utils/getBackend"
-    import convertTime from "../utils/timestamp";
+    import convertTime from "../utils/convertTime";
 
     export default {
         name: "orders",
         data(){
             return {
                 msgList:[],
-                current: 1,
-                totalMsgNum: 1,
-                pagesize: 12,
-                getMsgNum:0,
-                groundType: 1,
-                isRouterAlive: true,
-                keyword:"",
+                size:0,
             }
         },
 
         props:[
             "username",
             "power",
+            "avatar"
         ],
 
         methods: {
@@ -89,6 +84,12 @@
                             console.log("can't undo book")
                         }
                     });
+                var i;
+                for(i = 0; i < this.size; i+=1) {
+                    if(this.msgList[i].mission_id === row.mission_id){
+                        this.msgList.splice(i, 1)
+                    }
+                }
             },
 
             warnDDL({row, rowIndex}) {
@@ -106,6 +107,7 @@
                     let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                     this.msgList = data.rep_list;
                     var i;
+                    this.size=data.total_num
                     for(i = 0; i < data.total_num; i+=1){
                         this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
                         if(this.msgList[i].question_form === "judgement"){
@@ -113,6 +115,9 @@
                         }
                         else if(this.msgList[i].question_form === "chosen"){
                             this.msgList[i].type = "选择"
+                        }
+                        else{
+                            this.msgList[i].type = "图片"
                         }
                     }
                 }

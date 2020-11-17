@@ -33,11 +33,11 @@
                 </a>
                 <a slot="description">
                     <div style="color: #5e5e5e">
-                        信誉积分：{{user.weight}}
+                        信誉积分：{{ user.weight }}
                         <a-divider type="vertical" />
-                        金币值：{{user.score}}
+                        金币值：{{ user.coin }}
                         <a-divider type="vertical" />
-                        已完成任务：{{user.fin_num}}
+                        已完成任务：{{ user.fin_num }}
                     </div>
                 </a>
                 <a-avatar
@@ -51,7 +51,6 @@
 
 <script>
     import dealAdmin from "../../utils/admin"
-    import postBackend from "../../utils/postBackend"
     import getBackend from "../../utils/getBackend"
     export default {
         name: "banuser",
@@ -67,6 +66,7 @@
         props:[
             "username",
             "power",
+            "avatar"
         ],
         methods:{
             dealUser(id, method){

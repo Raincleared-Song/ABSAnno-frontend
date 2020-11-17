@@ -29,6 +29,10 @@ const API = {
     POST_APPLY: {
         path: "/backend/sendapply",
         method: "POST"
+    },
+    CHANGE_AVATAR: {
+        path: "/backend/changeavatar",
+        method: "POST"
     }
 };
 

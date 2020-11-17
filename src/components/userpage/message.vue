@@ -1,5 +1,5 @@
 <template>
-    <div class="lateral-sliding">
+    <div v-if="items.length" class="lateral-sliding">
         <div class="lateral-sliding-item" v-for="item in items" :key="item">
             <div class="each-img">
                 <a-card size="small" :title="item.title">
@@ -9,32 +9,25 @@
             </div>
         </div>
     </div>
-
+    <a-empty v-else :description="'您还没有消息'"/>
 </template>
 
 <script>
-    import convertTime from "../../utils/timestamp";
+    import convertTime from "../../utils/convertTime";
     import getBackend from "../../utils/getBackend";
 
     export default {
         name: "message",
         data() {
             return {
-                num: 7,
-                items:[
-                    {"title":"1", "content":"this is the message content", "time":1569507418772},
-                    {"title":"2", "content":"this is the message content", "time":1569507418772},
-                    {"title":"3", "content":"this is the message content", "time":1569507418772},
-                    {"title":"4", "content":"this is the message content", "time":1569507418772},
-                    {"title":"5", "content":"this is the message content", "time":1569507418772},
-                    {"title":"6", "content":"this is the message content", "time":1569507418772},
-                    {"title":"7", "content":"this is the message content", "time":1569507418772},
-                    ],
+                num: 0,
+                items:[],
             }
         },  // end of data
         props: [
             'power',
-            'username'
+            'username',
+            'avatar'
         ],  // end of props
         mounted() {
             let onRespond = jsonObj => {
@@ -43,19 +36,13 @@
                     console.log(data)
                     this.num = data.message_num;
                     this.items = data.message_list;
-                    var i;
-                    for(i = 0; i < this.num; i+=1){
-                        this.items[i].time = convertTime( this.items[i].time)
+                    var j;
+                    for(j = 0; j < this.num; j += 1){
+                        this.items[j].time = convertTime( this.items[j].time)
                     }
                 }
             };
-            getBackend("backend/message", {}, onRespond);
-
-            // test only
-            var i;
-            for(i = 0; i < this.num; i+=1){
-                this.items[i].time = convertTime( this.items[i].time)
-            }
+            getBackend("/backend/message", {}, onRespond);
         },
     }
 </script>

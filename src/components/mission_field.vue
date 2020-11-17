@@ -2,7 +2,6 @@
   <div class="card-container">
 
     <a-tabs default-active-key="1">
-
       <a-tab-pane key="1" tab="手动添加任务">
         <router-view
             :mission_info="mission"
@@ -13,8 +12,8 @@
             v-model="current"
             type="navigation"
             :style="{ marginBottom: '60px', boxShadow: '0px -1px 0 0 #e8e8e8 inset' }">
-          <a-step title="编辑任务信息" disabled />
-          <a-step title="编辑题目" disabled />
+          <a-step title="编辑任务信息" />
+          <a-step title="编辑题目" />
         </a-steps>
       </a-tab-pane>
 
@@ -29,12 +28,15 @@
 import API from "@/utils/API";
 import upload_mission from "@/components/upload_mission";
 import postFile from "@/utils/postFile";
+import postBackend from "@/utils/postBackend";
+import moment from 'moment';
 
 export default {
   name: "mission_field",
   props: [
       'username',
-      'id'
+      'power',
+      'avatar'
   ],
   components: {
     upload_mission: upload_mission
@@ -45,12 +47,14 @@ export default {
         name: '',
         type: '',
         info: '',
+        cover: null,
         min: 10,
-        ddl: '',
+        ddl: moment(new Date()),
         tags: [],
         reward: 5,
-        retrieve: 7,
+        retrieve: 24,
         check_way: '',
+        has_cover: false,
         has_image: false
       },
       questions: [],
@@ -59,8 +63,9 @@ export default {
   },
   methods: {
     onSubmitInfo() {
-      this.$router.push('/mission/edit');
+      this.current = 1;
     },
+    onChangeStep(current) {},
     // 向后端发送数据
     submit() {
       // 题目的基本信息
@@ -68,57 +73,91 @@ export default {
         name: this.mission.name,
         question_form: this.mission.type + (this.mission.has_image ? '-image' : ''),
         question_num: this.questions.length.toString(),
-        mission_tags: this.mission.tags,
+        mission_tags: this.mission.tags.join('||'),
         info: this.mission.info,
         total: this.mission.min.toString(),
         reward: this.mission.reward.toString(),
-        deadline: this.mission.ddl.toString(),
+        deadline: this.mission.ddl.format('YYYY-MM-DD').toString(),
         retrieve_time: this.mission.retrieve.toString(),
         check_way: this.mission.check_way
       };
+
       // 问题列表
       submitObj.question_list = this.questions.map(question => {
-        if (this.mission.type === 'judgement') {
-          return {contains: question.description};
-        } else if (this.mission.type === 'choice') {
-          return {
+        let ret;
+        if (this.mission.type === 'chosen') {
+          ret = {
             contains: question.description,
-            options: question.options.join(',')
+            choices: question.options.join('||'),
+            ans: question.answer
           };
-        } else if (this.mission.type === 'text') {
-          return {contains: question.description};
+        } else if (this.mission.type === 'fill') {
+          ret = { contains: question.description };
         }
+        if (ret !== undefined && this.mission.has_image)
+          ret.image_name = question.image.name;
+        return ret;
       });
-      console.log(submitObj);
 
-      let formData = new FormData();
-      formData.append('info', JSON.stringify(submitObj));
+      if (this.mission.has_cover || this.mission.has_image) {
+        // 图片
+        let formData = new FormData();
+        formData.append('info', JSON.stringify(submitObj));
+        if (this.mission.has_cover)
+          formData.append('mission_image', this.mission.cover);
+        if (this.mission.has_image)
+          this.questions.forEach(question => {
+            console.log(question.image);
+            formData.append('img_list', question.image.raw);
+          });
 
-      // 题目的图片信息
-      if (this.mission.has_image) {
-        this.questions.forEach(question => {
-          formData.append('img_list', question.image.raw);
+        postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
+          if (jsonObj.code === 201) {
+            console.log(jsonObj);
+            this.$message.success("Upload Success!", 1).then(() => {
+              this.$router.go(-1);
+            });
+          } else {
+            this.$message.error(jsonObj.data);
+          }
+        });
+      } else {
+        // 无图片
+        postBackend(API.POST_NEW_MISSION.path, submitObj, jsonObj => {
+          if (jsonObj.code === 201) {
+            console.log(jsonObj);
+            this.$message.success("Upload Success!", 1).then(() => {
+              this.$router.go(-1);
+            });
+          } else {
+            this.$message.error(jsonObj.data);
+          }
         });
       }
-
-      postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
-        if (jsonObj.code === 201) {
-          console.log(jsonObj);
-          this.$message.success("Upload Success!");
-          this.$router.push("/ground");
-        } else {
-          this.$message.error("Upload Error! Try later!");
-        }
-      });
     },
   },
   watch: {
-    '$route.path': function (newVal) {
-      if (newVal === '/mission/create') {
-        this.current = 0;
-      } else if (newVal === '/mission/edit') {
-        this.current = 1;
-      }
+    // '$route.path': function (newVal) {
+    //   if (newVal === '/mission/create') {
+    //     this.current = 0;
+    //   } else if (newVal === '/mission/edit') {
+    //     this.current = 1;
+    //   }
+    // },
+    'this.mission.type': function (newVal) {
+      this.questions = [];
+    },
+    current: {
+      handler(newVal) {
+        if (newVal === 0) {
+          if (this.$route.path !== "/mission/create")
+            this.$router.replace("/mission/create");
+        } else {
+          if (this.$route.path !== "/mission/edit")
+            this.$router.replace("/mission/edit");
+        }
+      },
+      immediate: true
     }
   }
 }

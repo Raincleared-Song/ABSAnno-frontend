@@ -4,6 +4,7 @@
  * param url: url字符串
  * param requestBody: POST的request.body，传进一个object
  * param onRespond: 对于response的处理 */
+import router from "../router/router"
 export default function postBackend(url, requestBody, onRespond) {
     let xmlHttpPost;
     let xmlHttpCsrf;
@@ -21,6 +22,11 @@ export default function postBackend(url, requestBody, onRespond) {
     xmlHttpPost.onreadystatechange = function () {
         if (xmlHttpPost.readyState === 4) {
             jsonObj = JSON.parse(xmlHttpPost.responseText);
+            //console.log(jsonObj)
+            if(jsonObj.code === 400 &&
+                (jsonObj.data === "Invalid Token or Have Not Login" || jsonObj.data === "No Token Found in Cookie")){
+                router.push('/login');
+            }
             onRespond(jsonObj);
         }
     }
@@ -31,6 +37,7 @@ export default function postBackend(url, requestBody, onRespond) {
                 xmlHttpPost.open('POST', url, true);
                 xmlHttpPost.setRequestHeader('content-type', 'application/json');
                 xmlHttpPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
+                console.log(requestBody);
                 xmlHttpPost.send(JSON.stringify(requestBody));
             } else {
                 console.log(xmlHttpCsrf.responseText);

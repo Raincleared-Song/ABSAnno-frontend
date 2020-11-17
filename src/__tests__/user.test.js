@@ -27,9 +27,9 @@ const mockXmlBasic = {
 describe('basic_info', () => {
     it('Check data', () => {
         const wrapper = mount(basic_info, {localVue, router});
-        expect(wrapper.vm.userScore).toBe('')
-        expect(wrapper.vm.userWeight).toBe('')
-        expect(wrapper.vm.userAnsNum).toBe('')
+        expect(wrapper.vm.userCoin).toBe(-1)
+        expect(wrapper.vm.userWeight).toBe(-1)
+        expect(wrapper.vm.userAnsNum).toBe(-1)
     })
     it('Check mounted', () => {
         const oldXml = window.XMLHttpRequest;
@@ -48,9 +48,8 @@ describe('edit_info', () => {
         expect(info.question_form).toStrictEqual([])
         expect(info.question_num).toStrictEqual([5, 50])
         expect(wrapper.vm.questionForms).toStrictEqual([
-            { label: '判断题', value: 'judgement' },
             { label: '选择题', value: 'chosen' },
-            { label: '文字题', value: 'text' }
+            { label: '文字题', value: 'fill' }
         ])
     })
     it('check functions', () => {

@@ -2,38 +2,74 @@
 <template>
   <div>
     <h2>文字编辑题</h2>
-    <div v-if="editable">
-      <div
-          style="margin: 15px 10px 10px 10px">
-        编辑题目：
-      </div>
-      <a-textarea v-model="question.description" placeholder="your question" />
+
+    <!-- 题目描述区 -->
+    <div v-if="editable" style="margin: 10px">
+      <div style="margin: 10px">编辑题目：</div>
+      <a-textarea
+          v-model="question.description"
+          placeholder="Your question..." />
     </div>
     <div v-else>
-      <p>{{ this.question.description }}</p>
+      <p style="margin: 10px 5px">{{ this.question.description }}</p>
     </div>
-    <div
-        style="margin: 15px 10px 10px 10px">
-      答题区：
+
+    <!-- 图片区 -->
+    <div v-if="has_image" style="margin: 10px 15px">
+      <div v-if="editable">
+        <el-upload
+            v-if="!question.image"
+            ref="upload_img_text"
+            class="img-uploader"
+            action="#"
+            :auto-upload="false"
+            :show-file-list="false"
+            :on-change="onChangeImage">
+          <a-button style="margin: 10px 0">
+            <i class="el-icon-plus" />
+            <span style="margin: 0 10px">点击上传图片</span>
+          </a-button>
+        </el-upload>
+        <div v-else>
+          <i class="el-icon-picture-outline" />
+          <span style="margin: 0 30px 0 10px">{{ question.image.name }}</span>
+          <a-button
+              @click="onRemoveImage"
+              size="small" shape="circle">
+            <a-icon type="delete" />
+          </a-button>
+        </div>
+      </div>
+      <div v-else>
+        <el-image :src="question.image.url" />
+      </div>
     </div>
+
+    <!-- 答题区 -->
+    <div style="margin: 15px 10px 10px 10px"><strong>答题区：</strong></div>
     <div>
-      <a-textarea :read-only="editable" v-model="question.answer" />
+      <a-input
+          :disabled="editable && (!question.has_pre_ans)"
+          v-model="question.answer"
+          style="margin: 10px" />
     </div>
   </div>
 </template>
 
 <script>
   export default {
+    name: "text_edit",
     props: {
       question: {
         type: Object,
         default() {
           return {
             id: 0,
-            type: 'text',
+            type: 'chosen',
             description: "",
-            answer: "",
-            has_image: ""
+            new_option: "",
+            answer: "A||B",
+            image: ""
           }
         }
       },
@@ -44,6 +80,20 @@
       has_image: {
         type: Boolean,
         default: false
+      }
+    },  // end of props
+    methods: {
+      onChangeImage(file) {
+        this.question.image = file;
+      },
+      onRemoveImage() {
+        this.question.image = null;
+      }
+    },  // end of methods
+    watch: {
+      'question.has_pre_ans': function (newVal, oldVal) {
+        if (newVal === false && oldVal === true)
+          this.question.answer = "";
       }
     }
   }

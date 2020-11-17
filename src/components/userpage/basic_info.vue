@@ -3,8 +3,8 @@
     <a-descriptions
         title="用户信息"
         :column="1">
-      <a-descriptions-item label="用户积分">
-        {{ this.userScore }}
+      <a-descriptions-item label="金币值">
+        {{ this.userCoin }}
       </a-descriptions-item>
       <a-descriptions-item label="用户信誉">
         {{ this.userWeight }}
@@ -24,9 +24,9 @@ export default {
   name: "basic_info",
   data() {
     return {
-      userScore: '',
-      userWeight: '',
-      userAnsNum: ''
+      userCoin: -1,
+      userWeight: -1,
+      userAnsNum: -1
     };
   },  // end of data
   mounted: function() {
@@ -37,9 +37,10 @@ export default {
       console.log(jsonObj);
       if (jsonObj.code === 201) {
         const dataObj = getDataObj(jsonObj);
-        this.userScore = dataObj.score;
+        this.userCoin = dataObj.coin;
         this.userWeight = dataObj.weight;
         this.userAnsNum = dataObj.num;
+        this.$emit('change-avatar', dataObj.avatar);
       }
     });
   }   // mounted

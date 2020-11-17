@@ -1,6 +1,7 @@
 import basic_info from "@/components/userpage/basic_info";
 import edit_info from "@/components/userpage/edit_info";
 import history from "@/components/userpage/history";
+import message from "@/components/userpage/message";
 import {createLocalVue, mount} from "@vue/test-utils";
 import VueRouter from "vue-router";
 import ElementUI from "element-ui";
@@ -61,6 +62,18 @@ describe('edit_info', () => {
     })
 })
 
+const mockXmlHistory = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: JSON.stringify(
+            {totalNum: 1, mission_list: [{id: 1, name: 'a', question_form: 'chosen', info: '',
+                    user: 'a', question_num: 2, ret_time: 1569507418772, reward: 50}]})}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
 describe('history', () => {
     it('check data', () => {
         const wrapper = mount(history, {localVue, router});
@@ -73,5 +86,40 @@ describe('history', () => {
         expect(wrapper.vm.type2src({question_form: ""})).toBe("")
         expect(wrapper.vm.type2src({question_form: "judgement"})).toBe("@/assets/ground/judgement2.jpg")
         expect(wrapper.vm.type2src({question_form: "chosen"})).toBe("@/assets/ground/choice2.jpg")
+    })
+    it('check created', () => {
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlHistory);
+        const wrapper = mount(history, {localVue, router});
+        wrapper.vm.$mount();
+        mockXmlHistory.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+})
+
+const mockXmlMessage = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: JSON.stringify(
+            {message_num: 1, message_list: [
+                {"title":"8", "content":"this is the message content", "time":1569507418772}]})}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+describe('message', () => {
+    it('check data', () => {
+        const wrapper = mount(message, {localVue, router});
+        expect(wrapper.vm.num).toBe(7);
+    })
+    it('check mount', () => {
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlMessage);
+        const wrapper = mount(message, {localVue, router});
+        wrapper.vm.$mount();
+        mockXmlMessage.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
     })
 })

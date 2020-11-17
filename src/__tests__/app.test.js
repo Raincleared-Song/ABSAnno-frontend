@@ -14,4 +14,13 @@ describe('App', () => {
         const wrapper = shallowMount(App, { localVue });
         expect(wrapper.vm.power).toBe(-1);
     });
+    it('check login', () => {
+        const wrapper = shallowMount(App, { localVue });
+        wrapper.vm.login({name: 'songchenyang', power: 2});
+        wrapper.vm.$mount();
+    })
+    it('check logout', () => {
+        const wrapper = shallowMount(App, { localVue });
+        wrapper.vm.logout();
+    })
 })

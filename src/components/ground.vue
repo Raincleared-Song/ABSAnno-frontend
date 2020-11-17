@@ -62,7 +62,6 @@
                     <a-row type="flex" justify="space-around" v-if="isRouterAlive">
                         <a-col :span="7" v-for="msg in msgList" :key="msg">
                             <div v-if="msg.questionForm !== 'none'" class="portfolio-wrap" align="center">
-
                                 <img :src="msg.image_url" alt="" width="100%" >
                                 <div  class="portfolio-info">
                                     <h4>{{msg.name}}</h4>
@@ -274,6 +273,10 @@
                                 this.msgList[i].questionForm === "chosen-image"){
                                 this.msgList[i].type = "选择"
                             }
+                            else if(this.msgList[i].questionForm === "fill" ||
+                                this.msgList[i].questionForm === "fill-image"){
+                                this.msgList[i].type = "文字"
+                            }
                         }
                     } else {
                         console.log(jsonObj.data);
@@ -405,6 +408,10 @@
                             else if(this.intList[i].questionForm === "chosen" ||
                                 this.intList[i].questionForm === "chosen-image"){
                                 this.intList[i].type = "选择"
+                            }
+                            else if(this.intList[i].questionForm === "fill" ||
+                                this.intList[i].questionForm === "fill-image"){
+                                this.intList[i].type = "文字"
                             }
                         }
                     } else {

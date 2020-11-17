@@ -51,10 +51,6 @@ describe('mission_field', function () {
     });
     const tab = wrapper.findComponent(ATabs);
 
-    it('ATabs has two tabs', function () {
-        expect(tab.findAllComponents({ name: 'ATabPane' })).toHaveLength(2);
-    })
-
     it('click edit mission tab', async function () {
         const tabEdit = tab.findAllComponents({ name: 'ATabPane' }).at(0);
         await tabEdit.trigger('click');
@@ -71,7 +67,6 @@ describe('mission_field', function () {
         wrapper.vm.$emit('submit-info');
         await wrapper.vm.$nextTick();
         expect(wrapper.emitted('submit-info')).toBeTruthy();
-        // expect(wrapper.vm.$route.path).toBe('/mission/edit');
     });
 
     it('emit submit-questions', async function () {

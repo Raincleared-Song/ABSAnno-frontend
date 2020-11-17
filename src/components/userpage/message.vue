@@ -1,5 +1,5 @@
 <template>
-    <div class="lateral-sliding">
+    <div v-if="items.length" class="lateral-sliding">
         <div class="lateral-sliding-item" v-for="item in items" :key="item">
             <div class="each-img">
                 <a-card size="small" :title="item.title">
@@ -9,7 +9,7 @@
             </div>
         </div>
     </div>
-
+    <a-empty v-else :description="'您还没有消息'"/>
 </template>
 
 <script>
@@ -26,7 +26,8 @@
         },  // end of data
         props: [
             'power',
-            'username'
+            'username',
+            'avatar'
         ],  // end of props
         mounted() {
             let onRespond = jsonObj => {
@@ -42,12 +43,6 @@
                 }
             };
             getBackend("/backend/message", {}, onRespond);
-
-            // test only
-            // var i;
-            // for(i = 0; i < this.num; i+=1){
-            //     this.items[i].time = convertTime( this.items[i].time)
-            // }
         },
     }
 </script>

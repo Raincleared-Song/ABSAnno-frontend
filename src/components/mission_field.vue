@@ -12,8 +12,8 @@
             v-model="current"
             type="navigation"
             :style="{ marginBottom: '60px', boxShadow: '0px -1px 0 0 #e8e8e8 inset' }">
-          <a-step title="编辑任务信息" disabled />
-          <a-step title="编辑题目" disabled />
+          <a-step title="编辑任务信息" />
+          <a-step title="编辑题目" />
         </a-steps>
       </a-tab-pane>
 
@@ -63,8 +63,9 @@ export default {
   },
   methods: {
     onSubmitInfo() {
-      this.$router.push('/mission/edit');
+      this.current = 1;
     },
+    onChangeStep(current) {},
     // 向后端发送数据
     submit() {
       // 题目的基本信息
@@ -90,11 +91,8 @@ export default {
             choices: question.options.join('||'),
             ans: question.answer
           };
-        } else if (this.mission.type === 'text') {
-          ret = {
-            contains: question.description,
-            ans: question.answer
-          };
+        } else if (this.mission.type === 'fill') {
+          ret = { contains: question.description };
         }
         if (ret !== undefined && this.mission.has_image)
           ret.image_name = question.image.name;
@@ -117,7 +115,7 @@ export default {
           if (jsonObj.code === 201) {
             console.log(jsonObj);
             this.$message.success("Upload Success!", 1).then(() => {
-              this.$router.push("/ground");
+              this.$router.go(-1);
             });
           } else {
             this.$message.error(jsonObj.data);
@@ -129,7 +127,7 @@ export default {
           if (jsonObj.code === 201) {
             console.log(jsonObj);
             this.$message.success("Upload Success!", 1).then(() => {
-              this.$router.push("/ground");
+              this.$router.go(-1);
             });
           } else {
             this.$message.error(jsonObj.data);
@@ -139,15 +137,27 @@ export default {
     },
   },
   watch: {
-    '$route.path': function (newVal) {
-      if (newVal === '/mission/create') {
-        this.current = 0;
-      } else if (newVal === '/mission/edit') {
-        this.current = 1;
-      }
-    },
+    // '$route.path': function (newVal) {
+    //   if (newVal === '/mission/create') {
+    //     this.current = 0;
+    //   } else if (newVal === '/mission/edit') {
+    //     this.current = 1;
+    //   }
+    // },
     'this.mission.type': function (newVal) {
       this.questions = [];
+    },
+    current: {
+      handler(newVal) {
+        if (newVal === 0) {
+          if (this.$route.path !== "/mission/create")
+            this.$router.replace("/mission/create");
+        } else {
+          if (this.$route.path !== "/mission/edit")
+            this.$router.replace("/mission/edit");
+        }
+      },
+      immediate: true
     }
   }
 }

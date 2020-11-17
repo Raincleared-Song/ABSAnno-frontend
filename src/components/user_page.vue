@@ -12,9 +12,9 @@
               :show-upload-list="false"
               :before-upload="beforeUploadAvatar"
               :custom-request="uploadAvatar"
-              style="top: -40px; left: 55%; position: relative">
-            <a-button shape="round">
-              <a-icon type="edit" />Edit
+              style="top: -50px; left: 65%; position: relative">
+            <a-button shape="circle" size="large">
+              <a-icon type="edit" />
             </a-button>
           </a-upload>
 

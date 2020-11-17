@@ -35,7 +35,7 @@
           <span style="margin: 0 30px 0 10px">{{ question.image.name }}</span>
           <a-button
               @click="onRemoveImage"
-              size="small" shape="circle" ghost>
+              size="small" shape="circle">
             <a-icon type="delete" />
           </a-button>
         </div>
@@ -74,7 +74,7 @@
           </a-radio>
           <a-button
               v-if="editable"
-              size="small" ghost
+              size="small"
               @click="$emit('removeOption', question.index, index)">
             <a-icon type="delete" />
           </a-button>
@@ -85,7 +85,7 @@
         No option added...
       </div>
     </div>
-    <div v-if="editable">
+    <div v-if="editable" style="margin: 5px 15px">
       <a-input
           v-model="question.new_option"
           placeholder="Add new option, press enter to commit."
@@ -108,12 +108,12 @@ export default {
       'has_image'
   ],  // end of props
   methods: {
-    onChangeImage(file, fileList) {
+    onChangeImage(file) {
       this.question.image = file;
     },
     onRemoveImage() {
       console.log('remove');
-      this.question.image = undefined;
+      this.question.image = null;
     }
   },
   watch: {

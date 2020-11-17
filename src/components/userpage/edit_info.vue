@@ -93,7 +93,7 @@
 export default {
   name: "edit_info",
   props: [
-    'username'
+      'username'
   ],  // end of props
   data() {
     return {
@@ -104,7 +104,7 @@ export default {
       },
       questionForms: [
         { label: '选择题', value: 'chosen' },
-        { label: '文字题', value: 'text' }
+        { label: '文字题', value: 'fill' }
       ]
     }
   },  // end of data

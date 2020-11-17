@@ -29,7 +29,7 @@
               v-model="mission_info.type"
               @blur="$refs.type.onFieldBlur()">
             <a-select-option value="chosen">选择题任务</a-select-option>
-            <a-select-option value="text">文字描述题任务</a-select-option>
+            <a-select-option value="fill">文字描述题任务</a-select-option>
           </a-select>
         </a-form-model-item>
 
@@ -117,8 +117,10 @@
 
         <a-form-model-item
             ref="reward"
-            label="悬赏金额"
             prop="reward">
+          <a-tooltip placement="topLeft" title="用户做完一个子项目的悬赏金额">
+            <label slot="label">悬赏金额</label>
+          </a-tooltip>
           <a-input-number
               v-model.trim.number="mission_info.reward"
               @blur="$refs.reward.onFieldBlur()" />

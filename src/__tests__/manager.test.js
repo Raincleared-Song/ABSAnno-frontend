@@ -1,7 +1,7 @@
 import banuser from "@/components/manager/banuser";
 import userManage from "@/components/manager/userManage";
 import manager from "@/components/manager";
-import {createLocalVue, mount} from "@vue/test-utils";
+import {createLocalVue, mount, shallowMount} from "@vue/test-utils";
 import VueRouter from "vue-router";
 import ElementUI from "element-ui";
 import Antd from "ant-design-vue";
@@ -24,6 +24,7 @@ const mockXmlBan = {
 };
 
 describe('banuser', () => {
+
     it('check data', () => {
         const wrapper = mount(banuser, {localVue, router})
         expect(wrapper.vm.current).toBe(1)
@@ -31,6 +32,7 @@ describe('banuser', () => {
         expect(wrapper.vm.pageSize).toBe(20)
         expect(wrapper.vm.getUserNum).toBe(0)
     })
+
     it('test dealUser', () => {
         const wrapper = mount(banuser, {localVue, router})
         wrapper.setData({
@@ -38,6 +40,7 @@ describe('banuser', () => {
         })
         wrapper.vm.dealUser(1, 'test')
     })
+
     it('test onChange', () => {
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlBan);
@@ -84,8 +87,19 @@ describe('userManage', () => {
 })
 
 describe('Manager', () => {
+
     it('test data', () => {
-        const wrapper = mount(manager, {localVue, router});
+        const wrapper = mount(manager, { localVue, router, components: { banuser } });
         wrapper.vm.$mount();
+    })
+
+    it('test handleChange all', function () {
+        const wrapper = mount(manager, { localVue, router, components: { banuser } });
+        wrapper.vm.handleChange("all");
+    })
+
+    it('test handleChange not all', function () {
+        const wrapper = mount(manager, { localVue, router, components: { banuser } });
+        wrapper.vm.handleChange("student");
     })
 })

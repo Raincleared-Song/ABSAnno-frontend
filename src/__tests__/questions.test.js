@@ -220,7 +220,7 @@ const mockXmlCsrf = {
     open: jest.fn(),
     send: jest.fn(),
     readyState: 4,
-    status: 200,
+    status: 201,
     responseText: '123456',
     onreadystatechange: () => {},
     setRequestHeader: () => {}
@@ -230,7 +230,7 @@ const mockXmlSwitch = {
     open: jest.fn(),
     send: jest.fn(),
     readyState: 4,
-    status: 200,
+    status: 201,
     responseText: JSON.stringify({code: 201, data: JSON.stringify(
             {ret: 1, type: 'chosen', description: '', choices: 'A||B||C'})}),
     onreadystatechange: () => {},
@@ -241,7 +241,7 @@ const mockXmlSwitchImage = {
     open: jest.fn(),
     send: jest.fn(),
     readyState: 4,
-    status: 200,
+    status: 201,
     responseText: JSON.stringify({code: 201, data: JSON.stringify(
             {ret: 1, type: 'chosen-image', description: '', choices: 'A||B||C'})}),
     onreadystatechange: () => {},
@@ -267,12 +267,7 @@ describe('answer_question', () => {
             propsData: { username: 'test', power: 1 },
             data() {
                 return {
-                    nowQuestion: {
-                        index: 0,
-                        type: 'chosen',
-                        description: 'test description',
-                        has_image: false
-                    }
+                    nowQuestion: { index: 0, type: 'chosen', description: 'test description', has_image: false }
                 }
             }
         });
@@ -282,6 +277,7 @@ describe('answer_question', () => {
         expect(chosenGroup.props('question')).toBe(wrapper.vm.nowQuestion);
         expect(chosenGroup.props('has_image')).toBe(false);
     })
+
     it('test submit', () => {
         const wrapper = shallowMount(answer_question, {localVue, router})
         wrapper.setData({questions: [{type: 'chosen', answer: ['A', 'B']}]});
@@ -291,6 +287,7 @@ describe('answer_question', () => {
         mockXmlCsrf.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('test submit2', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         wrapper.setData({questions: [{type: 'fill', answer: 'A'}]});
@@ -300,6 +297,7 @@ describe('answer_question', () => {
         mockXmlCsrf.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('test switch', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         const oldXml = window.XMLHttpRequest;
@@ -308,6 +306,7 @@ describe('answer_question', () => {
         mockXmlSwitch.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('test switch image', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         const oldXml = window.XMLHttpRequest;
@@ -316,11 +315,13 @@ describe('answer_question', () => {
         mockXmlSwitchImage.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('test switch id', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         wrapper.setData({nowQuestionIndex: 2});
         wrapper.vm.switchToNext();
     })
+
     it('test switch error', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         const oldXml = window.XMLHttpRequest;
@@ -329,6 +330,7 @@ describe('answer_question', () => {
         mockXmlError.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('test other', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         wrapper.vm.switchToPrev();

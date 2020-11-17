@@ -10,13 +10,15 @@ localVue.use(ElementUI)
 localVue.use(Antd)
 const router = new VueRouter()
 
-const mockXmlChange = {
+const mockXmlChangeJudgement = {
     open: jest.fn(),
     send: jest.fn(),
     readyState: 4,
     status: 201,
     responseText: JSON.stringify({code: 201, data: JSON.stringify(
-        {'total': 4, 'question_list': []}
+        {'total': 4, 'question_list': [
+                { question_form: 'judgement' }
+            ]}
         )}),
     onreadystatechange: () => {},
     setRequestHeader: () => {}
@@ -43,38 +45,22 @@ const mockXmlChangeCsrf = {
 };
 
 describe('ground', () => {
-    // it('check data', () => {
-    //     const wrapper = mount(ground, {localVue, router})
-    //     expect(wrapper.vm.$data).toEqual({
-    //         msgList:[],
-    //         current: 1,
-    //         totalMsgNum: 1,
-    //         pagesize: 12,
-    //         getMsgNum:0,
-    //         type:["total"],
-    //         theme:["total"],
-    //         themeTotal:["total","science", "art","sports","literature","food","music","game","daily","others"],
-    //         typeTotal:["total","judgement","chosen"],
-    //         groundType: 1,
-    //         isRouterAlive: true,
-    //         keyword:"",
-    //         intList:[],
-    //         intNum: 0,
-    //     })
-    // })
+
     it('check function', () => {
         const wrapper = mount(ground, {localVue, router})
         expect(wrapper.vm.min(1, 2)).toBe(1)
         expect(wrapper.vm.min(2, 1)).toBe(1)
     })
-    it('check onChange', () => {
+
+    it('check onChange Judgement', () => {
         const wrapper = mount(ground, {localVue, router})
         const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlChange);
+        window.XMLHttpRequest = jest.fn(() => mockXmlChangeJudgement);
         wrapper.vm.onChange(1);
-        mockXmlChange.onreadystatechange();
+        mockXmlChangeJudgement.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('check onChange Fail', () => {
         const wrapper = mount(ground, {localVue, router})
         const oldXml = window.XMLHttpRequest;
@@ -83,6 +69,7 @@ describe('ground', () => {
         mockXmlChangeFail.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('check deleteMsg', () => {
         const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
@@ -91,6 +78,7 @@ describe('ground', () => {
         mockXmlChangeCsrf.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('check getOrder', () => {
         const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
@@ -100,19 +88,21 @@ describe('ground', () => {
         mockXmlChangeCsrf.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('check onSearch', () => {
         const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlChange);
+        window.XMLHttpRequest = jest.fn(() => mockXmlChangeJudgement);
         wrapper.vm.onSearch('value');
-        mockXmlChange.onreadystatechange();
+        mockXmlChangeJudgement.onreadystatechange();
         wrapper.vm.sendSelect();
-        mockXmlChange.onreadystatechange();
+        mockXmlChangeJudgement.onreadystatechange();
         wrapper.vm.$mount();
-        mockXmlChange.onreadystatechange();
+        mockXmlChangeJudgement.onreadystatechange();
         window.XMLHttpRequest = oldXml;
         expect(wrapper.vm.keyword).toBe('value');
     })
+
     it('check other functions', () => {
         const wrapper = mount(ground, {localVue, router});
         wrapper.vm.handleChangeTheme('value1');

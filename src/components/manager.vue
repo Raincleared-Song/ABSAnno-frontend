@@ -71,7 +71,7 @@
                     });
             },
             handleChange(user) {
-                if(user==="all"){
+                if(user === "all"){
                     this.checknormal=false
                     this.checkvip=false
                     this.checkadmin=false
@@ -82,7 +82,7 @@
                         this.target=[]
                     }
                 }
-                else{
+                else {
                     this.checkall=false
                     let all=this.target.indexOf("all")
                     if(all !== -1){

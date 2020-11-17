@@ -119,7 +119,7 @@
         },
 
         watch: {
-            activeKey(key) { // 点击题组，展示题组详情
+            activeKey: function (key) { // 点击题组，展示题组详情
                 // console.log(key.id);
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {

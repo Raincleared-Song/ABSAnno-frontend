@@ -7,12 +7,110 @@ import {mount, createLocalVue, shallowMount} from '@vue/test-utils'
 import VueRouter from "vue-router";
 import ElementUI from "element-ui";
 import Antd from "ant-design-vue";
+import {getPropsData} from "ant-design-vue/lib/_util/props-util";
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)
 localVue.use(ElementUI)
 localVue.use(Antd)
 const router = new VueRouter()
+
+describe('choice_group', function () {
+
+    it('check data', function () {
+        const wrapper = mount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    index: 0,
+                    type: 'chosen',
+                    description: "",
+                    options: ['A', 'B', 'C'],
+                    new_option: "",
+                    answer: "",
+                    has_pre_ans: false,
+                    image: undefined
+                },
+                editable: true,
+                has_image: false
+            }
+        })
+        expect(wrapper.vm.$data).toStrictEqual({
+            optionCode: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+        })
+    })
+
+    it('check onChangeImage', function () {
+        const wrapper = shallowMount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    index: 0,
+                    type: 'chosen',
+                    description: "",
+                    options: ['A', 'B', 'C'],
+                    new_option: "",
+                    answer: "",
+                    has_pre_ans: false,
+                    image: undefined
+                },
+                editable: true,
+                has_image: true
+            }
+        })
+        wrapper.vm.onChangeImage({ name: "test.png" })
+        expect(wrapper.props().question.image).toStrictEqual({ name: "test.png" })
+    })
+
+    it('test onRemoveImage', function () {
+        const wrapper = shallowMount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    options: ['A', 'B', 'C'],
+                    image: "123.png"
+                }
+            }
+        })
+        wrapper.vm.onRemoveImage();
+        expect(wrapper.props().question.image).toBe(null);
+    })
+
+    it('test watch question.has_pre_ans', async function () {
+        const wrapper = mount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    options: ['A', 'B', 'C'],
+                    answer: "ha",
+                    has_pre_ans: true
+                }
+            }
+        })
+        wrapper.vm.$watch(
+            'question.has_pre_ans', function (newVal, oldVal) {
+                if (newVal === false && oldVal === true)
+                    this.question.answer = "";
+            })
+        await wrapper.setProps({
+            question: {
+                options: ['A', 'B', 'C'],
+                answer: "ha",
+                has_pre_ans: true
+            }})
+        await wrapper.setProps({
+            question: {
+                options: ['A', 'B', 'C'],
+                answer: "ha",
+                has_pre_ans: false
+            }})
+        expect(wrapper.props().question.answer).toBe("")
+    })
+})
 
 describe('checkbox_group', () => {
     it('Check data', () => {
@@ -62,7 +160,59 @@ describe('judgement_group', () => {
 
 describe('text_edit', () => {
     it('Check Text Edit', () => {
-        const wrapper = mount(text_edit, {localVue, router});
+        const wrapper = mount(text_edit, { localVue, router });
+        expect(wrapper.vm.$props).toStrictEqual({
+            question: {
+                id: 0,
+                type: 'chosen',
+                description: "",
+                new_option: "",
+                answer: "A||B",
+                image: ""
+            },
+            editable: false,
+            has_image: false
+        });
+    })
+
+    it('test onChangeImage', function () {
+        const wrapper = mount(text_edit, {
+            localVue,
+            router,
+            propsData: {
+                question: { image: "" }
+            }
+        })
+        wrapper.vm.onChangeImage({ name: "test.png" });
+        expect(wrapper.props().question.image).toStrictEqual({ name: "test.png" });
+    })
+
+    it('test onRemoveImage', function () {
+        const wrapper = mount(text_edit, {
+            localVue,
+            router,
+            propsData: {
+                question: { image: "" }
+            }
+        })
+        wrapper.vm.onRemoveImage();
+        expect(wrapper.props().question.image).toBe(null);
+    })
+
+    it('test watch question.has_pre_ans', async function () {
+        const wrapper = mount(text_edit, { localVue, router })
+        wrapper.vm.$watch(
+            'question.has_pre_ans', function (newVal, oldVal) {
+                if (newVal === false && oldVal === true)
+                    this.question.answer = "";
+            })
+        await wrapper.setProps({
+            question: { has_pre_ans: true }
+        })
+        await wrapper.setProps({
+            question: { has_pre_ans: false }
+        })
+        expect(wrapper.props().question.answer).toBe("")
     })
 })
 

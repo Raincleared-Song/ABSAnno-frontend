@@ -426,11 +426,20 @@
                 // console.log(num)
             },
             goOrder(msg){
-                this.$router.push('/question/'+msg.id);
                 if(msg.received === "F"){
-                    this.getOrder(msg, false)
+                    postBackend("backend/receive", {mission_id: msg.id.toString()},
+                        jsonObj => {
+                            if (jsonObj.code === 201) {
+                                this.$router.push('/question/'+msg.id);
+                                this.onChange(this.pageNumber)
+                            } else {
+                                console.log("can't book/unbook")
+                            }
+                        });
                 }
-
+                else{
+                    this.$router.push('/question/'+msg.id);
+                }
             },
         },
         mounted:function () {   //自动触发写入的函数

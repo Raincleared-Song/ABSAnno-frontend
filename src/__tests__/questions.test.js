@@ -82,7 +82,7 @@ const mockXmlSwitch = {
     readyState: 4,
     status: 200,
     responseText: JSON.stringify({code: 201, data: JSON.stringify(
-            {ret: 1, type: 'chosen', description: '', options: 'A||B||C'})}),
+            {ret: 1, type: 'chosen', description: '', choices: 'A||B||C'})}),
     onreadystatechange: () => {},
     setRequestHeader: () => {}
 };
@@ -93,7 +93,7 @@ const mockXmlSwitchImage = {
     readyState: 4,
     status: 200,
     responseText: JSON.stringify({code: 201, data: JSON.stringify(
-            {ret: 1, type: 'chosen-image', description: '', options: 'A||B||C'})}),
+            {ret: 1, type: 'chosen-image', description: '', choices: 'A||B||C'})}),
     onreadystatechange: () => {},
     setRequestHeader: () => {}
 };
@@ -104,7 +104,7 @@ const mockXmlError = {
     readyState: 4,
     status: 400,
     responseText: JSON.stringify({code: 400, data: JSON.stringify(
-            {ret: 1, type: 'chosen', description: '', options: 'A||B||C'})}),
+            {ret: 1, type: 'chosen', description: '', choices: 'A||B||C'})}),
     onreadystatechange: () => {},
     setRequestHeader: () => {}
 };
@@ -182,7 +182,6 @@ describe('answer_question', () => {
     it('test other', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         wrapper.vm.switchToPrev();
-        wrapper.vm.returnSquare();
     })
 });
 

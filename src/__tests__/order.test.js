@@ -1,5 +1,5 @@
 import orders from "@/components/orders";
-import convertTime from "@/utils/timestamp";
+import convertTime from "@/utils/convertTime";
 import {createLocalVue, mount} from "@vue/test-utils";
 import VueRouter from "vue-router";
 import ElementUI from "element-ui";
@@ -26,12 +26,8 @@ const mockXmlMount = {
 describe('order', () => {
     it('check data', () => {
         const wrapper = mount(orders, {localVue, router});
-        expect(wrapper.vm.current).toBe(1);
-        expect(wrapper.vm.totalMsgNum).toBe(1);
-        expect(wrapper.vm.pagesize).toBe(12);
-        expect(wrapper.vm.getMsgNum).toBe(0);
-        expect(wrapper.vm.groundType).toBe(1);
-        expect(wrapper.vm.isRouterAlive).toBe(true);
+        expect(wrapper.vm.size).toBe(0);
+        expect(wrapper.vm.msgList).toStrictEqual([]);
     })
     it('check handleDelete', () => {
         const wrapper = mount(orders, {localVue, router});

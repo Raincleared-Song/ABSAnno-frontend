@@ -111,7 +111,7 @@ const mockXmlMessage = {
 describe('message', () => {
     it('check data', () => {
         const wrapper = mount(message, {localVue, router});
-        expect(wrapper.vm.num).toBe(7);
+        expect(wrapper.vm.num).toBe(0);
     })
     it('check mount', () => {
         const oldXml = window.XMLHttpRequest;

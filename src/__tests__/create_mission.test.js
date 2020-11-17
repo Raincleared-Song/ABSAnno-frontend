@@ -30,7 +30,15 @@ describe('create_mission', function () {
                 reward: [{ required: true, message: 'Mission reward cannot be null.', trigger: 'blur' }],
                 retrieve: [{ required: true, message: 'Mission retrieve time cannot be null.', trigger: 'blur' }],
                 check_way: [{ required: true, message: 'Mission check way cannot be null.', trigger: 'blur' }]
-            }
+            },
+            tagsTotal: [
+                "青年", "中年", "老年", "学生",
+                "教师", "上班族", "研究者",
+                "人脸识别", "图片识别", "文字识别",
+                "AI写作", "翻译校对", "文本分析",
+                "生活场景", "工作场景", "购物", "运动", "旅游",
+                "动物", "道德准则", "地理", "科学", "心理学"
+            ]
         })
     })
 

@@ -47,7 +47,9 @@
                             <template slot="content">
                                 欢迎，{{this.username}}<br/>
                             </template>
-                            <router-link to="/user"><a-avatar shape="square" :src="avatar"/></router-link>
+                            <router-link to="/user">
+                                <a-avatar shape="square" :src="avatar"/>
+                            </router-link>
                         </a-popover>
                     </span>
                 </div>

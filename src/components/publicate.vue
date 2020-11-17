@@ -32,7 +32,7 @@
                                     <a-divider type="vertical" />
                                     <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />{{msg.deadline}}
                                     <a-divider type="vertical" />
-                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.num}}/{{msg.total}}
+                                    预期作答数量：{{msg.total}}
                                     <a-divider type="vertical" />
                                     {{msg.info}}
                                 </div>
@@ -65,6 +65,10 @@
                         label="可信度"
                         sortable
                 >
+                </el-table-column>
+                <el-table-column
+                        prop="now_num"
+                        label="已作答人数">
                 </el-table-column>
             </el-table>
         </a-collapse-panel>

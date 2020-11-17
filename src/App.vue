@@ -52,7 +52,7 @@
                 }
                 this.userName = "游客，请登录/注册";
                 this.power = -1;
-                this.avatar = '';
+                this.avatar = "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png";
                 console.log("logout!");
                 sessionStorage.setItem("userName", this.userName);
                 sessionStorage.setItem("power", this.power);
@@ -62,14 +62,19 @@
                 this.userName = data.name;
                 this.power = data.power;
                 this.avatar = data.avatar;
+                if(this.avatar === ""){
+                    this.avatar = "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                }
                 console.log(this.userName);
                 sessionStorage.setItem("userName", this.userName);
                 sessionStorage.setItem("power", this.power);
                 sessionStorage.setItem("avatar", this.avatar);
             },
             onChangeAvatar(url) {
-                this.avatar = url;
-                sessionStorage.setItem("avatar", this.avatar);
+                if(url !== "") {
+                    this.avatar = url;
+                    sessionStorage.setItem("avatar", this.avatar);
+                }
             },
             // showLogoutMessage(){
             //     this.$message.info('会话已过期，请重新登陆', 2);
@@ -83,7 +88,7 @@
             }else{
                 this.userName = "游客，请登录/注册";
                 this.power = -1;
-                this.avatar = '';
+                this.avatar = "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png";
                 sessionStorage.setItem("userName", this.userName);
                 sessionStorage.setItem("power", this.power);
                 sessionStorage.setItem("avatar", this.avatar);

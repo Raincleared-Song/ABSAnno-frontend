@@ -7,7 +7,6 @@ import {mount, createLocalVue, shallowMount} from '@vue/test-utils'
 import VueRouter from "vue-router";
 import ElementUI from "element-ui";
 import Antd from "ant-design-vue";
-import {getPropsData} from "ant-design-vue/lib/_util/props-util";
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)
@@ -220,8 +219,8 @@ const mockXmlCsrf = {
     open: jest.fn(),
     send: jest.fn(),
     readyState: 4,
-    status: 201,
-    responseText: '123456',
+    status: 200,
+    responseText: 'csrf',
     onreadystatechange: () => {},
     setRequestHeader: () => {}
 };
@@ -248,13 +247,44 @@ const mockXmlSwitchImage = {
     setRequestHeader: () => {}
 };
 
-const mockXmlError = {
+const mockXmlSwitchFail = {
     open: jest.fn(),
     send: jest.fn(),
     readyState: 4,
     status: 400,
     responseText: JSON.stringify({code: 400, data: JSON.stringify(
-            {ret: 1, type: 'chosen', description: '', choices: 'A||B||C'})}),
+            {ret: 1, type: 'chosen-image', description: '', choices: 'A||B||C'})}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlSubmitSuccess = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: 'Success'}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlSubmitFail = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 400, data: 'Fail'}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlSubmitCreated = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: JSON.stringify(
+            {total: 1, ret: 1, type: 'chosen-image', description: '', choices: 'A||B||C', image_url: ''})}),
     onreadystatechange: () => {},
     setRequestHeader: () => {}
 };
@@ -279,22 +309,26 @@ describe('answer_question', () => {
     })
 
     it('test submit', () => {
-        const wrapper = shallowMount(answer_question, {localVue, router})
+        const wrapper = mount(answer_question, {localVue, router})
         wrapper.setData({questions: [{type: 'chosen', answer: ['A', 'B']}]});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
         wrapper.vm.submit();
+        window.XMLHttpRequest = jest.fn(() => mockXmlSubmitSuccess);
         mockXmlCsrf.onreadystatechange();
+        mockXmlSubmitSuccess.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
 
-    it('test submit2', () => {
-        const wrapper = shallowMount(answer_question, {localVue, router});
-        wrapper.setData({questions: [{type: 'fill', answer: 'A'}]});
+    it('test submit fail', () => {
+        const wrapper = mount(answer_question, {localVue, router})
+        wrapper.setData({questions: [{type: 'chosen', answer: ['A', 'B']}]});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
         wrapper.vm.submit();
+        window.XMLHttpRequest = jest.fn(() => mockXmlSubmitFail);
         mockXmlCsrf.onreadystatechange();
+        mockXmlSubmitFail.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
 
@@ -316,24 +350,32 @@ describe('answer_question', () => {
         window.XMLHttpRequest = oldXml;
     })
 
+    it('test switch error', () => {
+        const wrapper = shallowMount(answer_question, {localVue, router});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlSwitchFail);
+        wrapper.vm.switchToNext();
+        mockXmlSwitchImage.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
     it('test switch id', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         wrapper.setData({nowQuestionIndex: 2});
         wrapper.vm.switchToNext();
     })
 
-    it('test switch error', () => {
-        const wrapper = shallowMount(answer_question, {localVue, router});
-        const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlError);
-        wrapper.vm.switchToNext();
-        mockXmlError.onreadystatechange();
-        window.XMLHttpRequest = oldXml;
-    })
-
     it('test other', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         wrapper.vm.switchToPrev();
+    })
+
+    it('test created', () => {
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlSubmitCreated);
+        mount(answer_question, {localVue, router});
+        mockXmlSubmitCreated.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
     })
 });
 

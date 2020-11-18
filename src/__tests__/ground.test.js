@@ -16,8 +16,12 @@ const mockXmlChangeJudgement = {
     readyState: 4,
     status: 201,
     responseText: JSON.stringify({code: 201, data: JSON.stringify(
-        {'total': 4, 'question_list': [
-                { question_form: 'judgement' }
+        {total: 5, question_list: [
+                { questionForm: 'judgement', type: '', deadline: 1},
+                { questionForm: 'chosen', type: '', deadline: 1 },
+                { questionForm: 'fill', type: '', deadline: 1 },
+                { questionForm: 'fill', type: '', deadline: 1 },
+                { questionForm: 'fill', type: '', deadline: 1 }
             ]}
         )}),
     onreadystatechange: () => {},
@@ -44,6 +48,16 @@ const mockXmlChangeCsrf = {
     setRequestHeader: () => {}
 };
 
+const mockXmlOrder = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: 'test'}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+}
+
 describe('ground', () => {
 
     it('check function', () => {
@@ -53,7 +67,8 @@ describe('ground', () => {
     })
 
     it('check onChange Judgement', () => {
-        const wrapper = mount(ground, {localVue, router})
+        const wrapper = mount(ground, {localVue, router});
+        wrapper.setData({type: ['选择', '判断', '文字', '图片']});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeJudgement);
         wrapper.vm.onChange(1);
@@ -72,6 +87,19 @@ describe('ground', () => {
 
     it('check deleteMsg', () => {
         const wrapper = mount(ground, {localVue, router});
+        wrapper.setData({msgList: [
+                {id: 0, questionNum: 0},
+                {id: 1, questionNum: 0},
+                {id: 1, questionNum: 0},
+                {id: 1, questionNum: 0},
+                {id: 1, questionNum: 0},
+                {id: 1, questionNum: 0},
+                {id: 1, questionNum: 0},
+                {id: 1, questionNum: 0},
+                {id: 1, questionNum: 0},
+                {id: 1, questionNum: 0},
+                {id: 1, questionNum: 0},
+            ]});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
         wrapper.vm.deleteMsg(0);
@@ -79,13 +107,58 @@ describe('ground', () => {
         window.XMLHttpRequest = oldXml;
     })
 
-    it('check getOrder', () => {
+    it('check getOrder1', () => {
         const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
-        wrapper.vm.getOrder({id: 1, received: 'T'});
-        wrapper.vm.getOrder({id: 2, received: 'F'});
+        wrapper.vm.getOrder({id: 1, received: 'T'}, true);
+        window.XMLHttpRequest = jest.fn(() => mockXmlOrder);
         mockXmlChangeCsrf.onreadystatechange();
+        mockXmlOrder.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check getOrder2', () => {
+        const wrapper = mount(ground, {localVue, router});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
+        wrapper.vm.getOrder({id: 1, received: 'F'}, true);
+        window.XMLHttpRequest = jest.fn(() => mockXmlOrder);
+        mockXmlChangeCsrf.onreadystatechange();
+        mockXmlOrder.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check getOrder3', () => {
+        const wrapper = mount(ground, {localVue, router});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
+        wrapper.vm.getOrder({id: 1, received: 'T'}, false);
+        window.XMLHttpRequest = jest.fn(() => mockXmlOrder);
+        mockXmlChangeCsrf.onreadystatechange();
+        mockXmlOrder.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check getOrder4', () => {
+        const wrapper = mount(ground, {localVue, router});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
+        wrapper.vm.getOrder({id: 1, received: 'F'}, false);
+        window.XMLHttpRequest = jest.fn(() => mockXmlOrder);
+        mockXmlChangeCsrf.onreadystatechange();
+        mockXmlOrder.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check getOrder5', () => {
+        const wrapper = mount(ground, {localVue, router});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
+        wrapper.vm.getOrder({id: 1, received: 'F'}, false);
+        window.XMLHttpRequest = jest.fn(() => mockXmlChangeFail);
+        mockXmlChangeCsrf.onreadystatechange();
+        mockXmlChangeFail.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
 
@@ -113,5 +186,20 @@ describe('ground', () => {
         expect(wrapper.vm.groundType).toBe(2);
         wrapper.vm.changeType();
         expect(wrapper.vm.groundType).toBe(1);
+    })
+
+    it('test getNewInterest', () => {
+        const wrapper = mount(ground, {localVue, router});
+        wrapper.setData({type: ['选择', '判断', '文字', '图片']});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlChangeJudgement);
+        wrapper.vm.getNewInterest(1);
+        mockXmlChangeJudgement.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('test goOrder', () => {
+        const wrapper = mount(ground, {localVue, router});
+        wrapper.vm.goOrder({received: 'F', id: 1});
     })
 })

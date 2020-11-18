@@ -86,4 +86,27 @@ describe('create_mission', function () {
         })
         wrapper.vm.onEditClick();
     })
+    it('test other', () => {
+        const wrapper = mount(create_mission, {
+            localVue,
+            router,
+            propsData: {
+                mission_info: {
+                    name: undefined,
+                    type: 'chosen',
+                    info: 'random',
+                    min: 10,
+                    ddl: undefined,
+                    tags: ['student'],
+                    reward: 10,
+                    retrieve: 14,
+                    check_way: 'auto',
+                    has_image: false
+                }
+            }
+        });
+        wrapper.vm.disabledDate(1);
+        wrapper.vm.onChangeCover(null);
+        wrapper.vm.onRemoveCover();
+    })
 })

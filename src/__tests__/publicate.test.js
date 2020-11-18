@@ -158,19 +158,20 @@ describe('publicate', function () {
         window.XMLHttpRequest = oldXml;
     })
 
-    it('test watch activeKey', function () {
+    it('check watch key', () => {
         const wrapper = mount(publicate, {
             localVue,
             router,
             propsData: {
                 username: 'test',
                 power: 0,
-                avatar: 'test'
+                avatar: 'test',
+                activeKey: []
             }
-        })
+        });
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlCheck);
-        wrapper.vm.$watch({ activeKey: {id: 123} });
+        wrapper.vm.activeKey.push({id: 1});
         mockXmlCheck.onreadystatechange();
         expect(wrapper.vm.detailedInfo).toStrictEqual([]);
         window.XMLHttpRequest = oldXml;

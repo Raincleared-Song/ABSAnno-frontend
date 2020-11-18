@@ -42,14 +42,27 @@ describe('basic_info', () => {
 
 describe('edit_info', () => {
     it('Check data', () => {
-        const wrapper = mount(edit_info, {localVue, router});
-        let info = wrapper.vm.user_info;
-        expect(info.question_form).toStrictEqual([])
-        expect(info.question_num).toStrictEqual([5, 50])
-        expect(wrapper.vm.questionForms).toStrictEqual([
-            { label: '选择题', value: 'chosen' },
-            { label: '文字题', value: 'fill' }
+        const wrapper = mount(edit_info, {
+            localVue,
+            router,
+            propsData: { username: 'test' }
+        });
+        expect(wrapper.vm.user_info).toStrictEqual({
+            username: 'test',
+            mission_tags: []
+        })
+        expect(wrapper.vm.missionTags).toStrictEqual([
+            "青年", "中年", "老年", "学生", "教师", "上班族", "研究者",
+            "人脸识别", "图片识别", "文字识别", "AI写作", "翻译校对", "文本分析",
+            "生活场景", "工作场景", "购物", "运动", "旅游", "动物", "道德准则", "地理", "科学", "心理学"
         ])
+        expect(wrapper.vm.password_form).toStrictEqual({
+            prevPassword: '',
+            newPassword: '',
+            confirmPassword: ''
+        })
+        expect(wrapper.vm.visible).toBeFalsy();
+
     })
     it('check functions', () => {
         const wrapper = mount(edit_info, {localVue, router});

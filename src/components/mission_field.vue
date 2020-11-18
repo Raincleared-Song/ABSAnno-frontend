@@ -4,10 +4,14 @@
     <a-tabs default-active-key="1">
       <a-tab-pane key="1" tab="手动添加任务">
         <router-view
+            @update-valid="updateValid"
             :mission_info="mission"
-            :questions="questions"
-            @submit-info="onSubmitInfo"
-            @submit-questions="submit" />
+            :questions="questions" />
+        <div style="margin: 10px 15px">
+          <a-button type="primary" @click="submit" block>
+            提交任务<a-icon type="check" />
+          </a-button>
+        </div>
         <a-steps
             v-model="current"
             type="navigation"
@@ -49,7 +53,7 @@ export default {
         info: '',
         cover: null,
         min: 10,
-        ddl: moment(new Date()),
+        ddl: moment(new Date().setDate(new Date().getDate() + 2)),
         tags: [],
         reward: 5,
         retrieve: 24,
@@ -58,16 +62,18 @@ export default {
         has_image: false
       },
       questions: [],
-      current: 0
+      current: 0,
+      mission_info_valid: false
     };
   },
   methods: {
-    onSubmitInfo() {
-      this.current = 1;
-    },
-    onChangeStep(current) {},
     // 向后端发送数据
     submit() {
+      if (!this.mission_info_valid) {
+        this.$message.error('Field missing...', 1);
+        return;
+      }
+      let v = true;
       // 题目的基本信息
       let submitObj = {
         name: this.mission.name,
@@ -94,10 +100,17 @@ export default {
         } else if (this.mission.type === 'fill') {
           ret = { contains: question.description };
         }
-        if (ret !== undefined && this.mission.has_image)
-          ret.image_name = question.image.name;
+        if (ret !== undefined && this.mission.has_image) {
+          if (question.image) {
+            ret.image_name = question.image.name;
+          } else {
+            this.$message.error("Image Missing!", 1);
+            v = false;
+          }
+        }
         return ret;
       });
+      if (!v) return;
 
       if (this.mission.has_cover || this.mission.has_image) {
         // 图片
@@ -105,11 +118,11 @@ export default {
         formData.append('info', JSON.stringify(submitObj));
         if (this.mission.has_cover)
           formData.append('mission_image', this.mission.cover);
-        if (this.mission.has_image)
+        if (this.mission.has_image) {
           this.questions.forEach(question => {
-            console.log(question.image);
             formData.append('img_list', question.image.raw);
           });
+        }
 
         postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
           if (jsonObj.code === 201) {
@@ -135,15 +148,11 @@ export default {
         });
       }
     },
+    updateValid(newVal) {
+      this.mission_info_valid = newVal;
+    }
   },
   watch: {
-    // '$route.path': function (newVal) {
-    //   if (newVal === '/mission/create') {
-    //     this.current = 0;
-    //   } else if (newVal === '/mission/edit') {
-    //     this.current = 1;
-    //   }
-    // },
     'this.mission.type': function (newVal) {
       this.questions = [];
     },

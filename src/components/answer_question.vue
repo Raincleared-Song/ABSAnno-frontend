@@ -68,8 +68,6 @@ export default {
       nowQuestionIndex: -1, // 从0开始
       nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
       startTimer: 0
-      // countTimer: moment(new Date()).diff(this.startTimer).format('hh:mm'),
-      // showTime: true
     };
   },  // end of data
   props:[

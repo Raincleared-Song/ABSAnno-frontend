@@ -25,7 +25,10 @@
                             <a slot="description">
                                 <div style="color: #5e5e5e" >
                                     <a-tag color="green">
-                                        {{msg.type}}
+                                        {{msg.type[0]}}
+                                    </a-tag>
+                                    <a-tag color="green">
+                                        {{msg.type[1]}}
                                     </a-tag>
                                     题目数量：{{msg.question_num}}
                                     <a-divider type="vertical" />
@@ -107,15 +110,6 @@
             },
             checkMsg(id){
                 this.$router.push("/question/"+id.toString()+"/1")
-                // let onRespond = jsonObj => {
-                //     if (jsonObj.code === 201) {
-                //         let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
-                //         this.detailedInfo = data.question_list;
-                //     }
-                // };
-                // getBackend("backend/check", {
-                //     "mission_id":id.toString()
-                // }, onRespond);
             },
             judgeDisable(msg){
 
@@ -146,13 +140,17 @@
                     console.log(this.pubList)
                     for(i = 0; i < this.pubList.length; i+=1){
                         this.pubList[i].deadline = convertTime(this.pubList[i].deadline)
-                        if(this.pubList[i].question_form === "judgement" ||
-                            this.pubList[i].question_form === "judgement-image") {
-                            this.pubList[i].type = "判断"
+                        if(this.pubList[i].question_form === "chosen"){
+                            this.pubList[i].type = ["选择", "文字"]
                         }
-                        else if(this.pubList[i].question_form === "chosen" ||
-                            this.pubList[i].question_form === "chosen-image") {
-                            this.pubList[i].type = "选择"
+                        else if(this.pubList[i].question_form === "chosen-image"){
+                            this.pubList[i].type = ["选择", "图片"]
+                        }
+                        else if(this.pubList[i].question_form === "fill"){
+                            this.pubList[i].type = ["填空",'文字']
+                        }
+                        else if(this.pubList[i].question_form === "fill-image"){
+                            this.pubList[i].type = ["填空","图片"]
                         }
                     }
                 }

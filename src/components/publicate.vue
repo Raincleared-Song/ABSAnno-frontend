@@ -5,13 +5,13 @@
             <template slot="header">
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
-                        <a slot="actions" @click="checkMsg(msg.id)" style="font-size: 15pt; color: #d95656">
-                            <a-icon type="pause" />
+                        <a slot="actions" v-if="msg.to_ans === 1" @click="checkMsg(msg.id)" style="font-size: 15pt; color: #d95656">
+                            手动验收
                         </a>
                         <a slot="actions"
                                 :href="`/backend/result?mission_id=${msg.id}`"
                                 style="font-size: 15pt">
-                            <a-icon type="download" />
+                            下载结果
                         </a>
                         <a-list-item-meta>
                             <a slot="title" style="font-size: 15pt" >
@@ -107,15 +107,16 @@
                 });
             },
             checkMsg(id){
-                let onRespond = jsonObj => {
-                    if (jsonObj.code === 201) {
-                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
-                        this.detailedInfo = data.question_list;
-                    }
-                };
-                getBackend("backend/check", {
-                    "mission_id":id.toString()
-                }, onRespond);
+                this.$router.push("/question/"+id.toString()+"/1")
+                // let onRespond = jsonObj => {
+                //     if (jsonObj.code === 201) {
+                //         let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                //         this.detailedInfo = data.question_list;
+                //     }
+                // };
+                // getBackend("backend/check", {
+                //     "mission_id":id.toString()
+                // }, onRespond);
             },
             judgeDisable(msg){
 

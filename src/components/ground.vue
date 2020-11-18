@@ -438,7 +438,7 @@
                     postBackend("backend/receive", {mission_id: msg.id.toString()},
                         jsonObj => {
                             if (jsonObj.code === 201) {
-                                this.$router.push('/question/'+msg.id);
+                                this.$router.push('/question/'+msg.id+"/0");
                                 this.onChange(this.pageNumber)
                             } else {
                                 console.log("can't book/unbook")
@@ -446,7 +446,7 @@
                         });
                 }
                 else{
-                    this.$router.push('/question/'+msg.id);
+                    this.$router.push('/question/'+msg.id+"/0");
                 }
             },
         },

@@ -7,11 +7,6 @@
             @update-valid="updateValid"
             :mission_info="mission"
             :questions="questions" />
-        <div style="margin: 10px 15px">
-          <a-button type="primary" @click="submit" block>
-            提交任务<a-icon type="check" />
-          </a-button>
-        </div>
         <a-steps
             v-model="current"
             type="navigation"
@@ -19,6 +14,16 @@
           <a-step title="编辑任务信息" />
           <a-step title="编辑题目" />
         </a-steps>
+        <div style="margin: 10px 20px">
+          <a-button
+              v-show="$route.path === '/mission/edit'"
+              type="primary"
+              @click="submit"
+              :disabled="submitting"
+              block>
+            提交任务<a-icon type="check" />
+          </a-button>
+        </div>
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="上传压缩包">
@@ -63,15 +68,17 @@ export default {
       },
       questions: [],
       current: 0,
-      mission_info_valid: false
+      mission_info_valid: false,
+      submitting: false
     };
   },
   methods: {
     // 向后端发送数据
     submit() {
+      this.submitting = true;
       if (!this.mission_info_valid) {
         this.$message.error('Field missing...', 1);
-        return;
+        this.submitting = false; return;
       }
       let v = true;
       // 题目的基本信息
@@ -98,7 +105,10 @@ export default {
             ans: question.answer
           };
         } else if (this.mission.type === 'fill') {
-          ret = { contains: question.description };
+          ret = {
+            contains: question.description,
+            ans: question.answer
+          };
         }
         if (ret !== undefined && this.mission.has_image) {
           if (question.image) {
@@ -110,7 +120,9 @@ export default {
         }
         return ret;
       });
-      if (!v) return;
+      if (!v) {
+        this.submitting = false; return;
+      }
 
       if (this.mission.has_cover || this.mission.has_image) {
         // 图片
@@ -131,6 +143,7 @@ export default {
               this.$router.go(-1);
             });
           } else {
+            this.submitting = false;
             this.$message.error(jsonObj.data);
           }
         });
@@ -143,6 +156,7 @@ export default {
               this.$router.go(-1);
             });
           } else {
+            this.submitting = false;
             this.$message.error(jsonObj.data);
           }
         });

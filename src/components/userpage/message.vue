@@ -32,6 +32,7 @@
         mounted() {
             let onRespond = jsonObj => {
                 if (jsonObj.code === 201) {
+                    console.log(jsonObj.data);
                     let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                     console.log(data)
                     this.num = data.message_num;

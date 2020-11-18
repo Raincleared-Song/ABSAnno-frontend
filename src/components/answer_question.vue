@@ -80,8 +80,7 @@ export default {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        if (!this.renew) return question.answer;
-        else return question.answer === ''? ' ': question.ans;
+        return question.answer === ''? ' ': question.answer;
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION.path, {

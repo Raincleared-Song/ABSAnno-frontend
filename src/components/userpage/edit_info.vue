@@ -59,7 +59,7 @@
             placeholder="你偏好的任务标签">
           <a-select-option
               v-for="(tag, idx) in missionTags"
-              :key="idx">
+              :key="tag">
             {{ tag }}
           </a-select-option>
         </a-select>
@@ -115,13 +115,13 @@ export default {
   },  // end of data
   methods: {
     submit() {
-      // TODO: 向后端post个人信息
       postBackend('/backend/info', {
         tags: this.user_info.mission_tags.join(',')
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          this.$message.success(jsonObj.data, 1).then(
-              () => { this.$emit('submit-edit'); });
+          this.$message.success('Edit Profile Success!', 1).then(() => {
+            this.$emit('submit-edit');
+          });
         } else {
           this.$message.error(jsonObj.data, 1);
         }
@@ -139,6 +139,9 @@ export default {
         if (jsonObj.code === 201) {
           this.$message.success(jsonObj.data, 1).then(() => {
             this.visible = false;
+            this.password_form.prevPassword = '';
+            this.password_form.newPassword = '';
+            this.password_form.confirmPassword = '';
           });
         } else {
           this.$message.error(jsonObj.data, 1);
@@ -152,12 +155,20 @@ export default {
   mounted: function () {
     getBackend('/backend/info', {}, jsonObj => {
       if (jsonObj.code === 201) {
-        this.user_info.mission_tags = jsonObj.data.tags.split(',');
+        const dataObj = getDataObj(jsonObj);
+        console.log(dataObj)
+        this.user_info.mission_tags = dataObj.tags.split(',');
       } else {
         this.$message.error(jsonObj.data, 1);
       }
     })
   }   // end of mounted
+}
+
+function getDataObj(jsonObj) {
+  let dataStr = jsonObj.data;
+  dataStr = dataStr.replace(/'/g, '"');
+  return JSON.parse(dataStr);
 }
 </script>
 

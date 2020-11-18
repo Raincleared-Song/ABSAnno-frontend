@@ -151,6 +151,7 @@
       },
       onChangeAvatar(url) {
         this.$emit('change-avatar', url);
+        console.log("changing avatar...")
       }
     }   // end of methods
   }

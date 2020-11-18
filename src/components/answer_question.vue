@@ -62,14 +62,13 @@ export default {
   },  // end of components
   data() {
     return {
+      renew: Number(this.$route.params.renew) === 1,
       missionId: 0,
       totalNum: 0,    // 总题目数量
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
       nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
       startTimer: 0
-      // countTimer: moment(new Date()).diff(this.startTimer).format('hh:mm'),
-      // showTime: true
     };
   },  // end of data
   props:[
@@ -81,10 +80,11 @@ export default {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        return question.answer;
+        return question.answer === ''? ' ': question.answer;
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION.path, {
+        method: this.renew? 'renew': 'submit',
         mission_id: this.missionId.toString(),
         ans: answers.join('||'),
         time: (new Date().getTime() - this.startTimer).toLocaleString()

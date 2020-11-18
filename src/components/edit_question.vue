@@ -53,21 +53,14 @@
           <a-space style="{ width: 100% }">
             <a-button
                 @click="addQuestion"
-                style="{ width: 30% }">
+                style="{ width: 50% }">
               添加题目<a-icon type="plus" />
             </a-button>
             <a-button
-                v-show="questions.length > 0 || nowQuestion != null"
                 @click="removeQuestion"
-                style="{ width: 30% }">
+                :disabled="questions.length === 0 || nowQuestion == null"
+                style="{ width: 50% }">
               删除题目<a-icon type="minus" />
-            </a-button>
-            <a-button
-                @click="$emit('submit-questions')"
-                v-show="questions.length > 0 || nowQuestion != null"
-                type="primary"
-                style="{ width: 30% }">
-              提交任务<a-icon type="check" />
             </a-button>
           </a-space>
         </a-layout-content>
@@ -91,7 +84,7 @@ export default {
   },  // end of components
   data() {
     return {
-      nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
+      nowQuestionIndex: this.questions.length, // 为了配合导航条，这个变量是从1开始的！
       nowQuestion: null
     };
   },  // end of data
@@ -106,6 +99,8 @@ export default {
         this.addChosenQuestion();
       } else if (this.mission_info.type === 'fill') {
         this.addTextEditQuestion();
+      } else {
+        this.$message.warning("You haven't select mission type yet!", 1);
       }
     },
     removeQuestion() {
@@ -170,8 +165,11 @@ export default {
     }
   },  // end of methods
   watch: {
-    nowQuestionIndex: function (newVal) {
-      this.nowQuestion = this.questions[newVal - 1];
+    nowQuestionIndex: {
+      handler(newVal) {
+        this.nowQuestion = this.questions[newVal - 1];
+      },
+      immediate: true
     },
     questions: {
       handler(newVal) {

@@ -42,29 +42,6 @@ describe('create_mission', function () {
         })
     })
 
-    it('test create_mission validation', function () {
-        const wrapper = mount(create_mission, {
-            localVue,
-            router,
-            propsData: {
-                mission_info: {
-                    name: 'test-name',
-                    type: 'chosen',
-                    info: 'random',
-                    min: 10,
-                    ddl: '2020-12-31',
-                    tags: ['student'],
-                    reward: 10,
-                    retrieve: 14,
-                    check_way: 'auto',
-                    has_image: false
-                }
-            }
-        })
-        wrapper.vm.onEditClick();
-        expect(wrapper.emitted('submit-info')).toBeTruthy()
-    })
-
     it('test create_mission validation - fail case', function () {
         const wrapper = mount(create_mission, {
             localVue,
@@ -84,7 +61,6 @@ describe('create_mission', function () {
                 }
             }
         })
-        wrapper.vm.onEditClick();
     })
     it('test other', () => {
         const wrapper = mount(create_mission, {
@@ -106,7 +82,7 @@ describe('create_mission', function () {
             }
         });
         wrapper.vm.disabledDate(1);
-        wrapper.vm.onChangeCover(null);
+        wrapper.vm.onChangeCover({ type: 'image/png', size: 2048, name: 'test.png' });
         wrapper.vm.onRemoveCover();
     })
 })

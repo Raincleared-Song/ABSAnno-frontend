@@ -32,13 +32,16 @@
         mounted() {
             let onRespond = jsonObj => {
                 if (jsonObj.code === 201) {
-                    let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
-                    console.log(data)
-                    this.num = data.message_num;
-                    this.items = data.message_list;
-                    var j;
-                    for(j = 0; j < this.num; j += 1){
-                        this.items[j].time = convertTime( this.items[j].time)
+                    console.log(jsonObj.data);
+                    if (jsonObj.data !== 'No message to show!') {
+                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                        console.log(data)
+                        this.num = data.message_num;
+                        this.items = data.message_list;
+                        var j;
+                        for (j = 0; j < this.num; j += 1) {
+                            this.items[j].time = convertTime(this.items[j].time)
+                        }
                     }
                 }
             };

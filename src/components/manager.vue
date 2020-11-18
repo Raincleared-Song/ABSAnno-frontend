@@ -18,11 +18,14 @@
                 </a-checkable-tag>
             </a-col>
             <a-col :span="13">
-                <a-input-search placeholder="消息内容" :row="2" @search="onBroadCast">
-                    <a-button slot="enterButton">
-                        广播
-                    </a-button>
-                </a-input-search>
+                <el-input placeholder="消息内容" v-model="text">
+                    <el-button slot="append" @click="onBroadCast">广播</el-button>
+                </el-input>
+<!--                <a-input-search placeholder="消息内容" allow-clear row="2" @search="onBroadCast">-->
+<!--                    <a-button slot="enterButton">-->
+<!--                        广播-->
+<!--                    </a-button>-->
+<!--                </a-input-search>-->
             </a-col>
         </a-row>
 
@@ -58,14 +61,21 @@
             "avatar"
         ],
         methods:{
-            onBroadCast(value){
-                console.log(value)
+            onBroadCast(){
+                // console.log(value)
+                // this.text = value
                 postBackend("backend/message",
-                    {msg:value, user:this.target},
+                    {msg:this.text, user:this.target},
                     jsonObj => {
                         if (jsonObj.code === 201) {
                             console.log("Successful broadcast!")
+                            this.$message.success("成功发送消息",2)
+                            this.text = ""
+
                         } else {
+                            if(jsonObj.data === "You didnt specify receivers"){
+                                this.$message.warning("请选择发送对象",2)
+                            }
                             console.log("can't broadcast")
                         }
                     });

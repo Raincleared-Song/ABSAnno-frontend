@@ -51,6 +51,7 @@
               ref="upload_cover"
               class="img-uploader"
               action="#"
+              :show-upload-list="false"
               :before-upload="onChangeCover">
             <a-button style="margin: 10px 0">
               <i class="el-icon-plus" />
@@ -62,7 +63,7 @@
             <span style="margin: 0 30px 0 10px">{{ this.mission_info.cover.name }}</span>
             <a-button
                 @click="onRemoveCover"
-                size="small" shape="circle" ghost>
+                size="small" shape="circle">
               <a-icon type="delete" />
             </a-button>
           </span>
@@ -152,13 +153,6 @@
         </a-form-model-item>
       </a-form-model>
 
-      <a-button
-          type="dashed"
-          @click="onEditClick"
-          block>
-        继续编辑题目
-      </a-button>
-
     </a-layout-content>
   </a-layout>
 </template>
@@ -194,26 +188,37 @@ export default {
       'mission_info'
   ],  // end of props
   methods: {
-    onEditClick() {
-      this.$refs.mission_form.validate(valid => {
-        if (valid) {
-          this.$emit('submit-info');
-        } else {
-          this.$message.warning("error submit");
-        }
-      });
-    },
     disabledDate(current) {
       return current < moment().endOf('day')
     },
     onChangeCover(file) {
-      this.mission_info.has_cover = true;
-      this.mission_info.cover = file;
-      return false;
+      const isImg = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isImg) {
+        this.$message.error('Please upload image!', 1);
+        return false;
+      } else if (!isLt2M) {
+        this.$message.error('Please upload a smaller image!', 1);
+        return false;
+      } else {
+        this.mission_info.has_cover = true;
+        this.mission_info.cover = file;
+        return false;
+      }
     },
     onRemoveCover() {
       this.mission_info.has_cover = false;
       this.mission_info.cover = null;
+    }
+  },  // end of methods
+  watch: {
+    mission_info: {
+      handler() {
+        this.$refs.mission_form.validate(valid => {
+          this.$emit('update-valid', valid);
+        })
+      },
+      deep: true
     }
   }
 }

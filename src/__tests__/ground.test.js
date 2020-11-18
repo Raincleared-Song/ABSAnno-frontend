@@ -166,14 +166,14 @@ describe('ground', () => {
         const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeJudgement);
-        wrapper.vm.onSearch('value');
+        wrapper.vm.onSearch();
         mockXmlChangeJudgement.onreadystatechange();
         wrapper.vm.sendSelect();
         mockXmlChangeJudgement.onreadystatechange();
         wrapper.vm.$mount();
         mockXmlChangeJudgement.onreadystatechange();
         window.XMLHttpRequest = oldXml;
-        expect(wrapper.vm.keyword).toBe('value');
+        expect(wrapper.vm.keyword).toBe('');
     })
 
     it('check other functions', () => {

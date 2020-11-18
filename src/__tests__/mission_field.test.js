@@ -186,7 +186,7 @@ describe('mission_field', function () {
     })
 
     it('check other', () => {
-        wrapper.vm.onSubmitInfo();
-        wrapper.vm.onChangeStep();
+        wrapper.vm.updateValid(true);
+        expect(wrapper.vm.mission_info_valid).toBeTruthy();
     })
 });

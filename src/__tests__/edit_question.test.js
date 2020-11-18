@@ -23,7 +23,7 @@ describe('edit_question', function () {
         })
         expect(wrapper.vm.$data).toStrictEqual({
             nowQuestionIndex: 0, // 为了配合导航条，这个变量是从1开始的！
-            nowQuestion: null
+            nowQuestion: undefined
         })
     })
 

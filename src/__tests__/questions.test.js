@@ -59,8 +59,8 @@ describe('choice_group', function () {
                 has_image: true
             }
         })
-        wrapper.vm.onChangeImage({ name: "test.png" })
-        expect(wrapper.props().question.image).toStrictEqual({ name: "test.png" })
+        wrapper.vm.onChangeImage({ name: "test.png", size: 2048 })
+        expect(wrapper.props().question.image).toStrictEqual({ name: "test.png", size: 2048 })
     })
 
     it('test onRemoveImage', function () {
@@ -182,8 +182,8 @@ describe('text_edit', () => {
                 question: { image: "" }
             }
         })
-        wrapper.vm.onChangeImage({ name: "test.png" });
-        expect(wrapper.props().question.image).toStrictEqual({ name: "test.png" });
+        wrapper.vm.onChangeImage({ name: "test.png", size: 2048 });
+        expect(wrapper.props().question.image).toStrictEqual({ name: "test.png", size: 2048 });
     })
 
     it('test onRemoveImage', function () {

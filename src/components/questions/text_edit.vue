@@ -84,7 +84,17 @@
     },  // end of props
     methods: {
       onChangeImage(file) {
-        this.question.image = file;
+        const isImg = file.name.endsWith('.jpeg') ||
+            file.name.endsWith('.png') ||
+            file.name.endsWith('.jpg');
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isImg) {
+          this.$message.error('Please upload image!', 1);
+        } else if (!isLt2M) {
+          this.$message.error('Please upload a smaller image!', 1);
+        } else {
+          this.question.image = file;
+        }
       },
       onRemoveImage() {
         this.question.image = null;

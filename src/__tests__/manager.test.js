@@ -1,10 +1,12 @@
 import banuser from "@/components/manager/banuser";
 import userManage from "@/components/manager/userManage";
 import manager from "@/components/manager";
-import {createLocalVue, mount, shallowMount} from "@vue/test-utils";
+import { createLocalVue, mount, shallowMount, shallowWithIntl } from "@vue/test-utils";
 import VueRouter from "vue-router";
 import ElementUI from "element-ui";
 import Antd from "ant-design-vue";
+import postBackend from "../utils/postBackend";
+import getBackend from "@/utils/getBackend";
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)
@@ -51,37 +53,85 @@ describe('banuser', () => {
     })
 })
 
-const mockXmlUser = {
-    open: jest.fn(),
-    send: jest.fn(),
-    readyState: 4,
-    status: 201,
-    responseText: JSON.stringify({code: 201, data: JSON.stringify(
-            {apply_num : 1, apply_list: [{pub_time: 1569507418772}]})}),
-    onreadystatechange: () => {},
-    setRequestHeader: () => {}
-};
-
 describe('userManage', () => {
+
+    const mockXmlUser = {
+        open: jest.fn(),
+        send: jest.fn(),
+        readyState: 4,
+        status: 201,
+        responseText: JSON.stringify({
+            code: 201,
+            data: JSON.stringify({ apply_num : 1, apply_list: [{ pub_time: 1569507418772 }] })
+        }),
+        onreadystatechange: () => {},
+        setRequestHeader: () => {}
+    };
+
+    const mockXmlPost = {
+        open: jest.fn(),
+        send: jest.fn(),
+        readyState: 4,
+        status: 201,
+        responseText: JSON.stringify({ code: 201, data: 'test' }),
+        onreadystatechange: () => {},
+        setRequestHeader: () => {}
+    }
+
+    const mockXmlPostFail = {
+        open: jest.fn(),
+        send: jest.fn(),
+        readyState: 4,
+        status: 400,
+        responseText: JSON.stringify({ code: 400, data: 'test' }),
+        onreadystatechange: () => {},
+        setRequestHeader: () => {}
+    }
+
+    const mockXmlCsrf = {
+        open: jest.fn(),
+        send: jest.fn(),
+        readyState: 4,
+        status: 200,
+        responseText: "123456",
+        onreadystatechange: () => {},
+        setRequestHeader: () => {}
+    };
+
     it('check data', () => {
         const wrapper = mount(userManage, {localVue, router});
         expect(wrapper.vm.current).toBe(1);
         expect(wrapper.vm.num).toBe(0);
     })
+
     it('check onChange', () => {
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlUser);
-        const wrapper = mount(userManage, {localVue, router});
-        wrapper.vm.onChange(1);
+        const wrapper = mount(userManage, { localVue, router });
+        wrapper.vm.onChange();
         mockXmlUser.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
+
     it('check dealUser', () => {
         const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlUser);
-        const wrapper = mount(userManage, {localVue, router});
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        const wrapper = shallowMount(userManage, { localVue, router });
         wrapper.vm.dealUser(1, 'test');
-        mockXmlUser.onreadystatechange();
+        window.XMLHttpRequest = jest.fn(() => mockXmlPost);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlPost.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check dealUser, fail case', () => {
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        const wrapper = shallowMount(userManage, { localVue, router });
+        wrapper.vm.dealUser(1, 'test');
+        window.XMLHttpRequest = jest.fn(() => mockXmlPostFail);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlPostFail.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
 })

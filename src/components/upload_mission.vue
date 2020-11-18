@@ -33,7 +33,7 @@
 
             <a-col span="16">
                 <!--        右侧，规则说明-->
-                <div style="margin-left: 40px;">
+                <div style="margin-left: 60px;">
 
                     <h4>
                         .zip文件格式：
@@ -59,10 +59,10 @@
                             </div>
                         </a-collapse-panel>
                         <a-collapse-panel key="2" header="questions.json文件（带注释版本）">
-                            <p style="color: #dd6161">
-                                注意，下方格式为带注释的格式，实际上需要保证每行或者为空或者为一个完整的json可解析字符串。
-                            </p>
                             <div>
+                                <div style="color: #dd6161">
+                                    注意，下方格式为带注释的格式，实际上需要保证每行或者为空或者为一个完整的json可解析字符串。<br/>
+                                </div>
                                 {# 第一道题<br/>
                                 <strong>"contains": "title3"</strong>, # 题目内容描述，即题干<br/>
                                 <strong>"ans": "A"</strong>,  # 预埋答案（如果有）<br/>
@@ -75,16 +75,18 @@
                             </div>
                         </a-collapse-panel>
                         <a-collapse-panel key="3" header="questions.json文件（实际版本）">
-                            <p style="color: #dd6161">
-                                每道题必须为1行（即每行头尾必须为'{'和'}'），中间允许有空行。
-                            </p>
-                            <strong>
-                                {"contains": "title3", "ans": "A", "choices": "A||B||C||D"}<br/>
-                                {"contains": "title4", "ans": "B", "choices": "E||F||G||H"}
-                            </strong>
+                            <div>
+                                <div style="color: #dd6161">
+                                    每道题必须为1行（即每行头尾必须为'{'和'}'），中间允许有空行。<br/>
+                                </div>
+                                <strong>
+                                    {"contains": "title3", "ans": "A", "choices": "A||B||C||D"}<br/>
+                                    {"contains": "title4", "ans": "B", "choices": "E||F||G||H"}
+                                </strong>
+                            </div>
                         </a-collapse-panel>
                         <a-collapse-panel key="4" header="res文件夹（可选）">
-                            <p>存放所有题目的图片，对应questions.json内的图片。</p>
+                            <div>存放所有题目的图片，对应questions.json内的图片。</div>
                         </a-collapse-panel>
                     </a-collapse>
                 </div>

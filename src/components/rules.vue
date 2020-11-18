@@ -28,6 +28,20 @@
                     <a-tree-node key="0-1-1-2" title="你可以选择忽略某些用户的作答。" />
                 </a-tree-node>
             </a-tree-node>
+            <a-tree-node key="0-2" title="奖励金币、信誉度说明" style="font-size: 16px">
+                <a-tree-node key="0-2-0" title="你的信誉" style="font-size: 14px">
+                    <a-tree-node key="0-2-0-0" title="初始用户的信誉度为50。" />
+                    <a-tree-node key="0-2-0-1" title="你可以通过答题来增加你的信誉度（前提是，你成功答对了我们在每套题中有预埋答案的题目）。" />
+                    <a-tree-node key="0-2-0-2" title="当然，你的信誉度也有可能会被扣除——如果你答错了许多简单的、有预埋答案的题目的话。" />
+                    <a-tree-node key="0-2-0-3" title="你的信誉度影响到你的回答在我们系统中的占比：如果占比高，那么你的答案就更有可能发挥价值。" />
+                </a-tree-node>
+                <a-tree-node key="0-2-1" title="你的金币" style="font-size: 14px">
+                    <a-tree-node key="0-2-1-0" title="你可以通过正确答题来增加你的金币。" />
+                    <a-tree-node key="0-2-1-1" title="你可以通过申请成为发布者、发送题目来消耗你的金币。" />
+                    <a-tree-node key="0-2-1-2" title="发送题目时，消耗金币=目标作答数*每个用户奖励数。" />
+                    <a-tree-node key="0-2-1-3" title="申请成为发布者消耗500金币。" />
+                </a-tree-node>
+            </a-tree-node>
         </a-tree>
     </div>
 

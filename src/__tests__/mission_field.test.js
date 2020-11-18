@@ -42,6 +42,26 @@ const mockXmlCsrf = {
     setRequestHeader: () => {}
 };
 
+const mockXmlPostSuccess = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: 'Success'}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlPostFail = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 400,
+    responseText: JSON.stringify({code: 400, data: 'Fail'}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
 describe('mission_field', function () {
 
     const wrapper = mount(mission_field, {
@@ -82,5 +102,91 @@ describe('mission_field', function () {
         wrapper.vm.submit();
         mockXmlCsrf.onreadystatechange();
         window.XMLHttpRequest = oldXml;
+    })
+
+    it('check post chosen without image', () => {
+        wrapper.setData({mission: {
+                name: 'test',
+                type: 'chosen',
+                info: '',
+                cover: null,
+                min: 10,
+                ddl: moment(new Date()),
+                tags: [],
+                reward: 5,
+                retrieve: 24,
+                check_way: 'auto',
+                has_cover: false,
+                has_image: false
+            }, questions: [
+                {description: '', options: ['A', 'B'], answer: 'A'}
+            ]})
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        wrapper.vm.mission.ddl.format = jest.fn((str) => '2020-11-05');
+        wrapper.vm.submit();
+        window.XMLHttpRequest = jest.fn(() => mockXmlPostSuccess);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlPostSuccess.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check post fill without image', () => {
+        wrapper.setData({mission: {
+                name: 'test',
+                type: 'fill',
+                info: '',
+                cover: null,
+                min: 10,
+                ddl: moment(new Date()),
+                tags: [],
+                reward: 5,
+                retrieve: 24,
+                check_way: 'auto',
+                has_cover: false,
+                has_image: false
+            }, questions: [
+                {description: ''}
+            ]});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        wrapper.vm.mission.ddl.format = jest.fn((str) => '2020-11-05');
+        wrapper.vm.submit();
+        window.XMLHttpRequest = jest.fn(() => mockXmlPostSuccess);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlPostSuccess.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check post chosen fail', () => {
+        wrapper.setData({mission: {
+                name: 'test',
+                type: 'chosen',
+                info: '',
+                cover: null,
+                min: 10,
+                ddl: moment(new Date()),
+                tags: [],
+                reward: 5,
+                retrieve: 24,
+                check_way: 'auto',
+                has_cover: false,
+                has_image: false
+            }, questions: [
+                {description: '', options: ['A', 'B'], answer: 'A'}
+            ]});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        wrapper.vm.mission.ddl.format = jest.fn((str) => '2020-11-05');
+        wrapper.vm.submit();
+        window.XMLHttpRequest = jest.fn(() => mockXmlPostFail);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlPostFail.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check other', () => {
+        wrapper.vm.onSubmitInfo();
+        wrapper.vm.onChangeStep();
     })
 });

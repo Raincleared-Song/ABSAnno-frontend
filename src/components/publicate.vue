@@ -28,7 +28,7 @@
                                         {{msg.type[0]}}
                                     </a-tag>
                                     <a-tag color="green">
-                                        {{msg.type[0]}}
+                                        {{msg.type[1]}}
                                     </a-tag>
                                     题目数量：{{msg.question_num}}
                                     <a-divider type="vertical" />

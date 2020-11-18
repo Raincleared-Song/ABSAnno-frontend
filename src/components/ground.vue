@@ -125,7 +125,10 @@
                                 <a slot="description">
                                     <div style="color: #5e5e5e"  v-if="msg.tags[0] !== '' && msg.tags[0] !== '[]'" >
                                         <a-tag color="green">
-                                            {{msg.type}}
+                                            {{msg.type[0]}}
+                                        </a-tag>
+                                        <a-tag color="green">
+                                            {{msg.type[1]}}
                                         </a-tag>
                                         题目数量：{{msg.questionNum}}
                                         <a-divider type="vertical" />
@@ -179,9 +182,10 @@
                             <a-icon v-if="power!==-1 && msg.received==='F'" type="star" @click="getOrder(msg, false)" />
                             <a-icon v-if="power!==-1 && msg.received==='T'" type="star"
                                     theme="twoTone" two-tone-color="#ffb84d" @click="getOrder(msg, false)" />
-                            <a @click="goOrder(msg)" v-if="power!==-1" style="color: #5e5e5e">-{{msg.name}}-</a>
+                            <a @click="goOrder(msg)" v-if="power!==-1" style="color: #5e5e5e">{{msg.name}}</a>
                             <a v-else style="color: #5e5e5e">-{{msg.name}}-</a>
-                            <a-tag color="green">{{msg.type}}</a-tag>
+                            <a-tag color="green">{{msg.type[0]}}</a-tag>
+                            <a-tag color="green" v-if="msg.type[1] === '图片'">{{msg.type[1]}}</a-tag>
 
                         </template>
                         <div style="font-size: 13px">
@@ -266,17 +270,17 @@
                         var i;
                         for(i = 0; i < 12; i+=1){
                             this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
-                            if (this.msgList[i].questionForm === "judgement" ||
-                                this.msgList[i].questionForm === "judgement-image"){
-                                this.msgList[i].type = "判断"
+                            if(this.msgList[i].questionForm === "chosen"){
+                                this.msgList[i].type = ["选择", "文字"]
                             }
-                            else if(this.msgList[i].questionForm === "chosen" ||
-                                this.msgList[i].questionForm === "chosen-image"){
-                                this.msgList[i].type = "选择"
+                            else if(this.msgList[i].questionForm === "chosen-image"){
+                                this.msgList[i].type = ["选择", "图片"]
                             }
-                            else if(this.msgList[i].questionForm === "fill" ||
-                                this.msgList[i].questionForm === "fill-image"){
-                                this.msgList[i].type = "文字"
+                            else if(this.msgList[i].questionForm === "fill"){
+                                this.msgList[i].type = ["填空",'文字']
+                            }
+                            else if(this.msgList[i].questionForm === "fill-image"){
+                                this.msgList[i].type = ["填空","图片"]
                             }
                         }
                     } else {
@@ -402,17 +406,17 @@
                         var i;
                         for(i = 0; i < 5; i+=1){
                             this.intList[i].deadline = convertTime(this.intList[i].deadline)
-                            if(this.intList[i].questionForm === "judgement" ||
-                                this.intList[i].questionForm === "judgement-image"){
-                                this.intList[i].type = "判断"
+                            if(this.intList[i].questionForm === "chosen"){
+                                this.intList[i].type = ["选择", "文字"]
                             }
-                            else if(this.intList[i].questionForm === "chosen" ||
-                                this.intList[i].questionForm === "chosen-image"){
-                                this.intList[i].type = "选择"
+                            else if(this.intList[i].questionForm === "chosen-image"){
+                                this.intList[i].type = ["选择", "图片"]
                             }
-                            else if(this.intList[i].questionForm === "fill" ||
-                                this.intList[i].questionForm === "fill-image"){
-                                this.intList[i].type = "文字"
+                            else if(this.intList[i].questionForm === "fill"){
+                                this.intList[i].type = ["填空",'文字']
+                            }
+                            else if(this.intList[i].questionForm === "fill-image"){
+                                this.intList[i].type = ["填空","图片"]
                             }
                         }
                     } else {

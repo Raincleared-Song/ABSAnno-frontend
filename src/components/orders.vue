@@ -13,12 +13,15 @@
         <el-table-column
                 prop="mission_name"
                 label="任务名称"
-                width="180">
+                width="200">
             <template slot-scope="scope">
                 {{scope.row.mission_name}}
                 <a-tag color="green">
-                    {{scope.row.type}}
+                    {{scope.row.type[0]}}
                 </a-tag>
+<!--                <a-tag color="green">-->
+<!--                    {{scope.row.type[1]}}-->
+<!--                </a-tag>-->
             </template>
         </el-table-column>
         <el-table-column
@@ -40,7 +43,7 @@
         <el-table-column align="right">
             <template slot-scope="scope">
                 <a-space>
-                    <router-link v-if="power!==-1" :to="{path:'/question/'+ scope.row.mission_id}+'/0'">
+                    <router-link v-if="power!==-1" :to="{path:'/question/'+ scope.row.mission_id +'/0'}">
                         <el-button size="mini">做题</el-button>
                     </router-link>
                     <el-button
@@ -110,14 +113,17 @@
                     this.size=data.total_num
                     for(i = 0; i < data.total_num; i+=1){
                         this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
-                        if(this.msgList[i].question_form === "judgement"){
-                            this.msgList[i].type = "判断"
+                        if(this.msgList[i].question_form === "chosen"){
+                            this.msgList[i].type = ["选择", "文字"]
                         }
-                        else if(this.msgList[i].question_form === "chosen"){
-                            this.msgList[i].type = "选择"
+                        else if(this.msgList[i].question_form === "chosen-image"){
+                            this.msgList[i].type = ["选择", "图片"]
                         }
-                        else{
-                            this.msgList[i].type = "图片"
+                        else if(this.msgList[i].question_form === "fill"){
+                            this.msgList[i].type = ["填空",'文字']
+                        }
+                        else if(this.msgList[i].question_form === "fill-image"){
+                            this.msgList[i].type = ["填空","图片"]
                         }
                     }
                 }

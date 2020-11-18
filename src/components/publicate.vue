@@ -5,12 +5,11 @@
             <template slot="header">
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
-                        <a slot="actions" v-if="msg.to_ans === 1" @click="checkMsg(msg.id)" style="font-size: 15pt; color: #d95656">
+                        <a slot="actions" v-if="msg.to_ans === 1" @click="checkMsg(msg.id)" style="color: #d95656">
                             手动验收
                         </a>
                         <a slot="actions"
-                                :href="`/backend/result?mission_id=${msg.id}`"
-                                style="font-size: 15pt">
+                                :href="`/backend/result?mission_id=${msg.id}`">
                             下载结果
                         </a>
                         <a-list-item-meta>

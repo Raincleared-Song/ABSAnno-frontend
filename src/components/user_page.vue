@@ -18,7 +18,6 @@
             </a-button>
           </a-upload>
 
-
           <!-- 申请发题者 -->
           <a-button
               v-if="power === 0"
@@ -40,7 +39,7 @@
             <a-button
                 @click="editing = true"
                 type="primary" block
-                :disabled="power === -1"
+
                 style="margin: 10px 0">
               <a-icon type="form" />
               Edit profile

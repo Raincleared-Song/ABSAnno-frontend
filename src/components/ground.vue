@@ -6,41 +6,42 @@
                 <!--   导航栏，提供检索功能     -->
                 <div>
                     <a-row  type="flex">
-                        <a-col span="10">
-                            <a-input-search placeholder="关键词/发题者" enter-button @search="onSearch" />
+                        <a-col span="12">
+                            <el-input placeholder="关键词/发题者" v-model="keyword" size="small">
+                                <el-button slot="append" @click="onSearch">搜索</el-button>
+                            </el-input>
+<!--                            <a-input-search placeholder="关键词/发题者" enter-button @search="onSearch" />-->
                         </a-col>
                     </a-row>
                     <br/>
-                    <a-row justify="space-around" align="middle" type="flex">
-                        <a-col span="7">
+                    <a-row justify="space-around" type="flex">
+                        <a-col span="6">
                             题目类型
                             <a-select
                                     mode="multiple"
                                     :default-value="type"
                                     style="width: 70%"
                                     placeholder="题目类型"
-                                    @change="handleChangeType"
-                            >
+                                    @change="handleChangeType">
                                 <a-select-option v-for="t in typeTotal" :key="t">
                                     {{t}}
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col span="16">
+                        <a-col span="15">
                             题目主题
                             <a-select
                                     mode="multiple"
                                     :default-value="theme"
                                     style="width: 70%"
                                     placeholder="题目主题"
-                                    @change="handleChangeTheme"
-                            >
+                                    @change="handleChangeTheme">
                                 <a-select-option v-for="t in themeTotal" :key="t">
                                     {{t}}
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col span="1">
+                        <a-col span="2">
                             <a-button @click="sendSelect">确定</a-button>
                         </a-col>
                     </a-row>
@@ -227,7 +228,7 @@
                     "上班族","研究者","人脸识别","图片识别","文字识别",
                     "AI写作","翻译校对","文本分析","生活场景","工作场景","购物",
                     "运动","旅游","动物","道德准则","地理","科学","心理学"],
-                typeTotal:["选择","判断","图片","文字"],
+                typeTotal:["文字-选择","文字-填空","图片-选择","图片-填空"],
                 typeSend:[],
                 groundType: 1,
                 isRouterAlive: true,
@@ -285,17 +286,17 @@
                 this.typeSend = [];
                 var i;
                 for(i = 0; i < this.type.length; i+=1){
-                    if(this.type[i] === "选择"){
+                    if(this.type[i] === "文字-选择"){
                         this.typeSend.push("chosen");
                     }
-                    else if(this.type[i] === "判断"){
-                        this.typeSend.push("judge");
+                    else if(this.type[i] === "文字-填空"){
+                        this.typeSend.push("fill");
                     }
-                    else if(this.type[i] === "文字"){
-                        this.typeSend.push("text");
+                    else if(this.type[i] === "图片-选择"){
+                        this.typeSend.push("chosen-image");
                     }
-                    else if(this.type[i] === "图片"){
-                        this.typeSend.push("image");
+                    else if(this.type[i] === "图片-填空"){
+                        this.typeSend.push("fill-image");
                     }
                 }
 
@@ -368,8 +369,8 @@
                         }
                     });
             },
-            onSearch(value) {
-                this.keyword = value;
+            onSearch() {
+                // this.keyword = value;
                 this.onChange(1);
             },
             handleChangeTheme(value) {

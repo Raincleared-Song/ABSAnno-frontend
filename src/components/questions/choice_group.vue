@@ -35,7 +35,7 @@
           <span style="margin: 0 30px 0 10px">{{ question.image.name }}</span>
           <a-button
               @click="onRemoveImage"
-              size="small" shape="circle" ghost>
+              size="small" shape="circle">
             <a-icon type="delete" />
           </a-button>
         </div>
@@ -74,7 +74,7 @@
           </a-radio>
           <a-button
               v-if="editable"
-              size="small" ghost
+              size="small"
               @click="$emit('removeOption', question.index, index)">
             <a-icon type="delete" />
           </a-button>
@@ -85,7 +85,7 @@
         No option added...
       </div>
     </div>
-    <div v-if="editable">
+    <div v-if="editable" style="margin: 5px 15px">
       <a-input
           v-model="question.new_option"
           placeholder="Add new option, press enter to commit."
@@ -108,12 +108,24 @@ export default {
       'has_image'
   ],  // end of props
   methods: {
-    onChangeImage(file, fileList) {
-      this.question.image = file;
+    onChangeImage(file) {
+      console.log(file)
+      const isImg = file.name.endsWith('.jpeg') ||
+          file.name.endsWith('.png') ||
+          file.name.endsWith('.jpg');
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isImg) {
+        console.log(file.type)
+        this.$message.error('Please upload image!', 1);
+      } else if (!isLt2M) {
+        this.$message.error('Please upload a smaller image!', 1);
+      } else {
+        this.question.image = file;
+      }
     },
     onRemoveImage() {
       console.log('remove');
-      this.question.image = undefined;
+      this.question.image = null;
     }
   },
   watch: {
@@ -135,18 +147,5 @@ export default {
 }
 .img-uploader .el-upload:hover {
   border-color: #409EFF;
-}
-.img-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
 }
 </style>

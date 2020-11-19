@@ -4,17 +4,26 @@
     <a-tabs default-active-key="1">
       <a-tab-pane key="1" tab="手动添加任务">
         <router-view
+            @update-valid="updateValid"
             :mission_info="mission"
-            :questions="questions"
-            @submit-info="onSubmitInfo"
-            @submit-questions="submit" />
+            :questions="questions" />
         <a-steps
             v-model="current"
             type="navigation"
             :style="{ marginBottom: '60px', boxShadow: '0px -1px 0 0 #e8e8e8 inset' }">
-          <a-step title="编辑任务信息" disabled />
-          <a-step title="编辑题目" disabled />
+          <a-step title="编辑任务信息" />
+          <a-step title="编辑题目" />
         </a-steps>
+        <div style="margin: 10px 20px">
+          <a-button
+              v-show="$route.path === '/mission/edit'"
+              type="primary"
+              @click="submit"
+              :disabled="submitting"
+              block>
+            提交任务<a-icon type="check" />
+          </a-button>
+        </div>
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="上传压缩包">
@@ -35,7 +44,8 @@ export default {
   name: "mission_field",
   props: [
       'username',
-      'id'
+      'power',
+      'avatar'
   ],
   components: {
     upload_mission: upload_mission
@@ -46,24 +56,31 @@ export default {
         name: '',
         type: '',
         info: '',
+        cover: null,
         min: 10,
-        ddl: moment(new Date()),
+        ddl: moment(new Date().setDate(new Date().getDate() + 2)),
         tags: [],
         reward: 5,
         retrieve: 24,
         check_way: '',
+        has_cover: false,
         has_image: false
       },
       questions: [],
-      current: 0
+      current: 0,
+      mission_info_valid: false,
+      submitting: false
     };
   },
   methods: {
-    onSubmitInfo() {
-      this.$router.push('/mission/edit');
-    },
     // 向后端发送数据
     submit() {
+      this.submitting = true;
+      if (!this.mission_info_valid) {
+        this.$message.error('Field missing...', 1);
+        this.submitting = false; return;
+      }
+      let v = true;
       // 题目的基本信息
       let submitObj = {
         name: this.mission.name,
@@ -87,35 +104,47 @@ export default {
             choices: question.options.join('||'),
             ans: question.answer
           };
-        } else if (this.mission.type === 'text') {
+        } else if (this.mission.type === 'fill') {
           ret = {
             contains: question.description,
             ans: question.answer
           };
         }
-        if (ret !== undefined && this.mission.has_image)
-          ret.image_name = question.image.name;
+        if (ret !== undefined && this.mission.has_image) {
+          if (question.image) {
+            ret.image_name = question.image.name;
+          } else {
+            this.$message.error("Image Missing!", 1);
+            v = false;
+          }
+        }
         return ret;
       });
+      if (!v) {
+        this.submitting = false; return;
+      }
 
-      console.log(submitObj.question_list);
-
-      if (this.mission.has_image) {
+      if (this.mission.has_cover || this.mission.has_image) {
         // 图片
         let formData = new FormData();
         formData.append('info', JSON.stringify(submitObj));
-        this.questions.forEach(question => {
-          formData.append('img_list', question.image.raw);
-        });
+        if (this.mission.has_cover)
+          formData.append('mission_image', this.mission.cover);
+        if (this.mission.has_image) {
+          this.questions.forEach(question => {
+            formData.append('img_list', question.image.raw);
+          });
+        }
+
         postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
           if (jsonObj.code === 201) {
             console.log(jsonObj);
             this.$message.success("Upload Success!", 1).then(() => {
-              this.$router.push("/ground");
+              this.$router.go(-1);
             });
           } else {
-            console.log(jsonObj);
-            this.$message.error("Upload Error! Try later!");
+            this.submitting = false;
+            this.$message.error(jsonObj.data);
           }
         });
       } else {
@@ -124,24 +153,34 @@ export default {
           if (jsonObj.code === 201) {
             console.log(jsonObj);
             this.$message.success("Upload Success!", 1).then(() => {
-              console.log(12345678);
-              this.$router.push("/ground");
+              this.$router.go(-1);
             });
           } else {
-            console.log(jsonObj);
-            this.$message.error("Upload Error! Try later!");
+            this.submitting = false;
+            this.$message.error(jsonObj.data);
           }
         });
       }
     },
+    updateValid(newVal) {
+      this.mission_info_valid = newVal;
+    }
   },
   watch: {
-    '$route.path': function (newVal) {
-      if (newVal === '/mission/create') {
-        this.current = 0;
-      } else if (newVal === '/mission/edit') {
-        this.current = 1;
-      }
+    'this.mission.type': function (newVal) {
+      this.questions = [];
+    },
+    current: {
+      handler(newVal) {
+        if (newVal === 0) {
+          if (this.$route.path !== "/mission/create")
+            this.$router.replace("/mission/create");
+        } else {
+          if (this.$route.path !== "/mission/edit")
+            this.$router.replace("/mission/edit");
+        }
+      },
+      immediate: true
     }
   }
 }

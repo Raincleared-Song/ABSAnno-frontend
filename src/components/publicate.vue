@@ -5,13 +5,12 @@
             <template slot="header">
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
-                        <a slot="actions" @click="checkMsg(msg.id)" style="font-size: 15pt; color: #d95656">
-                            <a-icon type="pause" />
+                        <a slot="actions" v-if="msg.to_ans === 1" @click="checkMsg(msg.id)" style="color: #d95656">
+                            手动验收
                         </a>
                         <a slot="actions"
-                                :href="`/backend/result?mission_id=${msg.id}`"
-                                style="font-size: 15pt">
-                            <a-icon type="download" />
+                                :href="`/backend/result?mission_id=${msg.id}`">
+                            下载结果
                         </a>
                         <a-list-item-meta>
                             <a slot="title" style="font-size: 15pt" >
@@ -26,13 +25,16 @@
                             <a slot="description">
                                 <div style="color: #5e5e5e" >
                                     <a-tag color="green">
-                                        {{msg.type}}
+                                        {{msg.type[0]}}
+                                    </a-tag>
+                                    <a-tag color="green">
+                                        {{msg.type[1]}}
                                     </a-tag>
                                     题目数量：{{msg.question_num}}
                                     <a-divider type="vertical" />
                                     <a-icon type="clock-circle" theme="twoTone" two-tone-color="#4dc7ff" />{{msg.deadline}}
                                     <a-divider type="vertical" />
-                                    <a-icon type="fire" theme="twoTone" two-tone-color="#ff4d4f" />{{msg.num}}/{{msg.total}}
+                                    预期作答数量：{{msg.total}}
                                     <a-divider type="vertical" />
                                     {{msg.info}}
                                 </div>
@@ -66,6 +68,10 @@
                         sortable
                 >
                 </el-table-column>
+                <el-table-column
+                        prop="now_num"
+                        label="已作答人数">
+                </el-table-column>
             </el-table>
         </a-collapse-panel>
     </a-collapse>
@@ -80,7 +86,8 @@
         name: "publicate",
         props: [
             'username',
-            'power'
+            'power',
+            'avatar'
         ],
         data() {
             return {
@@ -102,15 +109,7 @@
                 });
             },
             checkMsg(id){
-                let onRespond = jsonObj => {
-                    if (jsonObj.code === 201) {
-                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
-                        this.detailedInfo = data.question_list;
-                    }
-                };
-                getBackend("backend/check", {
-                    "mission_id":id.toString()
-                }, onRespond);
+                this.$router.push("/question/"+id.toString()+"/1")
             },
             judgeDisable(msg){
 
@@ -118,7 +117,7 @@
         },
 
         watch: {
-            activeKey(key) { // 点击题组，展示题组详情
+            activeKey: function (key) { // 点击题组，展示题组详情
                 // console.log(key.id);
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
@@ -139,15 +138,19 @@
                     this.pubList = data.mission_list;
                     var i;
                     console.log(this.pubList)
-                    for(i = 0; i < 12; i+=1){
+                    for(i = 0; i < this.pubList.length; i+=1){
                         this.pubList[i].deadline = convertTime(this.pubList[i].deadline)
-                        if(this.pubList[i].question_form === "judgement" ||
-                            this.pubList[i].question_form === "judgement-image") {
-                            this.pubList[i].type = "判断"
+                        if(this.pubList[i].question_form === "chosen"){
+                            this.pubList[i].type = ["选择", "文字"]
                         }
-                        else if(this.pubList[i].question_form === "chosen" ||
-                            this.pubList[i].question_form === "chosen-image") {
-                            this.pubList[i].type = "选择"
+                        else if(this.pubList[i].question_form === "chosen-image"){
+                            this.pubList[i].type = ["选择", "图片"]
+                        }
+                        else if(this.pubList[i].question_form === "fill"){
+                            this.pubList[i].type = ["填空",'文字']
+                        }
+                        else if(this.pubList[i].question_form === "fill-image"){
+                            this.pubList[i].type = ["填空","图片"]
                         }
                     }
                 }

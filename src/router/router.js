@@ -26,7 +26,7 @@ const routes=[
     { path:'/login', component:login },
     { path:'/signin', component: signin },
     { path:'/user', component: user_page },
-    { path:'/question/:id', component: answer_question },
+    { path:'/question/:id/:renew', component: answer_question },
     { path:'/users', component: manager },
     { path:'/orders', component: orders },
     { path:"/pub", component: publicate},

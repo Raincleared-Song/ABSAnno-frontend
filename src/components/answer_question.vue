@@ -8,7 +8,7 @@
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
       <text_edit
-          v-else-if="nowQuestion.type === 'text'"
+          v-else-if="nowQuestion.type === 'fill'"
           :editable="false"
           :question="nowQuestion"
           :has_image="nowQuestion.has_image" />
@@ -39,8 +39,8 @@
           下一题<a-icon type="arrow-right" />
         </a-button>
         <a-button
-            @click="returnSquare">
-          返回广场<a-icon type="rollback" />
+            @click="$router.go(-1)">
+          返回<a-icon type="rollback" />
         </a-button>
       </a-space>
     </div>
@@ -62,35 +62,36 @@ export default {
   },  // end of components
   data() {
     return {
+      renew: Number(this.$route.params.renew) === 1,
       missionId: 0,
       totalNum: 0,    // 总题目数量
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
       nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
       startTimer: 0
-      // countTimer: moment(new Date()).diff(this.startTimer).format('hh:mm'),
-      // showTime: true
     };
   },  // end of data
   props:[
       'username',
-      'power'
+      'power',
+      'avatar'
   ],
   methods: {
     // 向后端发送数据
     submit() {
       let answers = this.questions.map(question => {
-        return question.answer;
+        return question.answer === ''? ' ': question.answer;
       });
       console.log(answers);
       postBackend(API.POST_SINGLE_QUESTION.path, {
+        method: this.renew? 'renew': 'submit',
         mission_id: this.missionId.toString(),
         ans: answers.join('||'),
         time: (new Date().getTime() - this.startTimer).toLocaleString()
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          this.$message.success("提交成功，返回广场！", 1).then(() => {
-            this.$router.push("/ground");
+          this.$message.success("提交成功，返回！", 1).then(() => {
+            this.$router.go(-1);
           });
         } else {
           console.log(jsonObj.data);
@@ -126,10 +127,6 @@ export default {
     // 上一题
     switchToPrev() {
       this.nowQuestionIndex -= 1;
-    },
-    // 返回广场
-    returnSquare() {
-      this.$router.push("/ground");
     }
   },  // end of methods
   created: function() {
@@ -176,7 +173,6 @@ function getNewQuestion(dataObj) {
     has_image: false,
     has_pre_ans: false
   };
-
   // 对于含有图片的题
   const type_list = newQuestion.type.split('-');
   if (type_list.length === 2 && type_list[1] === 'image') {

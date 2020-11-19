@@ -40,6 +40,7 @@ export default {
         this.userCoin = dataObj.coin;
         this.userWeight = dataObj.weight;
         this.userAnsNum = dataObj.num;
+        this.$emit('change-avatar', dataObj.avatar);
       }
     });
   }   // mounted

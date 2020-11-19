@@ -47,7 +47,9 @@
                             <template slot="content">
                                 欢迎，{{this.username}}<br/>
                             </template>
-                            <router-link to="/user"><a-avatar shape="square" icon="user"/></router-link>
+                            <router-link to="/user">
+                                <a-avatar shape="square" :src="avatar"/>
+                            </router-link>
                         </a-popover>
                     </span>
                 </div>
@@ -66,6 +68,7 @@
         props:[
             "username",
             "power",
+            "avatar"
         ],
         data() {
             return {
@@ -76,7 +79,7 @@
             onClick() {
                 postBackend("backend/logout", {}, jsonObj => {
                     if (jsonObj.code === 201) {
-                        this.$emit('logout',true);
+                        this.$emit('logout', 1);
                     } else {
                         console.log("can't logout")
                     }
@@ -87,6 +90,9 @@
             $route(to, from) {
                 this.current = [this.$route.path];
                 console.log(this.current);
+                if(this.$route.path === "/login"){
+                    this.$emit('logout', 0);
+                }
             }
         },
     }

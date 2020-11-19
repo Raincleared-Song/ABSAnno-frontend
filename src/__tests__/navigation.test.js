@@ -4,12 +4,12 @@ import Antd from "ant-design-vue";
 import VueRouter from "vue-router";
 import navigation from "@/components/navigation";
 import MenuItem from "ant-design-vue/lib/menu/MenuItem"
+import router from "@/router/router";
 
 let localVue = createLocalVue();
 localVue.use(ElementUI);
 localVue.use(Antd);
 localVue.use(VueRouter);
-const router = new VueRouter();
 
 describe('navigation', function () {
 
@@ -70,4 +70,13 @@ describe('navigation', function () {
         expect(routerLinks.at(6).props('to')).toBe('/ground');
         expect(routerLinks.at(7).props('to')).toBe('/user');
     });
+    it('check onClick', () => {
+        const wrapper = mount(navigation, {localVue, router});
+        wrapper.vm.onClick();
+    })
+    it('check watch', () => {
+        const wrapper = mount(navigation, {localVue, router});
+        wrapper.vm.$router.push('/login');
+        expect(router).toBeDefined();
+    })
 });

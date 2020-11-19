@@ -14,6 +14,103 @@ localVue.use(ElementUI)
 localVue.use(Antd)
 const router = new VueRouter()
 
+describe('choice_group', function () {
+
+    it('check data', function () {
+        const wrapper = mount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    index: 0,
+                    type: 'chosen',
+                    description: "",
+                    options: ['A', 'B', 'C'],
+                    new_option: "",
+                    answer: "",
+                    has_pre_ans: false,
+                    image: undefined
+                },
+                editable: true,
+                has_image: false
+            }
+        })
+        expect(wrapper.vm.$data).toStrictEqual({
+            optionCode: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+        })
+    })
+
+    it('check onChangeImage', function () {
+        const wrapper = shallowMount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    index: 0,
+                    type: 'chosen',
+                    description: "",
+                    options: ['A', 'B', 'C'],
+                    new_option: "",
+                    answer: "",
+                    has_pre_ans: false,
+                    image: undefined
+                },
+                editable: true,
+                has_image: true
+            }
+        })
+        wrapper.vm.onChangeImage({ name: "test.png", size: 2048 })
+        expect(wrapper.props().question.image).toStrictEqual({ name: "test.png", size: 2048 })
+    })
+
+    it('test onRemoveImage', function () {
+        const wrapper = shallowMount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    options: ['A', 'B', 'C'],
+                    image: "123.png"
+                }
+            }
+        })
+        wrapper.vm.onRemoveImage();
+        expect(wrapper.props().question.image).toBe(null);
+    })
+
+    it('test watch question.has_pre_ans', async function () {
+        const wrapper = mount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    options: ['A', 'B', 'C'],
+                    answer: "ha",
+                    has_pre_ans: true
+                }
+            }
+        })
+        wrapper.vm.$watch(
+            'question.has_pre_ans', function (newVal, oldVal) {
+                if (newVal === false && oldVal === true)
+                    this.question.answer = "";
+            })
+        await wrapper.setProps({
+            question: {
+                options: ['A', 'B', 'C'],
+                answer: "ha",
+                has_pre_ans: true
+            }})
+        await wrapper.setProps({
+            question: {
+                options: ['A', 'B', 'C'],
+                answer: "ha",
+                has_pre_ans: false
+            }})
+        expect(wrapper.props().question.answer).toBe("")
+    })
+})
+
 describe('checkbox_group', () => {
     it('Check data', () => {
         const wrapper = mount(check_group, {localVue, router});
@@ -62,7 +159,59 @@ describe('judgement_group', () => {
 
 describe('text_edit', () => {
     it('Check Text Edit', () => {
-        const wrapper = mount(text_edit, {localVue, router});
+        const wrapper = mount(text_edit, { localVue, router });
+        expect(wrapper.vm.$props).toStrictEqual({
+            question: {
+                id: 0,
+                type: 'chosen',
+                description: "",
+                new_option: "",
+                answer: "A||B",
+                image: ""
+            },
+            editable: false,
+            has_image: false
+        });
+    })
+
+    it('test onChangeImage', function () {
+        const wrapper = mount(text_edit, {
+            localVue,
+            router,
+            propsData: {
+                question: { image: "" }
+            }
+        })
+        wrapper.vm.onChangeImage({ name: "test.png", size: 2048 });
+        expect(wrapper.props().question.image).toStrictEqual({ name: "test.png", size: 2048 });
+    })
+
+    it('test onRemoveImage', function () {
+        const wrapper = mount(text_edit, {
+            localVue,
+            router,
+            propsData: {
+                question: { image: "" }
+            }
+        })
+        wrapper.vm.onRemoveImage();
+        expect(wrapper.props().question.image).toBe(null);
+    })
+
+    it('test watch question.has_pre_ans', async function () {
+        const wrapper = mount(text_edit, { localVue, router })
+        wrapper.vm.$watch(
+            'question.has_pre_ans', function (newVal, oldVal) {
+                if (newVal === false && oldVal === true)
+                    this.question.answer = "";
+            })
+        await wrapper.setProps({
+            question: { has_pre_ans: true }
+        })
+        await wrapper.setProps({
+            question: { has_pre_ans: false }
+        })
+        expect(wrapper.props().question.answer).toBe("")
     })
 })
 
@@ -71,13 +220,76 @@ const mockXmlCsrf = {
     send: jest.fn(),
     readyState: 4,
     status: 200,
-    responseText: '123456',
+    responseText: 'csrf',
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlSwitch = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: JSON.stringify(
+            {ret: 1, type: 'chosen', description: '', choices: 'A||B||C'})}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlSwitchImage = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: JSON.stringify(
+            {ret: 1, type: 'chosen-image', description: '', choices: 'A||B||C'})}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlSwitchFail = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 400,
+    responseText: JSON.stringify({code: 400, data: JSON.stringify(
+            {ret: 1, type: 'chosen-image', description: '', choices: 'A||B||C'})}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlSubmitSuccess = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: 'Success'}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlSubmitFail = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 400, data: 'Fail'}),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
+
+const mockXmlSubmitCreated = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({code: 201, data: JSON.stringify(
+            {total: 1, ret: 1, type: 'chosen-image', description: '', choices: 'A||B||C', image_url: ''})}),
     onreadystatechange: () => {},
     setRequestHeader: () => {}
 };
 
 describe('answer_question', () => {
-
     it('question without image', () => {
         const wrapper = shallowMount(answer_question, {
             localVue,
@@ -85,12 +297,7 @@ describe('answer_question', () => {
             propsData: { username: 'test', power: 1 },
             data() {
                 return {
-                    nowQuestion: {
-                        index: 0,
-                        type: 'chosen',
-                        description: 'test description',
-                        has_image: false
-                    }
+                    nowQuestion: { index: 0, type: 'chosen', description: 'test description', has_image: false }
                 }
             }
         });
@@ -102,25 +309,72 @@ describe('answer_question', () => {
     })
 
     it('test submit', () => {
-        const wrapper = shallowMount(answer_question, {
-            localVue,
-            router,
-            propsData: { username: 'test', power: 1 },
-            data() {
-                return {
-                    nowQuestion: {
-                    index: 0,
-                    type: 'chosen',
-                    description: 'test description',
-                    has_image: false
-                }
-            }
-            }
-        })
+        const wrapper = mount(answer_question, {localVue, router})
+        wrapper.setData({questions: [{type: 'chosen', answer: ['A', 'B']}]});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
         wrapper.vm.submit();
+        window.XMLHttpRequest = jest.fn(() => mockXmlSubmitSuccess);
         mockXmlCsrf.onreadystatechange();
+        mockXmlSubmitSuccess.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('test submit fail', () => {
+        const wrapper = mount(answer_question, {localVue, router})
+        wrapper.setData({questions: [{type: 'chosen', answer: ['A', 'B']}]});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        wrapper.vm.submit();
+        window.XMLHttpRequest = jest.fn(() => mockXmlSubmitFail);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlSubmitFail.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('test switch', () => {
+        const wrapper = shallowMount(answer_question, {localVue, router});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlSwitch);
+        wrapper.vm.switchToNext();
+        mockXmlSwitch.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('test switch image', () => {
+        const wrapper = shallowMount(answer_question, {localVue, router});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlSwitchImage);
+        wrapper.vm.switchToNext();
+        mockXmlSwitchImage.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('test switch error', () => {
+        const wrapper = shallowMount(answer_question, {localVue, router});
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlSwitchFail);
+        wrapper.vm.switchToNext();
+        mockXmlSwitchImage.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('test switch id', () => {
+        const wrapper = shallowMount(answer_question, {localVue, router});
+        wrapper.setData({nowQuestionIndex: 2});
+        wrapper.vm.switchToNext();
+    })
+
+    it('test other', () => {
+        const wrapper = shallowMount(answer_question, {localVue, router});
+        wrapper.vm.switchToPrev();
+    })
+
+    it('test created', () => {
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlSubmitCreated);
+        mount(answer_question, {localVue, router});
+        mockXmlSubmitCreated.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
 });

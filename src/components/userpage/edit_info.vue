@@ -58,7 +58,7 @@
             v-model="user_info.mission_tags"
             placeholder="你偏好的任务标签">
           <a-select-option
-              v-for="(tag, idx) in missionTags"
+              v-for="tag in missionTags"
               :key="tag">
             {{ tag }}
           </a-select-option>

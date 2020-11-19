@@ -257,6 +257,7 @@
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
                         let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                      console.log(data)
                         this.totalMsgNum = data.total;
                         this.msgList = data.question_list;
                         while (this.msgList.length < 12) {
@@ -402,6 +403,7 @@
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
                         let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                        console.log(data)
                         this.intList = data.question_list;
                         var i;
                         for(i = 0; i < 5; i+=1){

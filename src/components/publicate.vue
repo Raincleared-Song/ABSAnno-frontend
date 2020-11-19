@@ -5,7 +5,7 @@
             <template slot="header">
                 <a-list item-layout="horizontal" :data-source="[pub]">
                     <a-list-item slot="renderItem" slot-scope="msg" >
-                        <a slot="actions" v-if="msg.to_ans === 1" @click="checkMsg(msg.id)" style="color: #d95656">
+                        <a slot="actions" v-if="msg.to_be_check === 1" @click="checkMsg(msg.id)" style="color: #d95656">
                             手动验收
                         </a>
                         <a slot="actions"
@@ -20,6 +20,9 @@
                                 </a-tag>
                                 <a-tag v-if="msg.num === 0" color="orange">
                                     未被作答
+                                </a-tag>
+                                <a-tag v-if="msg.to_ans === 1" color="blue">
+                                    进行中
                                 </a-tag>
                             </a>
                             <a slot="description">

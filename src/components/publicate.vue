@@ -84,6 +84,7 @@
     import getBackend from "../utils/getBackend"
     import API from "../utils/API"
     import convertTime from "../utils/convertTime";
+    import postBackend from "../utils/postBackend";
 
     export default {
         name: "publicate",
@@ -112,7 +113,14 @@
                 });
             },
             checkMsg(id){
-                this.$router.push("/question/"+id.toString()+"/1")
+                postBackend("backend/receive", {mission_id: id.toString()},
+                    jsonObj => {
+                        if (jsonObj.code === 201) {
+                            this.$router.push("/question/"+id.toString()+"/1")
+                        } else {
+                            console.log("can't book/unbook")
+                        }
+                    });
             },
             judgeDisable(msg){
 

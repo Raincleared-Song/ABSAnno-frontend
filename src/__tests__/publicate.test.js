@@ -1,4 +1,4 @@
-import {createLocalVue, mount} from "@vue/test-utils";
+import {createLocalVue, mount, shallowMount} from "@vue/test-utils";
 import VueRouter from "vue-router";
 import ElementUI from "element-ui";
 import Antd from "ant-design-vue";
@@ -9,6 +9,16 @@ localVue.use(VueRouter)
 localVue.use(ElementUI)
 localVue.use(Antd)
 const router = new VueRouter()
+
+const mockXmlCsrf = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 200,
+    responseText: '123456',
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+};
 
 const mockXmlSuccess = {
     open: jest.fn(),
@@ -50,7 +60,14 @@ const mockXmlUser = {
     status: 201,
     responseText: JSON.stringify({
         code: 201,
-        data: JSON.stringify({ mission_list: [] })
+        data: JSON.stringify({
+            mission_list: [
+                {deadline: new Date().getTime(), question_form: 'chosen', to_ans: 1},
+                {deadline: new Date().getTime(), question_form: 'fill', to_ans: 1},
+                {deadline: new Date().getTime(), question_form: 'chosen-image', to_ans: 1},
+                {deadline: new Date().getTime(), question_form: 'fill-image', to_ans: 1},
+            ]
+        })
     }),
     onreadystatechange: () => {},
     setRequestHeader: () => {}
@@ -110,20 +127,51 @@ describe('publicate', function () {
     })
 
     it('test checkMsg', function () {
+        const oldXml = window.XMLHttpRequest;
         const wrapper = mount(publicate, {
             localVue,
             router,
-            propsData: {
-                username: 'test',
-                power: 0,
-                avatar: 'test'
-            }
+            propsData: { username: 'test', power: 0, avatar: 'test' }
         })
-        const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlCheck);
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
         wrapper.vm.checkMsg(123);
+        window.XMLHttpRequest = jest.fn(() => mockXmlSuccess);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlSuccess.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('test checkMsg, fail', function () {
+        const oldXml = window.XMLHttpRequest;
+        const wrapper = mount(publicate, {
+            localVue,
+            router,
+            propsData: { username: 'test', power: 0, avatar: 'test' }
+        })
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        wrapper.vm.checkMsg(123);
+        window.XMLHttpRequest = jest.fn(() => mockXmlFail);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlFail.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check stopMsg', function () {
+        const oldXml = window.XMLHttpRequest;
+        const wrapper = shallowMount(publicate, { localVue, router });
+        wrapper.setData({ pubList: [{ id: 1, showLegend: 0 }, { id: 2, showLegend: 0 }] })
+        window.XMLHttpRequest = jest.fn(() => mockXmlCheck);
+        wrapper.vm.stopMsg(1);
         mockXmlCheck.onreadystatechange();
-        expect(wrapper.vm.detailedInfo).toStrictEqual([]);
+        window.XMLHttpRequest = oldXml;
+    })
+
+    it('check stopMsg, fail', function () {
+        const oldXml = window.XMLHttpRequest;
+        const wrapper = shallowMount(publicate, { localVue, router });
+        window.XMLHttpRequest = jest.fn(() => mockXmlFail);
+        wrapper.vm.stopMsg(1);
+        mockXmlFail.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
 
@@ -131,16 +179,14 @@ describe('publicate', function () {
         const wrapper = mount(publicate, {
             localVue,
             router,
-            propsData: {
-                username: 'test',
-                power: 0,
-                avatar: 'test'
-            }
+            propsData: { username: 'test', power: 0, avatar: 'test' }
         })
         wrapper.vm.judgeDisable("fake message");
     })
 
     it('test mount', function () {
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlUser);
         const wrapper = mount(publicate, {
             localVue,
             router,
@@ -150,30 +196,24 @@ describe('publicate', function () {
                 avatar: 'test'
             }
         })
-        const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlUser);
-        wrapper.vm.$mount();
         mockXmlUser.onreadystatechange();
-        expect(wrapper.vm.pubList).toStrictEqual([]);
+        expect(wrapper.vm.pubList).toHaveLength(4);
         window.XMLHttpRequest = oldXml;
     })
 
-    it('check watch key', () => {
+    it('check watch activeKey', async function () {
+        const oldXml = window.XMLHttpRequest;
         const wrapper = mount(publicate, {
-            localVue,
-            router,
+            localVue, router,
             propsData: {
-                username: 'test',
-                power: 0,
-                avatar: 'test',
-                activeKey: []
+                username: 'test', power: 0, avatar: 'test'
             }
         });
-        const oldXml = window.XMLHttpRequest;
+        await wrapper.setData({ activeKey: [], detailedInfo: [] });
         window.XMLHttpRequest = jest.fn(() => mockXmlCheck);
-        wrapper.vm.activeKey.push({id: 1});
+        await wrapper.setData({ activeKey: [{id: 1}] });
         mockXmlCheck.onreadystatechange();
-        expect(wrapper.vm.detailedInfo).toStrictEqual([]);
+        expect(wrapper.vm.detailedInfo).toHaveLength(0);
         window.XMLHttpRequest = oldXml;
     })
 })

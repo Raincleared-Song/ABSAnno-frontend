@@ -71,7 +71,6 @@
                             console.log("Successful broadcast!")
                             this.$message.success("成功发送消息",2)
                             this.text = ""
-
                         } else {
                             if(jsonObj.data === "You didnt specify receivers"){
                                 this.$message.warning("请选择发送对象",2)

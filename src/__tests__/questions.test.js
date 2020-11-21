@@ -63,6 +63,52 @@ describe('choice_group', function () {
         expect(wrapper.props().question.image).toStrictEqual({ name: "test.png", size: 2048 })
     })
 
+    it('check onChangeImage, fail case 1', function () {
+        const wrapper = shallowMount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    index: 0,
+                    type: 'chosen',
+                    description: "",
+                    options: ['A', 'B', 'C'],
+                    new_option: "",
+                    answer: "",
+                    has_pre_ans: false,
+                    image: undefined
+                },
+                editable: true,
+                has_image: true
+            }
+        })
+        wrapper.vm.onChangeImage({ name: "test.json", size: 2048 })
+        expect(wrapper.props().question.image).toBeFalsy();
+    })
+
+    it('check onChangeImage, fail case 2', function () {
+        const wrapper = shallowMount(choice_group, {
+            localVue,
+            router,
+            propsData: {
+                question: {
+                    index: 0,
+                    type: 'chosen',
+                    description: "",
+                    options: ['A', 'B', 'C'],
+                    new_option: "",
+                    answer: "",
+                    has_pre_ans: false,
+                    image: undefined
+                },
+                editable: true,
+                has_image: true
+            }
+        })
+        wrapper.vm.onChangeImage({ name: "test.png", size: 20480000 })
+        expect(wrapper.props().question.image).toBeFalsy();
+    })
+
     it('test onRemoveImage', function () {
         const wrapper = shallowMount(choice_group, {
             localVue,

@@ -62,6 +62,7 @@ describe('create_mission', function () {
             }
         })
     })
+
     it('test other', () => {
         const wrapper = mount(create_mission, {
             localVue,
@@ -84,5 +85,23 @@ describe('create_mission', function () {
         wrapper.vm.disabledDate(1);
         wrapper.vm.onChangeCover({ type: 'image/png', size: 2048, name: 'test.png' });
         wrapper.vm.onRemoveCover();
+    })
+
+    it('test onChangeCover, fail case', () => {
+        const wrapper = mount(create_mission, {
+            localVue,
+            router,
+            propsData: {
+                mission_info: {
+                    name: undefined,
+                    has_cover: false,
+                    cover: null
+                }
+            }
+        });
+        wrapper.vm.onChangeCover({ type: 'text/json', size: 2048, name: 'test.json' });
+        expect(wrapper.vm.mission_info.cover).toBe(null);
+        wrapper.vm.onChangeCover({ type: 'image/png', size: 20480000, name: 'test.png' });
+        expect(wrapper.vm.mission_info.cover).toBe(null);
     })
 })

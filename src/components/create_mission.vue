@@ -109,8 +109,8 @@
               @blur="$refs.tags.onFieldBlur()"
               mode="multiple">
             <a-select-option
-                v-for="(tag, idx) in tagsTotal"
-                :key="idx">
+                v-for="tag in tagsTotal"
+                :key="tag">
               {{ tag }}
             </a-select-option>
           </a-select>

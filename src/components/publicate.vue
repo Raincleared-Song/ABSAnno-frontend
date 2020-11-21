@@ -8,6 +8,9 @@
                         <a slot="actions" v-if="msg.to_be_check === 1" @click="checkMsg(msg.id)" style="color: #d95656">
                             手动验收
                         </a>
+                        <a slot="actions" v-if="msg.showLegend === 1" @click="stopMsg(msg.id)">
+                            直接收题
+                        </a>
                         <a slot="actions"
                                 :href="`/backend/result?mission_id=${msg.id}`">
                             下载结果
@@ -84,6 +87,7 @@
     import getBackend from "../utils/getBackend"
     import API from "../utils/API"
     import convertTime from "../utils/convertTime";
+    import postBackend from "../utils/postBackend";
 
     export default {
         name: "publicate",
@@ -112,8 +116,34 @@
                 });
             },
             checkMsg(id){
-                this.$router.push("/question/"+id.toString()+"/1")
+                postBackend("backend/receive", {mission_id: id.toString()},
+                    jsonObj => {
+                        if (jsonObj.code === 201) {
+                            this.$router.push("/question/"+id.toString()+"/1")
+                        } else {
+                            console.log("can't book/unbook")
+                        }
+                    });
             },
+            stopMsg(id){
+                let onRespond = jsonObj => {
+                    if (jsonObj.code === 201) {
+                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                        this.detailedInfo = data.question_list;
+                        this.$message.success("已成功收题！",2)
+                        var i;
+                        for(i = 0; i < this.pubList.length; i+=1){
+                            if(this.pubList[i].id === id){
+                                this.pubList[i].showLegend = 0;
+                            }
+                        }
+                    }
+                };
+                getBackend("backend/check", {
+                    "mission_id":id.toString()
+                }, onRespond);
+            },
+
             judgeDisable(msg){
 
             },
@@ -155,6 +185,7 @@
                         else if(this.pubList[i].question_form === "fill-image"){
                             this.pubList[i].type = ["填空","图片"]
                         }
+                        this.pubList[i].showLegend = this.pubList[i].to_ans;
                     }
                 }
             };

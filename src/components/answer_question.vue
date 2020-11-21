@@ -105,6 +105,7 @@ export default {
       if (nextIndex === this.questions.length) {
         // 下一题未加载，从后端获取
         getBackend(API.GET_SINGLE_QUESTION.path, {
+          method: this.renew? 'renew': 'submit',
           id: this.missionId,
           num: nextIndex,
           step: 0
@@ -135,6 +136,7 @@ export default {
     this.missionId = Number(this.$route.params.id);
     // 从后台申请数据加载
     getBackend(API.GET_SINGLE_QUESTION.path, {
+      method: this.renew? 'renew': 'submit',
       id: this.missionId,
       num: 0,
       step: 0

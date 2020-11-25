@@ -5,7 +5,7 @@
  * param requestBody: POST的request.body，传进一个object
  * param onRespond: 对于response的处理 */
 import router from "../router/router"
-export default function postBackend(url, requestBody, onRespond) {
+export default function postBackend(url, requestBody, onRespond, isFile=false) {
     let xmlHttpCsrf;
     let jsonObj;    // 返回的东西
     if (window.XMLHttpRequest) {
@@ -40,10 +40,18 @@ export default function postBackend(url, requestBody, onRespond) {
                 }
                 const csrfToken = xmlHttpCsrf.responseText;  // 获取 CSRF token
                 xmlHttpPost.open('POST', url, true);
-                xmlHttpPost.setRequestHeader('content-type', 'application/json');
+                if (isFile) {
+                    xmlHttpPost.withCredentials = true;
+                } else {
+                    xmlHttpPost.setRequestHeader('content-type', 'application/json');
+                }
                 xmlHttpPost.setRequestHeader('X-CSRFToken', csrfToken);  // 设置请求头
                 console.log(requestBody);
-                xmlHttpPost.send(JSON.stringify(requestBody));
+                if (isFile) {
+                    xmlHttpPost.send(requestBody);
+                } else {
+                    xmlHttpPost.send(JSON.stringify(requestBody));
+                }
             } else {
                 console.log(xmlHttpCsrf.responseText);
             }

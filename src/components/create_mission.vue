@@ -209,15 +209,13 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isImg) {
         this.$message.error('Please upload image!', 1);
-        return false;
       } else if (!isLt2M) {
         this.$message.error('Please upload a smaller image!', 1);
-        return false;
       } else {
         this.mission_info.has_cover = true;
         this.mission_info.cover = file;
-        return false;
       }
+      return false;
     },
     onRemoveCover() {
       this.mission_info.has_cover = false;

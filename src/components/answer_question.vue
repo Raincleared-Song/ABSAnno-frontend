@@ -93,7 +93,7 @@ export default {
         time: (new Date().getTime() - this.startTimer).toLocaleString()
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          this.$message.success("提交成功，返回！", 1).then(() => {
+          this.$message.success(jsonObj.data, 1).then(() => {
             this.$router.go(-1);
           });
         } else {

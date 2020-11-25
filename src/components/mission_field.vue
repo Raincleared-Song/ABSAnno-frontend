@@ -36,7 +36,6 @@
 <script>
 import API from "@/utils/API";
 import upload_mission from "@/components/upload_mission";
-import postFile from "@/utils/postFile";
 import postBackend from "@/utils/postBackend";
 import moment from 'moment';
 
@@ -138,7 +137,7 @@ export default {
           });
         }
 
-        postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
+        postBackend(API.POST_NEW_MISSION.path, formData, jsonObj => {
           if (jsonObj.code === 201) {
             console.log(jsonObj);
             this.$message.success("Upload Success!", 1).then(() => {
@@ -148,7 +147,7 @@ export default {
             this.submitting = false;
             this.$message.error(jsonObj.data);
           }
-        });
+        }, true);
       } else {
         // 无图片
         postBackend(API.POST_NEW_MISSION.path, submitObj, jsonObj => {

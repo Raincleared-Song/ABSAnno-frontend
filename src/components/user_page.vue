@@ -42,7 +42,7 @@
 
                 style="margin: 10px 0">
               <a-icon type="form" />
-              Edit profile
+              编辑个人资料
             </a-button>
             <basic_info
                 @change-avatar="onChangeAvatar"

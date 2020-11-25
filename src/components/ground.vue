@@ -175,7 +175,7 @@
 
 <!--            感兴趣-->
             <a-layout-sider class="sidebar" width="250">
-                <h3 class="sidebar-title">Discover   <a-icon type="reload" @click="getNewInterest(intNum)"/></h3>
+                <h3 class="sidebar-title">为您推荐    <a-icon type="reload" @click="getNewInterest(intNum)"/></h3>
                 <div v-for="msg in intList" :key="msg">
                     <a-card size="small" style="width: 200px">
                         <template slot="title">

@@ -64,7 +64,9 @@
     </div>
     </a-layout-content>
 
-    <a-layout-sider v-if="template === 1" style="padding: 50px 10px">
+    <a-layout-sider
+        v-if="template === 1"
+        style="padding: 80px 10px 10px 10px">
       <div style="margin: 15px 10px 10px 10px">
         <strong>答题区：</strong>
       </div>
@@ -141,7 +143,6 @@ p {
   margin-top: 50px;
 }
 .ant-layout {
-  margin-bottom: 48px;
   background: #ffffff;
 }
 .ant-layout-sider {

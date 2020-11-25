@@ -401,20 +401,18 @@
                         let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                         console.log(data)
                         this.intList = data.question_list;
-                        var i;
-                        for(i = 0; i < 5; i+=1){
-                            this.intList[i].deadline = convertTime(this.intList[i].deadline)
-                            if(this.intList[i].questionForm === "chosen"){
-                                this.intList[i].type = ["选择", "文字"]
-                            }
-                            else if(this.intList[i].questionForm === "chosen-image"){
-                                this.intList[i].type = ["选择", "图片"]
-                            }
-                            else if(this.intList[i].questionForm === "fill"){
-                                this.intList[i].type = ["填空",'文字']
-                            }
-                            else if(this.intList[i].questionForm === "fill-image"){
-                                this.intList[i].type = ["填空","图片"]
+                        for(let i = 0; i < 5; i+=1){
+                            if (this.intList[i] !== undefined) {
+                                this.intList[i].deadline = convertTime(this.intList[i].deadline)
+                                if (this.intList[i].questionForm === "chosen") {
+                                    this.intList[i].type = ["选择", "文字"]
+                                } else if (this.intList[i].questionForm === "chosen-image") {
+                                    this.intList[i].type = ["选择", "图片"]
+                                } else if (this.intList[i].questionForm === "fill") {
+                                    this.intList[i].type = ["填空", '文字']
+                                } else if (this.intList[i].questionForm === "fill-image") {
+                                    this.intList[i].type = ["填空", "图片"]
+                                }
                             }
                         }
                     } else {

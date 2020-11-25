@@ -91,7 +91,9 @@
       </div>
     </a-layout-content>
 
-    <a-layout-sider v-if="template === 1" style="padding: 50px 10px">
+    <a-layout-sider
+        v-if="template === 1"
+        style="padding: 80px 10px 10px 10px">
       <a-radio-group
           v-if="question.options.length"
           :disabled="editable && (!question.has_pre_ans)"
@@ -171,7 +173,6 @@ export default {
   border-color: #409EFF;
 }
 .ant-layout {
-  margin-bottom: 48px;
   background: #ffffff;
 }
 .ant-layout-sider {

@@ -30,11 +30,13 @@
                 @removeOption="removeOption"
                 :editable="true"
                 :has_image="mission_info.has_image"
+                :template="mission_info.template"
                 :question="nowQuestion" />
             <text_edit
                 v-else-if="mission_info.type === 'fill'"
                 :editable="true"
                 :has_image="mission_info.has_image"
+                :template="mission_info.template"
                 :question="nowQuestion" />
             <p v-else>{{ mission_info.type }}</p>
           </div>

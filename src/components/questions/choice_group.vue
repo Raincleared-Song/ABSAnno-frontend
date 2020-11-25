@@ -105,7 +105,8 @@ export default {
   props: [
       'question',
       'editable',
-      'has_image'
+      'has_image',
+      'template'
   ],  // end of props
   methods: {
     onChangeImage(file) {

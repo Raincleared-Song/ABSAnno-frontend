@@ -64,7 +64,8 @@ export default {
         retrieve: 24,
         check_way: '',
         has_cover: false,
-        has_image: false
+        has_image: false,
+        template: 0
       },
       questions: [],
       current: 0,
@@ -92,7 +93,8 @@ export default {
         reward: this.mission.reward.toString(),
         deadline: this.mission.ddl.format('YYYY-MM-DD').toString(),
         retrieve_time: this.mission.retrieve.toString(),
-        check_way: this.mission.check_way
+        check_way: this.mission.check_way,
+        template: this.mission.template.toString()
       };
 
       // 问题列表

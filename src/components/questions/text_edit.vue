@@ -80,6 +80,10 @@
       has_image: {
         type: Boolean,
         default: false
+      },
+      template: {
+        type: Number,
+        default: 0
       }
     },  // end of props
     methods: {

@@ -29,7 +29,8 @@ describe('create_mission', function () {
                 ddl: [{ required: true, message: 'Mission deadline cannot be null.', trigger: ['blur', 'change'] }],
                 reward: [{ required: true, message: 'Mission reward cannot be null.', trigger: 'blur' }],
                 retrieve: [{ required: true, message: 'Mission retrieve time cannot be null.', trigger: 'blur' }],
-                check_way: [{ required: true, message: 'Mission check way cannot be null.', trigger: 'blur' }]
+                check_way: [{ required: true, message: 'Mission check way cannot be null.', trigger: 'blur' }],
+                template: [{ required: true, message: 'Mission template cannot be null.', trigger: 'blur' }]
             },
             tagsTotal: [
                 "青年", "中年", "老年", "学生",

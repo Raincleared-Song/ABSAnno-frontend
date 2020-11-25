@@ -19,7 +19,7 @@
 
     <!-- 答题进度条 -->
     <a-steps :current="nowQuestionIndex" style="margin: 40px">
-      <a-step v-for="n in totalNum" :key="n" :title="nowQuestion.type" />
+      <a-step v-for="n in totalNum" :key="n" />
     </a-steps>
 
     <!-- 按钮区域 -->
@@ -121,7 +121,7 @@ export default {
             this.questions.push(newQuestion);
             this.nowQuestionIndex = this.questions.length - 1;
           } else {
-            this.$message.error("Try later!");
+            this.$message.error(jsonObj.data);
           }
         });
       } else {

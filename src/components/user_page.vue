@@ -84,10 +84,8 @@
   import edit_info from "@/components/userpage/edit_info";
   import history from "@/components/userpage/history";
   import postBackend from "@/utils/postBackend";
-  import postFile from "@/utils/postFile";
   import API from "@/utils/API";
   import message from "@/components/userpage/message";
-  import getBackend from "@/utils/getBackend";
 
   export default {
     name: "user_page",
@@ -140,13 +138,13 @@
       uploadAvatar() {
         let formData = new FormData();
         formData.append('avatar', this.upload_avatar);
-        postFile(API.CHANGE_AVATAR.path, formData, jsonObj => {
+        postBackend(API.CHANGE_AVATAR.path, formData, jsonObj => {
           if (jsonObj.code === 201) {
             this.$message.success(jsonObj.data);
           } else {
             this.$message.error(jsonObj.data);
           }
-        });
+        }, true);
       },
       onChangeAvatar(url) {
         this.$emit('change-avatar', url);

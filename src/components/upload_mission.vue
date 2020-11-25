@@ -140,7 +140,7 @@
 
 <script>
     import API from "@/utils/API";
-    import postFile from "@/utils/postFile";
+    import postBackend from "@/utils/postBackend";
 
     export default {
         name: "upload_mission",
@@ -155,7 +155,7 @@
                     return;
                 let formData = new FormData();
                 formData.append('zip', this.file.raw);
-                postFile(API.POST_NEW_MISSION.path, formData, jsonObj => {
+                postBackend(API.POST_NEW_MISSION.path, formData, jsonObj => {
                     if (jsonObj.code === 201) {
                         console.log(jsonObj);
                         this.$message.success("Upload Success!", 1).then(() => {
@@ -165,7 +165,7 @@
                         console.log(jsonObj);
                         this.$message.error(jsonObj.data);
                     }
-                })
+                }, true)
             },
             onChangeFile(file) {
                 this.file = file;

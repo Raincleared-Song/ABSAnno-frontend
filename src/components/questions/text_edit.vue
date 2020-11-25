@@ -1,12 +1,12 @@
 <!-- 这是个文字输入题页面 -->
 <template>
-  <div>
-    <h2>文字编辑题</h2>
-
-    <!-- 题目描述区 -->
-    <div v-if="editable" style="margin: 10px">
-      <div style="margin: 10px">编辑题目：</div>
-      <a-textarea
+  <a-layout>
+    <a-layout-content>
+      <h2>文字编辑题</h2>
+      <!-- 题目描述区 -->
+      <div v-if="editable" style="margin: 10px">
+        <div style="margin: 10px">编辑题目：</div>
+        <a-textarea
           v-model="question.description"
           placeholder="Your question..." />
     </div>
@@ -46,14 +46,36 @@
     </div>
 
     <!-- 答题区 -->
-    <div style="margin: 15px 10px 10px 10px"><strong>答题区：</strong></div>
-    <div>
+    <div v-if="template === 0" style="margin: 15px 10px 10px 10px">
+      <strong>答题区：</strong>
+      <span v-if="editable" style="margin: 0 50px 0 0; text-align: right">
+          设置预设答案
+          <a-switch
+              v-model="question.has_pre_ans"
+              checked-children="yes"
+              un-checked-children="no"/>
+        </span>
+    </div>
+    <div v-if="template === 0">
       <a-input
           :disabled="editable && (!question.has_pre_ans)"
           v-model="question.answer"
           style="margin: 10px" />
     </div>
-  </div>
+    </a-layout-content>
+
+    <a-layout-sider v-if="template === 1" style="padding: 50px 10px">
+      <div style="margin: 15px 10px 10px 10px">
+        <strong>答题区：</strong>
+      </div>
+      <div>
+        <a-input
+            :disabled="editable && (!question.has_pre_ans)"
+            v-model="question.answer"
+            style="margin: 10px" />
+      </div>
+    </a-layout-sider>
+  </a-layout>
 </template>
 
 <script>
@@ -117,5 +139,12 @@
 p {
   margin-bottom: 5px;
   margin-top: 50px;
+}
+.ant-layout {
+  margin-bottom: 48px;
+  background: #ffffff;
+}
+.ant-layout-sider {
+  background: #ffffff;
 }
 </style>

@@ -10,18 +10,19 @@ localVue.use(ElementUI)
 localVue.use(Antd)
 const router = new VueRouter()
 
-const mockXmlChangeJudgement = {
+const mockXmlChange = {
     open: jest.fn(),
     send: jest.fn(),
     readyState: 4,
     status: 201,
-    responseText: JSON.stringify({code: 201, data: JSON.stringify(
-        {total: 5, question_list: [
-                { questionForm: 'judgement', type: '', deadline: 1},
+    responseText: JSON.stringify({code: 201, data: JSON.stringify({
+            total: 5,
+            question_list: [
                 { questionForm: 'chosen', type: '', deadline: 1 },
                 { questionForm: 'fill', type: '', deadline: 1 },
-                { questionForm: 'fill', type: '', deadline: 1 },
-                { questionForm: 'fill', type: '', deadline: 1 }
+                { questionForm: 'chosen-image', type: '', deadline: 1 },
+                { questionForm: 'fill-image', type: '', deadline: 1 },
+                { questionForm: 'fill-image', type: '', deadline: 1 }
             ]}
         )}),
     onreadystatechange: () => {},
@@ -53,31 +54,32 @@ const mockXmlOrder = {
     send: jest.fn(),
     readyState: 4,
     status: 201,
-    responseText: JSON.stringify({code: 201, data: 'test'}),
+    responseText: JSON.stringify({code: 201, data: ''}),
     onreadystatechange: () => {},
     setRequestHeader: () => {}
 }
 
+
 describe('ground', () => {
 
     it('check function', () => {
-        const wrapper = mount(ground, {localVue, router})
+        const wrapper = shallowMount(ground, {localVue, router})
         expect(wrapper.vm.min(1, 2)).toBe(1)
         expect(wrapper.vm.min(2, 1)).toBe(1)
     })
 
     it('check onChange Judgement', () => {
-        const wrapper = mount(ground, {localVue, router});
-        wrapper.setData({type: ['选择', '判断', '文字', '图片']});
+        const wrapper = shallowMount(ground, {localVue, router});
+        wrapper.setData({type: ['文字-选择', '文字-填空', '图片-选择', '图片-填空']});
         const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlChangeJudgement);
+        window.XMLHttpRequest = jest.fn(() => mockXmlChange);
         wrapper.vm.onChange(1);
-        mockXmlChangeJudgement.onreadystatechange();
+        mockXmlChange.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
 
     it('check onChange Fail', () => {
-        const wrapper = mount(ground, {localVue, router})
+        const wrapper = shallowMount(ground, {localVue, router})
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeFail);
         wrapper.vm.onChange(1);
@@ -86,7 +88,7 @@ describe('ground', () => {
     })
 
     it('check deleteMsg', () => {
-        const wrapper = mount(ground, {localVue, router});
+        const wrapper = shallowMount(ground, {localVue, router});
         wrapper.setData({msgList: [
                 {id: 0, questionNum: 0},
                 {id: 1, questionNum: 0},
@@ -108,9 +110,10 @@ describe('ground', () => {
     })
 
     it('check getOrder1', () => {
-        const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
+        const wrapper = shallowMount(ground, {localVue, router});
+        wrapper.setData({ pageNumber: 1 });
         wrapper.vm.getOrder({id: 1, received: 'T'}, true);
         window.XMLHttpRequest = jest.fn(() => mockXmlOrder);
         mockXmlChangeCsrf.onreadystatechange();
@@ -119,9 +122,10 @@ describe('ground', () => {
     })
 
     it('check getOrder2', () => {
-        const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
+        const wrapper = shallowMount(ground, {localVue, router});
+        wrapper.setData({ pageNumber: 1 });
         wrapper.vm.getOrder({id: 1, received: 'F'}, true);
         window.XMLHttpRequest = jest.fn(() => mockXmlOrder);
         mockXmlChangeCsrf.onreadystatechange();
@@ -130,20 +134,24 @@ describe('ground', () => {
     })
 
     it('check getOrder3', () => {
-        const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
+        const wrapper = shallowMount(ground, {localVue, router});
+        wrapper.setData({ pageNumber: 1, intNum: 5 });
         wrapper.vm.getOrder({id: 1, received: 'T'}, false);
         window.XMLHttpRequest = jest.fn(() => mockXmlOrder);
         mockXmlChangeCsrf.onreadystatechange();
+        window.XMLHttpRequest = jest.fn(() => mockXmlChange);
         mockXmlOrder.onreadystatechange();
+        mockXmlChange.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
 
     it('check getOrder4', () => {
-        const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
+        const wrapper = shallowMount(ground, {localVue, router});
+        wrapper.setData({ pageNumber: 1 });
         wrapper.vm.getOrder({id: 1, received: 'F'}, false);
         window.XMLHttpRequest = jest.fn(() => mockXmlOrder);
         mockXmlChangeCsrf.onreadystatechange();
@@ -152,10 +160,11 @@ describe('ground', () => {
     })
 
     it('check getOrder5', () => {
-        const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeCsrf);
-        wrapper.vm.getOrder({id: 1, received: 'F'}, false);
+        const wrapper = shallowMount(ground, {localVue, router});
+        wrapper.setData({ pageNumber: 1 });
+        wrapper.vm.getOrder({id: 1, received: 'F'}, true);
         window.XMLHttpRequest = jest.fn(() => mockXmlChangeFail);
         mockXmlChangeCsrf.onreadystatechange();
         mockXmlChangeFail.onreadystatechange();
@@ -163,21 +172,22 @@ describe('ground', () => {
     })
 
     it('check onSearch', () => {
-        const wrapper = mount(ground, {localVue, router});
         const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlChangeJudgement);
+        window.XMLHttpRequest = jest.fn(() => mockXmlChange);
+        const wrapper = shallowMount(ground, {localVue, router});
+        wrapper.setData({ pageNumber: 1 });
         wrapper.vm.onSearch();
-        mockXmlChangeJudgement.onreadystatechange();
+        mockXmlChange.onreadystatechange();
         wrapper.vm.sendSelect();
-        mockXmlChangeJudgement.onreadystatechange();
+        mockXmlChange.onreadystatechange();
         wrapper.vm.$mount();
-        mockXmlChangeJudgement.onreadystatechange();
+        mockXmlChange.onreadystatechange();
         window.XMLHttpRequest = oldXml;
         expect(wrapper.vm.keyword).toBe('');
     })
 
     it('check other functions', () => {
-        const wrapper = mount(ground, {localVue, router});
+        const wrapper = shallowMount(ground, {localVue, router});
         wrapper.vm.handleChangeTheme('value1');
         expect(wrapper.vm.theme).toBe('value1');
         wrapper.vm.handleChangeType('value2');
@@ -189,17 +199,17 @@ describe('ground', () => {
     })
 
     it('test getNewInterest', () => {
-        const wrapper = mount(ground, {localVue, router});
+        const wrapper = shallowMount(ground, {localVue, router});
         wrapper.setData({type: ['选择', '判断', '文字', '图片']});
         const oldXml = window.XMLHttpRequest;
-        window.XMLHttpRequest = jest.fn(() => mockXmlChangeJudgement);
+        window.XMLHttpRequest = jest.fn(() => mockXmlChange);
         wrapper.vm.getNewInterest(1);
-        mockXmlChangeJudgement.onreadystatechange();
+        mockXmlChange.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
 
     it('test goOrder', () => {
-        const wrapper = mount(ground, {localVue, router});
+        const wrapper = shallowMount(ground, {localVue, router});
         wrapper.vm.goOrder({received: 'F', id: 1});
     })
 })

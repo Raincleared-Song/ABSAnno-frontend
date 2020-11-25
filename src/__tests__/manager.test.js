@@ -14,18 +14,48 @@ localVue.use(ElementUI)
 localVue.use(Antd)
 const router = new VueRouter()
 
-const mockXmlBan = {
+const mockXmlCsrf = {
     open: jest.fn(),
     send: jest.fn(),
     readyState: 4,
-    status: 201,
-    responseText: JSON.stringify({code: 201, data: JSON.stringify(
-            {totalUserNum : 0, userList: [], getUserNum: 0})}),
+    status: 200,
+    responseText: "123456",
     onreadystatechange: () => {},
     setRequestHeader: () => {}
 };
 
+const mockXmlPost = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 201,
+    responseText: JSON.stringify({ code: 201, data: 'test' }),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+}
+
+const mockXmlPostFail = {
+    open: jest.fn(),
+    send: jest.fn(),
+    readyState: 4,
+    status: 400,
+    responseText: JSON.stringify({ code: 400, data: 'test' }),
+    onreadystatechange: () => {},
+    setRequestHeader: () => {}
+}
+
 describe('banuser', () => {
+
+    const mockXmlBan = {
+        open: jest.fn(),
+        send: jest.fn(),
+        readyState: 4,
+        status: 201,
+        responseText: JSON.stringify({code: 201, data: JSON.stringify(
+                {totalUserNum : 0, userList: [], getUserNum: 0})}),
+        onreadystatechange: () => {},
+        setRequestHeader: () => {}
+    };
 
     it('check data', () => {
         const wrapper = mount(banuser, {localVue, router})
@@ -64,36 +94,6 @@ describe('userManage', () => {
             code: 201,
             data: JSON.stringify({ apply_num : 1, apply_list: [{ pub_time: 1569507418772 }] })
         }),
-        onreadystatechange: () => {},
-        setRequestHeader: () => {}
-    };
-
-    const mockXmlPost = {
-        open: jest.fn(),
-        send: jest.fn(),
-        readyState: 4,
-        status: 201,
-        responseText: JSON.stringify({ code: 201, data: 'test' }),
-        onreadystatechange: () => {},
-        setRequestHeader: () => {}
-    }
-
-    const mockXmlPostFail = {
-        open: jest.fn(),
-        send: jest.fn(),
-        readyState: 4,
-        status: 400,
-        responseText: JSON.stringify({ code: 400, data: 'test' }),
-        onreadystatechange: () => {},
-        setRequestHeader: () => {}
-    }
-
-    const mockXmlCsrf = {
-        open: jest.fn(),
-        send: jest.fn(),
-        readyState: 4,
-        status: 200,
-        responseText: "123456",
         onreadystatechange: () => {},
         setRequestHeader: () => {}
     };
@@ -146,10 +146,37 @@ describe('Manager', () => {
     it('test handleChange all', function () {
         const wrapper = mount(manager, { localVue, router, components: { banuser } });
         wrapper.vm.handleChange("all");
+        wrapper.setData({ checkall: true })
+        wrapper.vm.handleChange("all");
     })
 
     it('test handleChange not all', function () {
         const wrapper = mount(manager, { localVue, router, components: { banuser } });
         wrapper.vm.handleChange("student");
+        wrapper.setData({ target: ["all", "student"]});
+        wrapper.vm.handleChange("student");
+    })
+
+    it('test onBroadcast', function () {
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        const wrapper = shallowMount(manager, { localVue, router, components: { banuser } });
+        wrapper.vm.onBroadCast();
+        window.XMLHttpRequest = jest.fn(() => mockXmlPost);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlPost.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
+        expect(wrapper.vm.text).toBe("");
+    })
+
+    it('test onBroadcast fail', function () {
+        const oldXml = window.XMLHttpRequest;
+        window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
+        const wrapper = shallowMount(manager, { localVue, router, components: { banuser } });
+        wrapper.vm.onBroadCast();
+        window.XMLHttpRequest = jest.fn(() => mockXmlPostFail);
+        mockXmlCsrf.onreadystatechange();
+        mockXmlPostFail.onreadystatechange();
+        window.XMLHttpRequest = oldXml;
     })
 })

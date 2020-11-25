@@ -5,10 +5,10 @@
             :default-sort = "{prop: 'date', order: 'ascending'}"
             :row-class-name="warnDDL">
         <el-table-column
-                prop="deadline"
+                prop="deadline2"
                 label="最晚作答时间"
                 sortable
-                width="150">
+                width="180">
         </el-table-column>
         <el-table-column
                 prop="mission_name"
@@ -60,7 +60,7 @@
     import postBackend from "../utils/postBackend"
     import getBackend from "../utils/getBackend"
     import convertTime from "../utils/convertTime";
-
+    import convertHour from "../utils/convertHour";
     export default {
         name: "orders",
         data(){
@@ -97,7 +97,7 @@
 
             warnDDL({row, rowIndex}) {
                 var date = new Date().getTime()
-                if (row.deadline === convertTime(date)) {
+                if (convertTime(row.deadline) === convertTime(date)) {
                     return 'warning-row';
                 }
                 return '';
@@ -112,7 +112,7 @@
                     var i;
                     this.size=data.total_num
                     for(i = 0; i < data.total_num; i+=1){
-                        this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
+                        this.msgList[i].deadline2 = convertHour(this.msgList[i].deadline)
                         if(this.msgList[i].question_form === "chosen"){
                             this.msgList[i].type = ["选择", "文字"]
                         }

@@ -402,7 +402,7 @@
                         console.log(data)
                         this.intList = data.question_list;
                         var i;
-                        for(i = 0; i < 5; i+=1){
+                        for(i = 0; i < this.intList.length; i+=1){
                             this.intList[i].deadline = convertTime(this.intList[i].deadline)
                             if(this.intList[i].questionForm === "chosen"){
                                 this.intList[i].type = ["选择", "文字"]

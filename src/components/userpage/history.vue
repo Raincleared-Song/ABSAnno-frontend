@@ -13,12 +13,17 @@
             key="mission.id">
           <a-list-item-meta
               :description="mission.info">
-            <a slot="title">{{ mission.name }}</a>
+            <a slot="title">
+              {{ mission.name }}
+              <a-tag v-if="mission.state === 2" color="yellow">未检测</a-tag>
+              <a-tag v-if="mission.state === 1" color="green">检测通过</a-tag>
+              <a-tag v-if="mission.state === 0" color="red">检测未通过</a-tag>
+            </a>
           </a-list-item-meta>
-          <img
-              slot="extra"
-              :src="type2src(mission)"
-              width="270" alt=""/>
+<!--          <img-->
+<!--              slot="extra"-->
+<!--              :src="type2src(mission)"-->
+<!--              width="270" alt=""/>-->
           <template
               slot="actions"
               v-for="{ type, text } in mission.actions">
@@ -78,6 +83,7 @@ export default {
             name: mission.name,
             question_form: mission.question_form,
             info: mission.info,
+            state: mission.state,
             actions: [
               { type: 'user', text: mission.user },
               { type: 'profile', text: mission.question_num },

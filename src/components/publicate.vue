@@ -139,7 +139,7 @@
                         }
                     }
                 };
-                getBackend("backend/check", {
+                getBackend("backend/endmission", {
                     "mission_id":id.toString()
                 }, onRespond);
             },

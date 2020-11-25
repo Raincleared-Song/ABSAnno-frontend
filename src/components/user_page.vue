@@ -23,6 +23,7 @@
               v-if="power === 0"
               @click="onApplyUpgrade"
               block
+              :disabled="applying"
               style="margin: 10px 0">
             <a-icon type="rocket" />
             发题者申请
@@ -92,6 +93,7 @@
     data() {
       return {
         editing: false,
+        applying: false,
         upload_avatar: null,
         userPower: ['未登录', '用户', '发布者', '管理员']
       }
@@ -109,13 +111,16 @@
     },  // end of components
     methods: {
       onApplyUpgrade() {
+        this.applying = true;
         postBackend(API.POST_APPLY.path, {
           type: "upgrade"
         }, jsonObj => {
           if (jsonObj.code === 201) {
             this.$message.success("申请已发送！");
+            this.applying = false;
           } else {
             this.$message.error("发送失败！请稍后再试！");
+            this.applying = false;
           }
         });
       },

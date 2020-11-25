@@ -26,6 +26,7 @@
 
         <a-button
             @click="sendFile"
+            :disabled="sending"
             type="primary" style="margin: 10px">
           Upload
         </a-button>
@@ -147,23 +148,28 @@ export default {
   data() {
     return {
       file: undefined,
+      sending: false
     }
   },
   methods: {
     sendFile() {
-      if (this.file === undefined)
-        return;
+      this.sending = true;
+      if (this.file === undefined) {
+        this.sending = false; return;
+      }
       let formData = new FormData();
       formData.append('zip', this.file.raw);
       postBackend(API.POST_NEW_MISSION.path, formData, jsonObj => {
         if (jsonObj.code === 201) {
           console.log(jsonObj);
+          this.sending = false;
           this.$message.success("Upload Success!", 1).then(() => {
             this.$router.push("/ground");
           });
         } else {
           console.log(jsonObj);
           this.$message.error(jsonObj.data);
+          this.sending = false;
         }
       }, true)
     },

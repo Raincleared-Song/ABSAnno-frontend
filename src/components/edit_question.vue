@@ -171,7 +171,7 @@ export default {
   },  // end of methods
   watch: {
     nowQuestionIndex: {
-      handler(newVal) {
+      handler: function(newVal) {
         this.nowQuestion = this.questions[newVal - 1];
       },
       immediate: true

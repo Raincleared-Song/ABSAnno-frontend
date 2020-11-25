@@ -17,28 +17,22 @@
     </div>
     <a-empty v-else :description="false" />
 
-    <!-- 答题进度条 -->
-    <a-steps :current="nowQuestionIndex" style="margin: 40px">
-      <a-step v-for="n in totalNum" :key="n" />
-    </a-steps>
+    <!-- 答题翻页条 -->
+    <a-pagination
+        v-model="nowQuestionIndex"
+        @change="switchTo"
+        :page-size="1"
+        :total="totalNum"
+        :hide-on-single-page="true"
+        style="margin: 40px" />
 
     <!-- 按钮区域 -->
     <div align="center">
       <a-space :size="20">
         <a-button
-            :disabled="nowQuestionIndex === 0"
-            @click="switchToPrev">
-          <a-icon type="arrow-left" />上一题
-        </a-button>
-        <a-button
-            :disabled="this.questions.length < totalNum"
+            :disabled="submitting"
             @click="submit" type="primary">
           提交任务<a-icon type="check" />
-        </a-button>
-        <a-button
-            :disabled="nowQuestionIndex === totalNum - 1"
-            @click="switchToNext">
-          下一题<a-icon type="arrow-right" />
         </a-button>
         <a-button
             @click="$router.go(-1)">
@@ -68,10 +62,11 @@ export default {
       missionId: 0,
       totalNum: 0,    // 总题目数量
       questions: [],  // 问题列表
-      nowQuestionIndex: -1, // 从0开始
+      nowQuestionIndex: 0, // 从 1 开始
       nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
       startTimer: 0,
-      template: 0
+      template: 0,
+      submitting: false
     };
   },  // end of data
   props:[
@@ -82,6 +77,7 @@ export default {
   methods: {
     // 向后端发送数据
     submit() {
+      this.submitting = true;
       let answers = this.questions.map(question => {
         return question.answer === ''? ' ': question.answer;
       });
@@ -93,49 +89,47 @@ export default {
         time: (new Date().getTime() - this.startTimer).toLocaleString()
       }, jsonObj => {
         if (jsonObj.code === 201) {
+          this.submitting = false;
           this.$message.success(jsonObj.data, 1).then(() => {
             this.$router.go(-1);
           });
         } else {
           console.log(jsonObj.data);
+          this.submitting = false;
           this.$message.error(jsonObj.data, 1);
         }
       });
     },
-    // 下一题
-    switchToNext() {
-      let nextIndex = this.nowQuestionIndex + 1;
-      if (nextIndex === this.questions.length) {
-        // 下一题未加载，从后端获取
+    // 跳转到某一题
+    switchTo(num) {
+      let targetIdx = this.questions.findIndex(question => {
+        return question.index === num  - 1;
+      });
+      if (targetIdx === -1) {
+        // 未加载，从后端获取
         getBackend(API.GET_SINGLE_QUESTION.path, {
           method: this.renew? 'renew': 'submit',
           id: this.missionId,
-          num: nextIndex,
+          num: String(num - 1),
           step: 0
         }, jsonObj => {
           if (jsonObj.code === 201) {
-            console.log(jsonObj);
             let dataObj = getDataObj(jsonObj);
             let newQuestion = getNewQuestion(dataObj);
-            this.template = Number(dataObj.template);
             this.questions.push(newQuestion);
-            this.nowQuestionIndex = this.questions.length - 1;
+            // this.nowQuestionIndex = num;
           } else {
             this.$message.error(jsonObj.data);
           }
+          let nowIdx = this.questions.findIndex(question => {
+            return question.index === this.nowQuestionIndex - 1;
+          });
+          this.nowQuestion = this.questions[nowIdx];
         });
-      } else {
-        // 下一题已经加载过了
-        this.nowQuestionIndex += 1;
       }
-    },
-    // 上一题
-    switchToPrev() {
-      this.nowQuestionIndex -= 1;
     }
   },  // end of methods
   created: function() {
-    console.log(this.$route.params.id);
     this.startTimer = new Date().getTime();
     this.missionId = Number(this.$route.params.id);
     // 从后台申请数据加载
@@ -152,15 +146,23 @@ export default {
         this.template = Number(dataObj.template);
         console.log(newQuestion);
         this.questions.push(newQuestion);
-        this.nowQuestionIndex = this.questions.length - 1;
+        this.nowQuestionIndex = 1;
       } else {
-        this.$message.error("Try later!");
+        this.$message.error(jsonObj.data);
       }
     });
   },  // end of created
   watch: {
-    nowQuestionIndex(newVal) {
-      this.nowQuestion = this.questions[newVal];
+    nowQuestionIndex: {
+      handler: function (newVal) {
+        let targetIdx = this.questions.findIndex(question => {
+          return question.index === newVal - 1;
+        });
+        console.log(newVal, targetIdx);
+        console.log(this.questions);
+        this.nowQuestion = this.questions[targetIdx];
+      },
+      immediate: true
     }
   }   // end of watch
 }

@@ -337,23 +337,6 @@ const mockXmlSubmitCreated = {
 };
 
 describe('answer_question', () => {
-    it('question without image', () => {
-        const wrapper = shallowMount(answer_question, {
-            localVue,
-            router,
-            propsData: { username: 'test', power: 1 },
-            data() {
-                return {
-                    nowQuestion: { index: 0, type: 'chosen', description: 'test description', has_image: false }
-                }
-            }
-        });
-        const chosenGroup = wrapper.findComponent(choice_group);
-        expect(chosenGroup.exists()).toBeTruthy();
-        expect(chosenGroup.props('editable')).toBe(false);
-        expect(chosenGroup.props('question')).toBe(wrapper.vm.nowQuestion);
-        expect(chosenGroup.props('has_image')).toBe(false);
-    })
 
     it('test submit', () => {
         const wrapper = mount(answer_question, {localVue, router})
@@ -383,7 +366,7 @@ describe('answer_question', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlSwitch);
-        wrapper.vm.switchToNext();
+        wrapper.vm.switchTo(1);
         mockXmlSwitch.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
@@ -392,7 +375,7 @@ describe('answer_question', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlSwitchImage);
-        wrapper.vm.switchToNext();
+        wrapper.vm.switchTo(1);
         mockXmlSwitchImage.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
@@ -401,7 +384,7 @@ describe('answer_question', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlSwitchFail);
-        wrapper.vm.switchToNext();
+        wrapper.vm.switchTo(1);
         mockXmlSwitchImage.onreadystatechange();
         window.XMLHttpRequest = oldXml;
     })
@@ -409,12 +392,7 @@ describe('answer_question', () => {
     it('test switch id', () => {
         const wrapper = shallowMount(answer_question, {localVue, router});
         wrapper.setData({nowQuestionIndex: 2});
-        wrapper.vm.switchToNext();
-    })
-
-    it('test other', () => {
-        const wrapper = shallowMount(answer_question, {localVue, router});
-        wrapper.vm.switchToPrev();
+        wrapper.vm.switchTo(1);
     })
 
     it('test created', () => {

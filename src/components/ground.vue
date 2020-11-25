@@ -211,10 +211,9 @@
 </template>
 
 <script>
-    import dealAdmin from "@/utils/admin"
+    import dealAdmin from "@/utils/dealAdmin"
     import postBackend from "../utils/postBackend"
     import getBackend from "../utils/getBackend"
-    import API from "@/utils/API";
     import convertTime from "../utils/convertTime";
     export default {
         name: "ground",
@@ -267,8 +266,7 @@
                                 'tags': ""
                             });
                         }
-                        var i;
-                        for(i = 0; i < 12; i+=1){
+                        for(let i = 0; i < 12; i+=1){
                             this.msgList[i].deadline = convertTime(this.msgList[i].deadline)
                             if(this.msgList[i].questionForm === "chosen"){
                                 this.msgList[i].type = ["选择", "文字"]
@@ -291,8 +289,7 @@
 
                 // 将中文选项映射至英文
                 this.typeSend = [];
-                var i;
-                for(i = 0; i < this.type.length; i+=1){
+                for(let i = 0; i < this.type.length; i+=1){
                     if(this.type[i] === "文字-选择"){
                         this.typeSend.push("chosen");
                     }

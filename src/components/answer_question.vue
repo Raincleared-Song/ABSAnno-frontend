@@ -6,11 +6,13 @@
           v-if="nowQuestion.type === 'chosen'"
           :editable="false"
           :question="nowQuestion"
+          :template="template"
           :has_image="nowQuestion.has_image" />
       <text_edit
           v-else-if="nowQuestion.type === 'fill'"
           :editable="false"
           :question="nowQuestion"
+          :template="template"
           :has_image="nowQuestion.has_image" />
     </div>
     <a-empty v-else :description="false" />
@@ -68,7 +70,8 @@ export default {
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
       nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
-      startTimer: 0
+      startTimer: 0,
+      template: 0
     };
   },  // end of data
   props:[
@@ -90,7 +93,7 @@ export default {
         time: (new Date().getTime() - this.startTimer).toLocaleString()
       }, jsonObj => {
         if (jsonObj.code === 201) {
-          this.$message.success("提交成功，返回！", 1).then(() => {
+          this.$message.success(jsonObj.data, 1).then(() => {
             this.$router.go(-1);
           });
         } else {
@@ -105,6 +108,7 @@ export default {
       if (nextIndex === this.questions.length) {
         // 下一题未加载，从后端获取
         getBackend(API.GET_SINGLE_QUESTION.path, {
+          method: this.renew? 'renew': 'submit',
           id: this.missionId,
           num: nextIndex,
           step: 0
@@ -113,6 +117,7 @@ export default {
             console.log(jsonObj);
             let dataObj = getDataObj(jsonObj);
             let newQuestion = getNewQuestion(dataObj);
+            this.template = Number(dataObj.template);
             this.questions.push(newQuestion);
             this.nowQuestionIndex = this.questions.length - 1;
           } else {
@@ -135,6 +140,7 @@ export default {
     this.missionId = Number(this.$route.params.id);
     // 从后台申请数据加载
     getBackend(API.GET_SINGLE_QUESTION.path, {
+      method: this.renew? 'renew': 'submit',
       id: this.missionId,
       num: 0,
       step: 0
@@ -143,6 +149,7 @@ export default {
         let dataObj = getDataObj(jsonObj);
         this.totalNum = dataObj.total;
         let newQuestion = getNewQuestion(dataObj);
+        this.template = Number(dataObj.template);
         console.log(newQuestion);
         this.questions.push(newQuestion);
         this.nowQuestionIndex = this.questions.length - 1;

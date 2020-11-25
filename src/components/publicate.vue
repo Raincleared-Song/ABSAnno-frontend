@@ -12,7 +12,7 @@
                             直接收题
                         </a>
                         <a slot="actions"
-                                :href="`/backend/result?mission_id=${msg.id}`">
+                           :href="`/backend/result?mission_id=${msg.id}`">
                             下载结果
                         </a>
                         <a-list-item-meta>
@@ -108,22 +108,13 @@
                 getBackend(API.GET_RESULT, {
                     mission_id: id
                 }, jsonObj => {
-                    if (jsonObj.code === 201) {
-                        // TODO: download
-                    } else {
+                    if (jsonObj.code !== 201) {
                         this.$message.error('An error occurred! Try later!');
                     }
                 });
             },
             checkMsg(id){
-                postBackend("backend/receive", {mission_id: id.toString()},
-                    jsonObj => {
-                        if (jsonObj.code === 201) {
-                            this.$router.push("/question/"+id.toString()+"/1")
-                        } else {
-                            console.log("can't book/unbook")
-                        }
-                    });
+                this.$router.push("/question/"+id.toString()+"/1");
             },
             stopMsg(id){
                 let onRespond = jsonObj => {

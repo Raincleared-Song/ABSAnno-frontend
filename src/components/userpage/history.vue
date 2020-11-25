@@ -13,7 +13,12 @@
             key="mission.id">
           <a-list-item-meta
               :description="mission.info">
-            <a slot="title">{{ mission.name }}</a>
+            <a slot="title">
+              {{ mission.name }}
+              <a-tag v-if="mission.status === 2" color="yellow">未检测</a-tag>
+              <a-tag v-if="mission.status === 1" color="green">检测通过</a-tag>
+              <a-tag v-if="mission.status === 0" color="red">检测未通过</a-tag>
+            </a>
           </a-list-item-meta>
           <img
               slot="extra"

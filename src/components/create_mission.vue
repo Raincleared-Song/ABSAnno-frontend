@@ -143,12 +143,24 @@
           <a-select
               v-model="mission_info.check_way"
               @blur="$refs.check_way.onFieldBlur()">
-            <a-select-option :key="'auto'">
+            <a-select-option :key="'auto'" :value="'auto'">
               自动验收
             </a-select-option>
-            <a-select-option :key="'human'">
+            <a-select-option :key="'human'" :value="'human'">
               手动验收
             </a-select-option>
+          </a-select>
+        </a-form-model-item>
+
+        <a-form-model-item
+            ref="template"
+            label="任务模版"
+            prop="template">
+          <a-select
+              v-model="mission_info.template"
+              @blur="$refs.template.onFieldBlur()">
+            <a-select-option :key="0" :value="0">上下排布</a-select-option>
+            <a-select-option :key="1" :value="1">分栏排布</a-select-option>
           </a-select>
         </a-form-model-item>
       </a-form-model>
@@ -172,7 +184,8 @@ export default {
         ddl: [{ required: true, message: 'Mission deadline cannot be null.', trigger: ['blur', 'change'] }],
         reward: [{ required: true, message: 'Mission reward cannot be null.', trigger: 'blur' }],
         retrieve: [{ required: true, message: 'Mission retrieve time cannot be null.', trigger: 'blur' }],
-        check_way: [{ required: true, message: 'Mission check way cannot be null.', trigger: 'blur' }]
+        check_way: [{ required: true, message: 'Mission check way cannot be null.', trigger: 'blur' }],
+        template: [{ required: true, message: 'Mission template cannot be null.', trigger: 'blur' }]
       },
       tagsTotal: [
           "青年", "中年", "老年", "学生",

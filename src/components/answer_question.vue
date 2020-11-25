@@ -6,11 +6,13 @@
           v-if="nowQuestion.type === 'chosen'"
           :editable="false"
           :question="nowQuestion"
+          :template="template"
           :has_image="nowQuestion.has_image" />
       <text_edit
           v-else-if="nowQuestion.type === 'fill'"
           :editable="false"
           :question="nowQuestion"
+          :template="template"
           :has_image="nowQuestion.has_image" />
     </div>
     <a-empty v-else :description="false" />
@@ -68,7 +70,8 @@ export default {
       questions: [],  // 问题列表
       nowQuestionIndex: -1, // 从0开始
       nowQuestion: null,    // 不要显式地去改，监听nowQuestionIndex来更改
-      startTimer: 0
+      startTimer: 0,
+      template: 0
     };
   },  // end of data
   props:[
@@ -113,6 +116,7 @@ export default {
             console.log(jsonObj);
             let dataObj = getDataObj(jsonObj);
             let newQuestion = getNewQuestion(dataObj);
+            this.template = Number(dataObj.template);
             this.questions.push(newQuestion);
             this.nowQuestionIndex = this.questions.length - 1;
           } else {
@@ -143,6 +147,7 @@ export default {
         let dataObj = getDataObj(jsonObj);
         this.totalNum = dataObj.total;
         let newQuestion = getNewQuestion(dataObj);
+        this.template = Number(dataObj.template);
         console.log(newQuestion);
         this.questions.push(newQuestion);
         this.nowQuestionIndex = this.questions.length - 1;

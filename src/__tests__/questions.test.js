@@ -216,7 +216,8 @@ describe('text_edit', () => {
                 image: ""
             },
             editable: false,
-            has_image: false
+            has_image: false,
+            template: 0
         });
     })
 

@@ -17,6 +17,9 @@
           <div style="margin: 20px">
             是否图片任务：{{ mission_info.has_image? '是': '否' }}
           </div>
+          <div style="margin: 20px">
+            任务模版：{{ mission_info.template? '分栏': '上下' }}
+          </div>
         </a-layout-sider>
 
         <i style="{ width: 1px, color: #8c939d }" />
@@ -30,12 +33,14 @@
                 @removeOption="removeOption"
                 :editable="true"
                 :has_image="mission_info.has_image"
-                :question="nowQuestion" />
+                :question="nowQuestion"
+                :template="0" />
             <text_edit
                 v-else-if="mission_info.type === 'fill'"
                 :editable="true"
                 :has_image="mission_info.has_image"
-                :question="nowQuestion" />
+                :question="nowQuestion"
+                :template="0" />
             <p v-else>{{ mission_info.type }}</p>
           </div>
           <a-empty v-else :description="false" />

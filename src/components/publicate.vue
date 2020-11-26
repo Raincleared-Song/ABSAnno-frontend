@@ -79,11 +79,39 @@
                         label="已作答人数">
                 </el-table-column>
             </el-table>
+<!--          <a-table-->
+<!--              :columns="columns"-->
+<!--              :data-source="detailedInfo"-->
+<!--          />-->
         </a-collapse-panel>
     </a-collapse>
 </template>
 
 <script>
+const columns = [
+  {
+    title: '题干',
+    dataIndex: 'word',
+  },
+  {
+    title: '标注答案',
+    dataIndex: 'ans',
+  },
+  {
+    title: '预设答案',
+    dataIndex: 'pre_ans',
+  },
+  {
+    title: '可信度',
+    dataIndex: 'ans_weight',
+    width: 100,
+  },
+  {
+    title: '已作答人数',
+    dataIndex: 'now_num',
+    width: 100,
+  },
+];
     import getBackend from "../utils/getBackend";
     import postBackend from "@/utils/postBackend";
     import API from "../utils/API"
@@ -119,12 +147,11 @@
             stopMsg(id){
                 let onRespond = jsonObj => {
                     if (jsonObj.code === 201) {
-                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
-                        this.detailedInfo = data.question_list;
+                        // let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                         this.$message.success("已成功收题！",2)
-                        var i;
-                        for(i = 0; i < this.pubList.length; i+=1){
+                        for(var i = 0; i < this.pubList.length; i+=1){
                             if(this.pubList[i].id === id){
+                                console.log("end mission"+this.pubList[i].name)
                                 this.pubList[i].showLegend = 0;
                             }
                         }
@@ -152,7 +179,8 @@
                     getBackend("backend/mymission", {
                         mission_id: key.id.toString()
                     }, onRespond);
-                }
+                },
+                deep: true
             },
         },
 

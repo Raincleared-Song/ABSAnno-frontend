@@ -1,14 +1,16 @@
 <template>
   <div style="padding: 24px 0;">
-    <div style="margin: 30px 0">
-    <span style="margin: 15px">
-      <strong>编辑个人信息</strong>
+    <div style="margin: 20px 0">
+    <span>
+      <h3>编辑个人信息</h3>
     </span>
+    </div>
     <a-button
-        @click="visible = true" type="link">
+            @click="visible = true" type="link" block>
       修改密码<a-icon type="edit" />
     </a-button>
-    </div>
+    <br/>
+    <br/>
     <a-modal
         :visible="visible"
         title='Change Your Password'
@@ -38,17 +40,6 @@
         :model="user_info"
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 16, offset: 0 }">
-
-      <a-form-model-item
-          label="用户名"
-          prop="username">
-        <a-input v-model="user_info.username">
-          <a-icon slot="prefix" type="user"/>
-          <a-tooltip slot="suffix" title="You can change your username here">
-            <a-icon type="info-circle" style="color: rgba(0,0,0,.45)"/>
-          </a-tooltip>
-        </a-input>
-      </a-form-model-item>
 
       <a-form-model-item
           label="任务标签"

@@ -66,7 +66,8 @@
         props:[
             "username",
             "power",
-            "avatar"
+            "avatar",
+            "reload"
         ],
         methods:{
             dealUser(id, method){
@@ -93,13 +94,21 @@
                         this.getUserNum = data.num;
                     }
                 };
-                getBackend("backend/alluser", {"now_num":this.getUserNum.toString()}, onRespond);
-
+                getBackend("backend/alluser", {"now_num":0}, onRespond);
             },
         },
         mounted:function () {
             this.onChange(1);
         },
+        watch: {
+            reload(value){
+                if(value === true){
+                    console.log("start update!")
+                    this.onChange(1)
+                }
+            }
+        }
+
     }
 </script>
 

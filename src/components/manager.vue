@@ -31,9 +31,9 @@
 
 
         <a-divider>待审批升级用户</a-divider>
-        <user-manage :username="username" :power="power"/>
+        <user-manage :username="username" :power="power" @reload="onReload"/>
         <a-divider>管理用户</a-divider>
-        <banuser :username="username" :power="power"/>
+        <banuser :username="username" :power="power" :reload="reload_"/>
     </div>
 </template>
 
@@ -53,6 +53,7 @@
                 checkadmin: false,
                 target:[],
                 text:"",
+                reload_:false,
             }
         },
         props:[
@@ -61,6 +62,9 @@
             "avatar"
         ],
         methods:{
+            onReload(){
+                this.reload_= true;
+            },
             onBroadCast(){
                 // console.log(value)
                 // this.text = value

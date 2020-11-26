@@ -59,6 +59,7 @@
                         if (jsonObj.code === 201) {
                             console.log("Admin Success")
                             this.onChange()
+                            this.$emit("reload")
                         } else {
                             console.log("can't admin")
                         }

@@ -149,10 +149,10 @@
             this.$message.success(jsonObj.data);
             getBackend(API.GET_USER.path, {
               method: 'user'
-            }, jsonObj => {
-              console.log(jsonObj);
-              if (jsonObj.code === 201) {
-                let dataStr = jsonObj.data;
+            }, res => {
+              console.log(res);
+              if (res.code === 201) {
+                let dataStr = res.data;
                 dataStr = dataStr.replace(/'/g, '"');
                 const dataObj = JSON.parse(dataStr);
                 this.avatar = dataObj.avatar

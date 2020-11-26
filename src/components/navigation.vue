@@ -17,7 +17,7 @@
                 <router-link to="/orders">我的接单</router-link>
             </a-menu-item>
             <a-menu-item v-if="power===1 || power===2" key="/mission">
-                <router-link to="/mission/create">发布题目</router-link>
+                <router-link to="/mission/create">发布任务</router-link>
             </a-menu-item>
             <a-menu-item v-if="power===1 || power===2" key="/pub">
                 <router-link to="/pub">我的发布</router-link>

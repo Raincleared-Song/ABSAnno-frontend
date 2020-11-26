@@ -87,6 +87,7 @@
   import postBackend from "@/utils/postBackend";
   import API from "@/utils/API";
   import message from "@/components/userpage/message";
+  import getBackend from "../utils/getBackend"
 
   export default {
     name: "user_page",
@@ -146,6 +147,18 @@
         postBackend(API.CHANGE_AVATAR.path, formData, jsonObj => {
           if (jsonObj.code === 201) {
             this.$message.success(jsonObj.data);
+            getBackend(API.GET_USER.path, {
+              method: 'user'
+            }, jsonObj => {
+              console.log(jsonObj);
+              if (jsonObj.code === 201) {
+                let dataStr = jsonObj.data;
+                dataStr = dataStr.replace(/'/g, '"');
+                const dataObj = JSON.parse(dataStr);
+                this.avatar = dataObj.avatar
+                this.$emit('change-avatar', dataObj.avatar);
+              }
+            });
           } else {
             this.$message.error(jsonObj.data);
           }

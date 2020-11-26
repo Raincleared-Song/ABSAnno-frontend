@@ -16,12 +16,12 @@
                     <br/>
                     <a-row justify="space-around" type="flex">
                         <a-col span="6">
-                            题目类型
+                            任务类型
                             <a-select
                                     mode="multiple"
                                     :default-value="type"
                                     style="width: 70%"
-                                    placeholder="题目类型"
+                                    placeholder="任务类型"
                                     @change="handleChangeType">
                                 <a-select-option v-for="t in typeTotal" :key="t">
                                     {{t}}
@@ -29,12 +29,12 @@
                             </a-select>
                         </a-col>
                         <a-col span="15">
-                            题目主题
+                            任务主题
                             <a-select
                                     mode="multiple"
                                     :default-value="theme"
                                     style="width: 70%"
-                                    placeholder="题目主题"
+                                    placeholder="任务主题"
                                     @change="handleChangeTheme">
                                 <a-select-option v-for="t in themeTotal" :key="t">
                                     {{t}}
@@ -175,7 +175,7 @@
 
 <!--            感兴趣-->
             <a-layout-sider class="sidebar" width="250">
-                <h3 class="sidebar-title">Discover   <a-icon type="reload" @click="getNewInterest(intNum)"/></h3>
+                <h3 class="sidebar-title">为您推荐    <a-icon type="reload" @click="getNewInterest(intNum)"/></h3>
                 <div v-for="msg in intList" :key="msg">
                     <a-card size="small" style="width: 200px">
                         <template slot="title">
@@ -401,7 +401,7 @@
                         let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
                         console.log(data)
                         this.intList = data.question_list;
-                        for(let i = 0; i < this.intList.length; i+=1){
+                        for(let i = 0; i < this.intList.length; i += 1){
                             this.intList[i].deadline = convertTime(this.intList[i].deadline);
                             if (this.intList[i].questionForm === "chosen") {
                                 this.intList[i].type = ["选择", "文字"]
@@ -413,14 +413,14 @@
                                 this.intList[i].type = ["填空", "图片"]
                             }
                         }
+                        this.intNum = data.ret === data.total? 0: num + 1;
                     } else {
                         console.log(jsonObj.data);
                     }
                 };
                 getBackend("backend/interest", {
-                    "page":num*5,
+                    "page":num * 5,
                 }, onRespond);
-                this.intNum = num + 1;
 
                 // for test only
                 // while(this.intList.length < 5){

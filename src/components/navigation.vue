@@ -8,7 +8,7 @@
                 :default-selected-keys="['1']"
                 :style="{ lineHeight: '64px' }">
             <a-menu-item key="/ground">
-                <router-link to="/ground">题目广场</router-link>
+                <router-link to="/ground">任务广场</router-link>
             </a-menu-item>
             <a-menu-item key="/rules">
                 <router-link to="/rules">规则说明</router-link>

@@ -119,6 +119,7 @@ describe('publicate', function () {
                 avatar: 'test'
             }
         })
+        wrapper.setData({ activeKey: [{ id: 1 }] });
         const oldXml = window.XMLHttpRequest;
         window.XMLHttpRequest = jest.fn(() => mockXmlFail);
         wrapper.vm.downloadMsg(123);
@@ -133,6 +134,7 @@ describe('publicate', function () {
             router,
             propsData: { username: 'test', power: 0, avatar: 'test' }
         })
+        wrapper.setData({ activeKey: [{ id: 1 }] });
         window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
         wrapper.vm.checkMsg(123);
         window.XMLHttpRequest = jest.fn(() => mockXmlSuccess);
@@ -148,6 +150,7 @@ describe('publicate', function () {
             router,
             propsData: { username: 'test', power: 0, avatar: 'test' }
         })
+        wrapper.setData({ activeKey: [{ id: 1 }] });
         window.XMLHttpRequest = jest.fn(() => mockXmlCsrf);
         wrapper.vm.checkMsg(123);
         window.XMLHttpRequest = jest.fn(() => mockXmlFail);
@@ -181,6 +184,7 @@ describe('publicate', function () {
             router,
             propsData: { username: 'test', power: 0, avatar: 'test' }
         })
+        wrapper.setData({ activeKey: [{ id: 1 }] });
         wrapper.vm.judgeDisable("fake message");
     })
 
@@ -196,6 +200,7 @@ describe('publicate', function () {
                 avatar: 'test'
             }
         })
+        wrapper.setData({ activeKey: [{ id: 1 }] });
         mockXmlUser.onreadystatechange();
         expect(wrapper.vm.pubList).toHaveLength(4);
         window.XMLHttpRequest = oldXml;

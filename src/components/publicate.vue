@@ -84,7 +84,8 @@
 </template>
 
 <script>
-    import getBackend from "../utils/getBackend"
+    import getBackend from "../utils/getBackend";
+    import postBackend from "@/utils/postBackend";
     import API from "../utils/API"
     import convertTime from "../utils/convertTime";
 
@@ -129,28 +130,29 @@
                         }
                     }
                 };
-                getBackend("backend/endmission", {
-                    "mission_id":id.toString()
+                postBackend("backend/endmission", {
+                    mission_id: id.toString()
                 }, onRespond);
             },
 
             judgeDisable(msg){
-
             },
         },
 
         watch: {
-            activeKey: function (key) { // 点击题组，展示题组详情
-                // console.log(key.id);
-                let onRespond = jsonObj => {
-                    if (jsonObj.code === 201) {
-                        let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
-                        this.detailedInfo = data.question_list;
-                    }
-                };
-                getBackend("backend/mymission", {
-                    mission_id:key.id.toString()
-                }, onRespond);
+            activeKey: {
+                handler: function (key) { // 点击题组，展示题组详情
+                    console.log(key);
+                    let onRespond = jsonObj => {
+                        if (jsonObj.code === 201) {
+                            let data = JSON.parse(jsonObj.data.replace(/'/g, '"'));
+                            this.detailedInfo = data.question_list;
+                        }
+                    };
+                    getBackend("backend/mymission", {
+                        mission_id: key.id.toString()
+                    }, onRespond);
+                }
             },
         },
 

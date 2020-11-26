@@ -44,8 +44,24 @@
                 <div>
                     <span>
                         <a-popover placement="bottom" >
-                            <template slot="content">
+                            <template slot="title">
                                 欢迎，{{this.username}}<br/>
+                            </template>
+                            <template slot="content">
+                                <div>
+                                      <a-button @click="showModal" block mini>充值</a-button>
+                                      <a-modal            title="充值"
+                                                          :visible="visible"
+                                                          :confirm-loading="confirmLoading"
+                                                          okText="确认"
+                                                          cancelText="取消"
+                                                          @ok="handleOk"
+                                                          centered="true"
+                                                          @cancel="handleCancel">
+                                          请输入您想充值的额度(1-10000)：
+                                          <a-input-number id="inputNumber" v-model="value" :min="1" :max="10000"  />
+                                      </a-modal>
+                                  </div>
                             </template>
                             <router-link to="/user">
                                 <a-avatar shape="square" :src="avatar"/>
@@ -60,6 +76,8 @@
 
 <script>
     import postBackend from "../utils/postBackend"
+    import getBackend from "../utils/getBackend"
+    import convertTime from "../utils/convertTime";
 
     export default {
         name: "navigation",
@@ -73,9 +91,38 @@
         data() {
             return {
                 current: [],
+                ModalText: 'Content of the modal',
+                visible: false,
+                confirmLoading: false,
+                value: 100,
             };
         },
         methods: {
+            showModal() {
+                this.visible = true;
+            },
+            handleOk(e) {
+                this.ModalText = 'The modal will be closed after two seconds';
+                this.confirmLoading = true;
+                let onRespond = jsonObj => {
+                    if (jsonObj.code === 201) {
+                        this.$message.success("成功充值"+this.value.toString()+"金币")
+                        this.visible = false;
+                        this.confirmLoading = false;
+                    } else {
+                        console.log(jsonObj.data);
+                        this.visible = false;
+                        this.confirmLoading = false;
+                    }
+                };
+                getBackend("backend/addcoin", {
+                    "add_coin":this.value,
+                }, onRespond);
+
+            },
+            handleCancel(e) {
+                this.visible = false;
+            },
             onClick() {
                 postBackend("backend/logout", {}, jsonObj => {
                     if (jsonObj.code === 201) {

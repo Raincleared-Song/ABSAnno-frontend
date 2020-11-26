@@ -87,7 +87,6 @@
     import getBackend from "../utils/getBackend"
     import API from "../utils/API"
     import convertTime from "../utils/convertTime";
-    import postBackend from "../utils/postBackend";
 
     export default {
         name: "publicate",

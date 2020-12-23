@@ -11,7 +11,9 @@
             placeholder="Your question..."/>
       </div>
       <div v-else>
-        <p style="margin: 10px 5px">{{ this.question.description }}</p>
+        <p style="margin: 10px 5px; font-size: large; font-family: 'Times New Roman', serif">
+          {{ this.question.description }}
+        </p>
       </div>
 
       <!-- 图片区 -->
@@ -62,12 +64,13 @@
             :disabled="editable && (!question.has_pre_ans)"
             v-model="question.answer"
             style="margin: 10px">
-          <div
+          <span
               v-for="(option, index) in question.options"
               :key="index"
               style="margin: 5px">
             <a-radio
-                :value="optionCode[index]">
+                :value="optionCode[index]" class="choice-box"
+                style="padding: 2px 10px; font-size: large; font-family: 'Hiragino Sans GB', serif">
               {{ option }}
             </a-radio>
             <a-button
@@ -76,7 +79,7 @@
                 @click="$emit('removeOption', question.index, index)">
               <a-icon type="delete"/>
             </a-button>
-          </div>
+          </span>
         </a-radio-group>
         <div
             v-else style="margin: 10px">
@@ -104,7 +107,8 @@
             :key="index"
             style="margin: 5px">
           <a-radio
-              :value="optionCode[index]">
+              :value="optionCode[index]" class="choice-box"
+              style="padding: 2px 10px; font-size: large; font-family: 'Hiragino Sans GB', serif">
             {{ option }}
           </a-radio>
           <br>
@@ -134,8 +138,9 @@ export default {
     onChangeImage(file) {
       console.log(file)
       const isImg = file.name.endsWith('.jpeg') ||
-          file.name.endsWith('.png') ||
-          file.name.endsWith('.jpg');
+                    file.name.endsWith('.png') ||
+                    file.name.endsWith('.jpg') ||
+                    file.name.endsWith('.gif') ;
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isImg) {
         console.log(file.type)
@@ -177,5 +182,9 @@ export default {
 }
 .ant-layout-sider {
   background: #ffffff;
+}
+.choice-box:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+  border-radius: 4px;
 }
 </style>

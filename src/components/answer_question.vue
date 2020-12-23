@@ -23,6 +23,7 @@
         @change="switchTo"
         :page-size="1"
         :total="totalNum"
+        :item-render="paginationRender"
         :hide-on-single-page="true"
         style="margin: 40px" />
 
@@ -117,7 +118,6 @@ export default {
             let dataObj = getDataObj(jsonObj);
             let newQuestion = getNewQuestion(dataObj);
             this.questions.push(newQuestion);
-            // this.nowQuestionIndex = num;
           } else {
             this.$message.error(jsonObj.data);
           }
@@ -126,6 +126,26 @@ export default {
           });
           this.nowQuestion = this.questions[nowIdx];
         });
+      }
+    },
+    // 翻页栏元件的渲染
+    paginationRender(current, type, element) {
+      if (type === 'page') {
+        let targetIdx = this.questions.findIndex(question => {
+          return question.index === current - 1;
+        });
+        if (targetIdx === -1 || this.questions[targetIdx].answer === '') {
+          // 还没有进行答题
+          return (
+              <a-badge dot style="top: -5px; left: 5px; position: relative">
+                <a style="top: 5px; left: -5px; position: relative">{current}</a>
+              </a-badge>
+          );
+        } else {
+          return element;
+        }
+      } else {
+        return element;
       }
     }
   },  // end of methods
@@ -144,7 +164,6 @@ export default {
         this.totalNum = dataObj.total;
         let newQuestion = getNewQuestion(dataObj);
         this.template = Number(dataObj.template);
-        console.log(newQuestion);
         this.questions.push(newQuestion);
         this.nowQuestionIndex = 1;
       } else {
@@ -158,8 +177,6 @@ export default {
         let targetIdx = this.questions.findIndex(question => {
           return question.index === newVal - 1;
         });
-        console.log(newVal, targetIdx);
-        console.log(this.questions);
         this.nowQuestion = this.questions[targetIdx];
       },
       immediate: true

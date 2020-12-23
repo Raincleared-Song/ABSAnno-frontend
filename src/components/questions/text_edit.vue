@@ -11,7 +11,9 @@
           placeholder="Your question..." />
     </div>
     <div v-else>
-      <p style="margin: 10px 5px">{{ this.question.description }}</p>
+      <p style="margin: 10px 5px; font-size: large; font-family: 'Times New Roman', serif">
+        {{ this.question.description }}
+      </p>
     </div>
 
     <!-- 图片区 -->
@@ -113,8 +115,9 @@
     methods: {
       onChangeImage(file) {
         const isImg = file.name.endsWith('.jpeg') ||
-            file.name.endsWith('.png') ||
-            file.name.endsWith('.jpg');
+                      file.name.endsWith('.png') ||
+                      file.name.endsWith('.jpg') ||
+                      file.name.endsWith('.gif');
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isImg) {
           this.$message.error('Please upload image!', 1);

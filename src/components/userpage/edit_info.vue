@@ -6,7 +6,7 @@
     </span>
     </div>
     <a-button
-            @click="visible = true" type="link" block>
+        @click="visible = true" type="link" block>
       修改密码<a-icon type="edit" />
     </a-button>
     <br/>
@@ -26,7 +26,7 @@
           <a-input-password
               v-model="password_form.newPassword" />
         </a-form-item>
-        <a-form-item label='ConfirmPassword'>
+        <a-form-item label='Confirm Password'>
           <a-input-password
               v-model="password_form.confirmPassword" />
         </a-form-item>

@@ -43,7 +43,10 @@
           </div>
         </div>
         <div v-else>
-          <el-image :src="question.image.url"/>
+          <el-image
+              :src="question.image.url"
+              fit="contain"
+              style="width: 720px; height: 540px" />
         </div>
       </div>
 

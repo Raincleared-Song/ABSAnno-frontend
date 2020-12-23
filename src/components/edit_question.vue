@@ -8,15 +8,19 @@
           <div style="margin: 20px">
             任务名称：{{ mission_info.name }}
           </div>
+          <a-divider />
           <div style="margin: 20px">
             任务类型：{{ missionType() }}
           </div>
+          <a-divider />
           <div style="margin: 20px">
             任务简介：{{ mission_info.info === ''? '未填写': mission_info.info }}
           </div>
+          <a-divider />
           <div style="margin: 20px">
             是否图片任务：{{ mission_info.has_image? '是': '否' }}
           </div>
+          <a-divider />
           <div style="margin: 20px">
             任务模版：{{ mission_info.template? '分栏': '上下' }}
           </div>
